@@ -2,18 +2,18 @@
 :root{
   --bg:#E8ECEF;--panel:#F8FAFB;--sunk:#DDE3E8;--ink:#15202A;--muted:#55636F;--line:#C6D0D8;
   --accent:#C8410B;--accent-ink:#FFFFFF;--go:#116B3F;--go-bg:#DCEFE4;--nogo:#B3231A;--nogo-bg:#F8DFDC;
-  --py:#1D649F;--js:#8A5A00;--web:#0F7666;--ja:#B02A4A;--track:var(--js);
+  --py:#1D649F;--js:#8A5A00;--web:#0F7666;--ja:#B02A4A;--es:#A1460C;--track:var(--js);
   --ed-bg:#141C24;--ed-gutter:#5F7181;--ed-ink:#DCE5EC;--ed-kw:#FF9E64;--ed-str:#9BD38F;--ed-num:#F2CC6B;--ed-com:#75889A;--ed-fn:#7FC4F5;--ed-line:#2A3744;
   --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--body:"IBM Plex Sans","Noto Sans JP",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0E151B;--panel:#17212A;--sunk:#0A1015;--ink:#E5ECF1;--muted:#98A8B5;--line:#2C3A46;
   --accent:#FF7D3B;--accent-ink:#1B0B02;--go:#4CCB8B;--go-bg:#12301F;--nogo:#FF7C70;--nogo-bg:#3A1714;
-  --py:#6DB7F2;--js:#F0BE4E;--web:#4FD1B8;--ja:#FF8FA6;--ed-bg:#0A1016;--ed-line:#222E39;color-scheme:dark}}
+  --py:#6DB7F2;--js:#F0BE4E;--web:#4FD1B8;--ja:#FF8FA6;--es:#FFB070;--ed-bg:#0A1016;--ed-line:#222E39;color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E151B;--panel:#17212A;--sunk:#0A1015;--ink:#E5ECF1;--muted:#98A8B5;--line:#2C3A46;
   --accent:#FF7D3B;--accent-ink:#1B0B02;--go:#4CCB8B;--go-bg:#12301F;--nogo:#FF7C70;--nogo-bg:#3A1714;
-  --py:#6DB7F2;--js:#F0BE4E;--web:#4FD1B8;--ja:#FF8FA6;--ed-bg:#0A1016;--ed-line:#222E39;color-scheme:dark}
+  --py:#6DB7F2;--js:#F0BE4E;--web:#4FD1B8;--ja:#FF8FA6;--es:#FFB070;--ed-bg:#0A1016;--ed-line:#222E39;color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;-webkit-text-size-adjust:100%}
@@ -262,3 +262,4 @@ ruby rt{font-size:.58em;color:var(--muted);text-decoration:none}
 .wans{font:500 20px var(--mono);padding:13px 14px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--ink);width:100%}
 .wans:focus{outline:2px solid var(--track)}
 .pv .pvhost{min-height:90px}
+.akeys{gap:6px}.akeys .tok{min-width:42px;text-align:center}

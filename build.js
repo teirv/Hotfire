@@ -67,7 +67,8 @@ const jaUnits=[kanaUnit(0,'Hiragana','The basic Japanese alphabet. Start here.',
  kanaUnit(1,'Katakana','The alphabet for foreign words and names.',[['テレビ','terebi','TV'],['カメラ','kamera','camera'],['ホテル','hoteru','hotel'],['アメリカ','amerika','America'],['バス','basu','bus'],['パン','pan','bread'],['ピザ','piza','pizza'],['ジュース','juusu jusu','juice']])];
 const ja=[];[['Part 1: Reading Japanese',null],['Part 2: Beginner','course/ja_ch2.txt'],['Part 3: Intermediate and Beyond','course/ja_ch3.txt']].forEach(([t,f])=>{const us=f?parse(fs.readFileSync(f,'utf8'),'japanese'):jaUnits;us.forEach(u=>{u.ch=t;ja.push(u)})});
 const web=[];[['HTML: Beginner and Intermediate','course/web_ch1.txt'],['CSS: Beginner and Intermediate','course/web_ch2.txt']].forEach(([t,f])=>{parse(fs.readFileSync(f,'utf8'),'html').forEach(u=>{u.ch=t;web.push(u)})});
-const COURSES={javascript:{units:js},python:{units:py},html:{units:web},japanese:{units:ja}};
+const es=[];[['Part 1: Beginner','course/es_ch1.txt'],['Part 2: Everyday Spanish','course/es_ch2.txt'],['Part 3: Intermediate and Beyond','course/es_ch3.txt']].forEach(([t,f])=>{parse(fs.readFileSync(f,'utf8'),'spanish').forEach(u=>{u.ch=t;es.push(u)})});
+const COURSES={javascript:{units:js},python:{units:py},html:{units:web},japanese:{units:ja},spanish:{units:es}};
 // clean out-case buffers
 const walk=o=>{if(Array.isArray(o))o.forEach(walk);else if(o&&typeof o==='object'){if(o._b){o.out=o._b.join('\n').replace(/\n+$/,'');delete o._b}Object.values(o).forEach(walk)}};walk(COURSES);
 const json=JSON.stringify(COURSES).replace(/</g,'\\u003c');
@@ -91,5 +92,5 @@ ${app.replace(/<\/script/g,'<\\/script')}</script>
 fs.mkdirSync('dist',{recursive:true});fs.writeFileSync('dist/hotfire.html',html);
 if(fs.existsSync('server/static'))fs.writeFileSync('server/static/index.html','<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><script src="/host.js"></script></head><body>'+html.replace('<script>\nconst COURSES','<script>\nconst COURSES')+'</body></html>');
 const n=l=>COURSES[l].units.flatMap(u=>u.lessons);
-for(const l of ['javascript','python','html','japanese'])console.log(l,'units',COURSES[l].units.length,'lessons',n(l).length,'cards',n(l).reduce((a,x)=>a+x.s.length,0),'code',n(l).flatMap(x=>x.s).filter(s=>s.k==='C').length);
+for(const l of ['javascript','python','html','japanese','spanish'])console.log(l,'units',COURSES[l].units.length,'lessons',n(l).length,'cards',n(l).reduce((a,x)=>a+x.s.length,0),'code',n(l).flatMap(x=>x.s).filter(s=>s.k==='C').length);
 console.log('bytes',html.length);

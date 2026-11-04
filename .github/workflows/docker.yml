@@ -19,13 +19,23 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Work out the image name
-        id: name
-        run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - name: Set version tags and labels
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          flavor: latest=false
+          tags: |
+            type=raw,value=latest
+            type=raw,value=1.${{ github.run_number }}
+            type=sha,format=short
+          labels: |
+            org.opencontainers.image.title=Hotfire
+            org.opencontainers.image.description=Interactive JavaScript and Python lessons with accounts and saved progress
+            org.opencontainers.image.version=1.${{ github.run_number }}
       - uses: docker/build-push-action@v6
         with:
           context: ./server
           push: true
-          tags: |
-            ${{ steps.name.outputs.image }}:latest
-            ${{ steps.name.outputs.image }}:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

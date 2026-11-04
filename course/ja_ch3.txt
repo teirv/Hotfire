@@ -1,0 +1,709 @@
+=U jk1 | First Kanji | Characters that carry meaning.
+=L jk11 | What kanji are
+@T
+**Kanji** are characters that carry meaning. A sentence uses all three scripts: kanji for core ideas, hiragana for grammar, katakana for foreign words.
+
+Most kanji have two kinds of reading: **kun** (native Japanese) and **on** (from Chinese). Learn words, not isolated readings.
+
+The small kana above kanji is called **furigana**. It's a pronunciation guide. Tap words to hear them.
+
+{一|いち} one, {二|に} two, {三|さん} three, {四|よん} four, {五|ご} five, {六|ろく} six, {七|なな} seven, {八|はち} eight, {九|きゅう} nine, {十|じゅう} ten, {百|ひゃく} hundred, {千|せん} thousand, {万|まん} ten thousand, {円|えん} yen
+@Q
+Which kanji means five?
+~opts
+* 五
+- 三
+- 千
+~why
+五 is ご.
+@Q
+How much is 三千円?
+~opts
+* ¥3,000
+- ¥300
+- ¥30
+~why
+Three, thousand, yen.
+@Q
+What do furigana show?
+~opts
+* How to read a kanji
+- The word's meaning
+- The English translation
+~why
+They're small kana beside or above the kanji.
+=L jk12 | Days and nature
+@T
+{日|ひ} day, sun. {月|つき} moon, month. {火|ひ} fire. {水|みず} water. {木|き} tree. {金|きん} gold, money. {土|つち} earth.
+
+These are the days of the week: {月曜日|げつようび}, {火曜日|かようび}, {水曜日|すいようび}, {木曜日|もくようび}, {金曜日|きんようび}, {土曜日|どようび}, {日曜日|にちようび}.
+
+{山|やま} mountain, {川|かわ} river, {田|た} rice field, {雨|あめ} rain
+@Q
+Which kanji means water?
+~opts
+* 水
+- 火
+- 木
+~why
+みず.
+@Q
+Which day is 金曜日?
+~opts
+* Friday
+- Monday
+- Sunday
+~why
+金 is gold, and Friday is gold day.
+@Q
+What does 山 mean?
+~opts
+* Mountain
+- River
+- Rain
+~why
+It looks like one.
+=L jk13 | People and places
+@T
+{人|ひと} person, {男|おとこ} man, {女|おんな} woman, {子|こ} child, {日本|にほん} Japan, {学校|がっこう} school, {学生|がくせい} student, {先生|せんせい} teacher, {友達|ともだち} friend, {会社|かいしゃ} company, {駅|えき} station, {店|みせ} shop, {家|いえ} house, {国|くに} country
+
+{日本人|にほんじん} means a Japanese person. Add {人|じん} to a country.
+
+{大|おお}きい big, {小|ちい}さい small, {高|たか}い tall or expensive, {安|やす}い cheap, {新|あたら}しい new, {古|ふる}い old
+@Q
+What does 先生 mean?
+~opts
+* Teacher
+- Student
+- Friend
+~why
+It literally means "born before".
+@Q
+What does 駅 mean?
+~opts
+* Station
+- Shop
+- Company
+~why
+えき.
+@Q
+Which one means "cheap"?
+~opts
+* {安|やす}い
+- {高|たか}い
+- {新|あたら}しい
+~why
+高い is its opposite.
+=L jk14 | Common verbs in kanji
+@T
+{行|い}きます go, {来|き}ます come, {食|た}べます eat, {飲|の}みます drink, {見|み}ます see, {聞|き}きます listen, {読|よ}みます read, {書|か}きます write, {話|はな}します speak, {買|か}います buy, {休|やす}みます rest, {会|あ}います meet, {帰|かえ}ります return home, {起|お}きます get up, {寝|ね}ます sleep
+
+Notice that the hiragana after the kanji, called **okurigana**, stays the same while the ending changes.
+@Q
+What does {飲|の}みます mean?
+~opts
+* Drink
+- Eat
+- Read
+~why
+Its left side is the food radical.
+@Q
+Which verb means "to write"?
+~opts
+* {書|か}きます
+- {買|か}います
+- {話|はな}します
+~why
+Both 書 and 買 can be read か, so context and kanji help.
+@B
+Say "I read a book."
+~code
+{本|ほん}___ {読|よ}みます。
+~opts
+* を
+- に
+- で
+~why
+本 is book.
+=U jte | The て-Form | The most useful verb form in Japanese.
+=L jt1 | Verb groups
+@T
+To change verb forms, you need the **three verb groups**.
+
+**Group 2 (ichidan):** end in いる or える sounds. Drop る. {食|た}べる, {見|み}る, {寝|ね}る
+
+**Group 1 (godan):** the rest. The last sound changes. {行|い}く, {飲|の}む, {話|はな}す, {買|か}う
+
+**Irregular:** する do, くる come.
+
+The basic form in a dictionary is the **plain form**.
+
+Some look like Group 2 but are Group 1: {帰|かえ}る, {入|はい}る, {走|はし}る, {知|し}る, {切|き}る.
+@Q
+Which group is {飲|の}む?
+~opts
+* Group 1
+- Group 2
+- Irregular
+~why
+It doesn't end in る.
+@Q
+{帰|かえ}る looks like Group 2. What is it really?
+~opts
+* Group 1
+- Group 2
+- Irregular
+~why
+It's one of the exceptions. Its ます-form is {帰|かえ}ります.
+=L jt2 | Making the て-form
+@T
+**Group 2:** drop る, add て. {食|た}べる → {食|た}べて
+
+**Irregular:** する → して, くる → きて
+
+**Group 1:**
+
+う, つ, る → って ({買|か}う → {買|か}って)
+
+む, ぶ, ぬ → んで ({飲|の}む → {飲|の}んで)
+
+く → いて ({書|か}く → {書|か}いて)
+
+ぐ → いで ({泳|およ}ぐ → {泳|およ}いで)
+
+す → して ({話|はな}す → {話|はな}して)
+
+Exception: {行|い}く → {行|い}って
+@Q
+What's the て-form of {読|よ}む?
+~opts
+* {読|よ}んで
+- {読|よ}って
+- {読|よ}いて
+~why
+む becomes んで.
+@Q
+What's the て-form of {行|い}く?
+~opts
+* {行|い}って
+- {行|い}いて
+- {行|い}んで
+~why
+It's the one exception.
+@W
+Type the romaji for the て-form of 書く (kaku).
+~accept
+kaite
+~why
+く becomes いて.
+@W
+Type the romaji for the て-form of 話す (hanasu).
+~accept
+hanashite
+~why
+す becomes して.
+=L jt3 | Using the て-form
+@T
+**〜てください**: please do.
+
+{見|み}てください。 Please look.
+
+**〜ている**: doing now, or a continuing state.
+
+{食|た}べています。 I'm eating.
+
+{結婚|けっこん}しています。 I'm married.
+
+**〜てもいいです**: may I.
+
+{写真|しゃしん}を {撮|と}ってもいいですか。 May I take a photo?
+
+**〜てはいけません**: must not.
+
+**Linking actions:** て joins sentences in order.
+
+{起|お}きて、{食|た}べて、{行|い}きます。 I get up, eat, and go.
+@B
+Say "Please wait."
+~code
+{待|ま}って___。
+~opts
+* ください
+- います
+- あります
+~why
+〜てください makes a request.
+@Q
+What does {今|いま} {勉強|べんきょう}しています mean?
+~opts
+* I'm studying now.
+- I studied.
+- Please study.
+~why
+〜ています is an ongoing action.
+@Q
+You want to ask to sit. Which one fits?
+~opts
+* {座|すわ}ってもいいですか
+- {座|すわ}ってください
+- {座|すわ}りません
+~why
+〜てもいいですか asks permission.
+=U jplain | Plain Form | How people talk to friends.
+=L jp1 | Plain verbs
+@T
+Friends use the **plain form**, and it's needed for many grammar patterns.
+
+**Negative (ない):** Group 2: {食|た}べない. Group 1: last sound → あ-row + ない: {飲|の}まない, {行|い}かない. う becomes わ: {買|か}わない. する → しない, くる → こない. ある → ない.
+
+**Past (た):** same as て-form, with た: {食|た}べた, {飲|の}んだ, {行|い}った.
+
+**Past negative:** なかった: {食|た}べなかった.
+
+です becomes だ.
+@Q
+What's the plain negative of {飲|の}む?
+~opts
+* {飲|の}まない
+- {飲|の}むない
+- {飲|の}みない
+~why
+む → ま, then ない.
+@Q
+What's the plain past of {見|み}る?
+~opts
+* {見|み}た
+- {見|み}って
+- {見|み}るた
+~why
+Group 2: drop る, add た.
+@Q
+What's the plain negative of ある?
+~opts
+* ない
+- あらない
+- あるない
+~why
+ある is irregular here.
+@Q
+What's the casual version of {行|い}きますか?
+~opts
+* {行|い}く?
+- {行|い}きますよ
+- {行|い}くです
+~why
+Casual questions drop か and rise in tone.
+=L jp2 | Linking and reasons
+@T
+**から** after a sentence means "because". The reason comes first.
+
+{雨|あめ}だから、{行|い}きません。 It's raining, so I won't go.
+
+**けど / が** means "but".
+
+{高|たか}いですが、おいしいです。 It's expensive, but tasty.
+
+**〜と{思|おも}います**: I think.
+
+いいと {思|おも}います。 I think it's good.
+
+**〜と{言|い}いました**: said.
+
+{田中|たなか}さんは {来|こ}ないと {言|い}いました。 Tanaka said he won't come.
+@B
+Say "I think it will rain."
+~code
+{雨|あめ}が {降|ふ}る___ {思|おも}います。
+~opts
+* と
+- を
+- で
+~why
+と quotes the thought.
+@Q
+In {暑|あつ}いから、{水|みず}を {飲|の}みます, what's the reason?
+~opts
+* It's hot
+- I drink water
+- There's no reason
+~why
+The reason comes before から.
+=L jp3 | Experience and comparison
+@T
+**〜たことがあります**: I've done it before.
+
+{日本|にほん}に {行|い}ったことがあります。 I've been to Japan.
+
+**〜より**: compared to.
+
+{電車|でんしゃ}は バスより {速|はや}いです。 Trains are faster than buses.
+
+**いちばん**: the most.
+
+{犬|いぬ}が いちばん すきです。 I like dogs the most.
+
+**〜つもりです**: I intend to.
+
+**〜ながら**: while doing. {音楽|おんがく}を {聞|き}きながら {走|はし}ります。 I run while listening to music.
+@Q
+How do you say "I've eaten sushi before"?
+~opts
+* すしを {食|た}べたことがあります
+- すしを {食|た}べています
+- すしを {食|た}べましょう
+~why
+Plain past + ことがあります.
+@O
+Put it in order: "Japanese is harder than English."
+~lines
+{日本語|にほんご}は
+{英語|えいご}より
+{難|むずか}しいです。
+~why
+X は Y より adjective.
+=U jn4 | Intermediate Grammar | Conditions, ability and giving.
+=L jm1 | Can and conditions
+@T
+**Potential (can):** Group 2: る → られる ({食|た}べられる). Group 1: last sound → え-row + る ({飲|の}める, {行|い}ける). する → できる, くる → こられる.
+
+{日本語|にほんご}が {話|はな}せます。 I can speak Japanese.
+
+**〜たら**: if, when. {雨|あめ}が {降|ふ}ったら、{行|い}きません。
+
+**〜ば**: if. {安|やす}ければ {買|か}います。
+
+**〜と**: whenever, naturally. {春|はる}になると、{暖|あたた}かくなります。
+
+**〜なら**: if that's the case.
+@Q
+What's the potential of {話|はな}す?
+~opts
+* {話|はな}せる
+- {話|はな}される
+- {話|はな}せない
+~why
+す → せ + る.
+@Q
+Which one means "If it rains, I won't go"?
+~opts
+* {雨|あめ}が {降|ふ}ったら、{行|い}きません
+- {雨|あめ}が {降|ふ}って、{行|い}きません
+- {雨|あめ}が {降|ふ}るから、{行|い}きます
+~why
+〜たら sets a condition.
+@Q
+What's the potential of する?
+~opts
+* できる
+- しられる
+- すれる
+~why
+Note: {日本語|にほんご}が できます.
+=L jm2 | Giving and receiving
+@T
+Japanese has separate verbs depending on direction.
+
+**あげる**: I give to others.
+
+**くれる**: others give to me.
+
+**もらう**: I receive.
+
+{友達|ともだち}に {本|ほん}を あげました。 I gave a friend a book.
+
+{友達|ともだち}が {本|ほん}を くれました。 A friend gave me a book.
+
+{友達|ともだち}に {本|ほん}を もらいました。 I got a book from a friend.
+
+With て-form they mean doing a favor: {手伝|てつだ}って くれました。 They helped me.
+@Q
+A friend gave **you** a present. Which verb?
+~opts
+* くれました
+- あげました
+- もらいましょう
+~why
+くれる means toward me.
+@B
+Say "I gave my mother flowers."
+~code
+{母|はは}に {花|はな}を ___。
+~opts
+* あげました
+- くれました
+- もらいました
+~why
+I'm the giver, so あげる.
+=L jm3 | Passive and causative
+@T
+**Passive (〜られる):** something is done to you. It often sounds like an annoyance.
+
+{先生|せんせい}に {褒|ほ}められました。 I was praised by the teacher.
+
+Group 1: あ-row + れる: {書|か}かれる. Group 2: られる: {見|み}られる.
+
+**Causative (〜させる):** make or let someone do.
+
+{子供|こども}に {野菜|やさい}を {食|た}べさせます。 I make my child eat vegetables.
+
+Group 1: あ-row + せる. Group 2: させる. する → させる.
+@Q
+What does {母|はは}に {怒|おこ}られました mean?
+~opts
+* I was scolded by my mother.
+- I scolded my mother.
+- My mother is angry at someone else.
+~why
+に marks who did it, and the verb is passive.
+@Q
+Which one means "make someone do"?
+~opts
+* {行|い}かせる
+- {行|い}かれる
+- {行|い}ける
+~why
+Causative. 行かれる is passive, and 行ける is potential.
+=L jm4 | Polite levels
+@T
+Japanese changes with the social situation.
+
+**Casual:** {食|た}べる. For friends and family.
+
+**Polite:** {食|た}べます. Your safe default.
+
+**Honorific (そんけいご):** raises the other person. いらっしゃいます (is, goes), {召|め}し{上|あ}がります (eats), おっしゃいます (says).
+
+**Humble (けんじょうご):** lowers yourself. {参|まい}ります (go), いただきます (receive), {申|もう}します (say).
+
+Work and customer service use these all the time. Example: {田中|たなか}と {申|もう}します。 My name is Tanaka.
+@Q
+Which one do you use for yourself?
+~opts
+* {申|もう}します
+- おっしゃいます
+- いらっしゃいます
+~why
+It's humble. おっしゃいます is honorific, for others.
+@Q
+Which level should a beginner use with strangers?
+~opts
+* Polite ます and です
+- Casual plain form
+- Only honorific
+~why
+It's always safe.
+=U jn3 | Upper Intermediate | Nuance and natural speech.
+=L jx1 | Seems, looks and hearsay
+@T
+**〜そうです** (ます-stem): looks like. おいしそうです。 Looks tasty.
+
+**〜そうです** (plain): I heard. {来|く}るそうです。 I heard they're coming.
+
+**〜ようです / 〜みたいです**: it seems. {雨|あめ}が {降|ふ}ったようです。
+
+**〜らしいです**: apparently, I hear.
+
+**〜はずです**: should, is expected to. {来|く}るはずです。
+
+**〜かもしれません**: might. {雨|あめ}かもしれません。
+@Q
+You see a cake. What do you say?
+~opts
+* おいしそうですね
+- おいしいそうです
+- おいしいはずです
+~why
+Stem + そう means "looks". おいしいそう would be hearsay.
+@Q
+Which one means "might"?
+~opts
+* かもしれません
+- はずです
+- ください
+~why
+It's about 50%. はず is much more certain.
+=L jx2 | Relative clauses and nuance
+@T
+To describe a noun, put a plain sentence **before** it.
+
+{昨日|きのう} {買|か}った {本|ほん}: the book I bought yesterday
+
+{日本語|にほんご}を {話|はな}す {人|ひと}: a person who speaks Japanese
+
+**Sentence enders:** ね seeks agreement, よ gives new information, and よね checks.
+
+**〜のです / 〜んです** explains or asks for a reason. どうしたんですか。 What happened?
+
+**〜てしまう** means completely, or regretfully. {忘|わす}れてしまいました。 I (sadly) forgot.
+@O
+Put it in order: "The person I met yesterday."
+~lines
+{昨日|きのう}
+{会|あ}った
+{人|ひと}
+~why
+The description comes before the noun.
+@Q
+Which ending shares new information with the listener?
+~opts
+* よ
+- ね
+- か
+~why
+ね looks for agreement.
+@Q
+What does {財布|さいふ}を なくしてしまいました suggest?
+~opts
+* I lost my wallet, and I regret it.
+- I found my wallet.
+- I might lose my wallet.
+~why
+〜てしまう adds regret.
+=L jx3 | Advanced patterns
+@T
+Beyond this, learning is mostly vocabulary and exposure. These common patterns show up in reading.
+
+**〜わけではない**: it doesn't mean that
+
+**〜ことにする**: decide to
+
+**〜ようになる**: come to be able to
+
+**〜ために**: in order to, because of
+
+**〜ばかり**: nothing but, just did
+
+**〜にとって**: for, from the view of
+
+**〜に{対|たい}して**: toward, in contrast to
+@Q
+What does {日本語|にほんご}が {話|はな}せるようになりました mean?
+~opts
+* I've become able to speak Japanese.
+- I decided to speak Japanese.
+- I must speak Japanese.
+~why
+ようになる describes change.
+@Q
+What does {留学|りゅうがく}することにしました mean?
+~opts
+* I decided to study abroad.
+- It was decided that I can't study abroad.
+- I've studied abroad.
+~why
+ことにする means your own decision.
+=U jread | Reading and Your Next Steps | Putting it all together.
+=L jre1 | Short reading
+@T
+Read this aloud, and tap sentences to hear them.
+
+{私|わたし}は {毎朝|まいあさ} {六時|ろくじ}に {起|お}きます。{朝|あさ}ごはんを {食|た}べて、{車|くるま}で {会社|かいしゃ}に {行|い}きます。{仕事|しごと}は {大変|たいへん}ですが、おもしろいです。{週末|しゅうまつ}は {家族|かぞく}と {公園|こうえん}に {行|い}きます。
+@Q
+How does the writer get to work?
+~opts
+* By car
+- By train
+- On foot
+~why
+{車|くるま}で means by car.
+@Q
+What's the writer's opinion of work?
+~opts
+* Hard but interesting
+- Easy and boring
+- It isn't mentioned
+~why
+{大変|たいへん} is hard, and おもしろい is interesting.
+@Q
+What does the writer do on weekends?
+~opts
+* Goes to the park with family
+- Works
+- Sleeps
+~why
+{週末|しゅうまつ} means weekend.
+=L jre2 | What comes next
+@T
+You've now seen the core of Japanese grammar. Reaching real fluency takes thousands of hours, and no single course covers it all. Here's what to do next.
+
+**Vocabulary:** Use a spaced repetition app such as Anki, and aim for a steady number of words daily.
+
+**Kanji:** About 2,000 are in everyday use, so learn them through words.
+
+**Listening and reading:** Graded readers first, then NHK Easy News, anime, and podcasts.
+
+**Speaking:** Weekly conversation practice is what makes it stick.
+
+**Testing yourself:** The JLPT has five levels. N5 is the easiest, and N1 is the hardest.
+@Q
+What matters most after finishing the grammar?
+~opts
+* Lots of reading, listening and speaking
+- Rereading grammar lists
+- Memorizing romaji
+~why
+Grammar makes sense when you meet it again and again in real use.
+@Q
+Which JLPT level is the hardest?
+~opts
+* N1
+- N5
+- N3
+~why
+Numbers go down as levels go up.
+=F jfire2 | Hot fire: Final test
+@B
+Say "I want to eat Japanese food."
+~code
+{日本|にほん}の {料理|りょうり}___ {食|た}べ___です。
+~opts
+* を
+* たい
+- に
+- ほしい
+~why
+たい can also take が, but を is fine here.
+@Q
+What does {昨日|きのう} {友達|ともだち}に {会|あ}って、{映画|えいが}を {見|み}ました mean?
+~opts
+* Yesterday I met a friend and saw a movie.
+- Tomorrow I'll meet a friend and see a movie.
+- Yesterday a friend saw me at the movies.
+~why
+て links the two actions, and ました sets the past.
+@B
+Say "Please speak slowly."
+~code
+ゆっくり {話|はな}して___。
+~opts
+* ください
+- います
+- しまいました
+~why
+〜てください makes a request.
+@O
+Put it in order: "The book I read yesterday was interesting."
+~lines
+{昨日|きのう}
+{読|よ}んだ
+{本|ほん}は
+おもしろかったです。
+~why
+The describing clause comes before 本.
+@Q
+A customer asks your name at work. Which one's most polite?
+~opts
+* {田中|たなか}と {申|もう}します
+- {田中|たなか}だよ
+- {田中|たなか}さんです
+~why
+The humble form suits work, and you never use さん for yourself.
+@W
+Type the romaji for "thank you very much", politely: ありがとうございます.
+~accept
+arigatou gozaimasu
+arigatougozaimasu
+arigatoo gozaimasu
+arigato gozaimasu
+~why
+You've reached the end of this path. おつかれさまでした!

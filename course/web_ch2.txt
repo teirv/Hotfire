@@ -1,0 +1,671 @@
+=U cstart | CSS Basics | Beginner CSS. Making pages look the way you want.
+=L c1a | Rules and selectors
+@T
+**CSS** styles HTML. A **rule** has a **selector** that picks elements, and **declarations** inside braces that say how they look.
+
+A declaration is a `property: value;` pair. Put CSS in a `<style>` tag here. On real sites, it usually goes in its own file.
+~code
+<style>
+  h1 {
+    color: firebrick;
+    font-size: 40px;
+  }
+  p {
+    color: steelblue;
+  }
+</style>
+<h1>Styled heading</h1>
+<p>Styled paragraph</p>
+@T
+Three main selectors: a tag name (`p`), a **class** with a dot (`.warn`), and an **id** with a hash (`#top`).
+
+A class can be reused on many elements. An id should be unique on a page.
+~code
+<style>
+  p { color: gray; }
+  .warn { color: darkorange; }
+  #top { color: seagreen; }
+</style>
+<p id="top">Unique item</p>
+<p>Normal</p>
+<p class="warn">Careful</p>
+<p class="warn">Careful again</p>
+@Q
+Which selector targets `class="card"`?
+~opts
+* `.card`
+- `#card`
+- `card`
+~why
+Dot for class, hash for id, plain word for tag.
+@B
+Make all paragraphs blue.
+~code
+p ___ color___ blue; }
+~opts
+* {
+* :
+- (
+- =
+~why
+Selector, opening brace, `property: value;`, closing brace.
+@C
+Make every `h1` red, with `color: red`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<h1>Alert</h1>
+~sol
+<style>
+  h1 { color: red; }
+</style>
+<h1>Alert</h1>
+~hint
+h1 { color: red; }
+~style
+h1 :: color :: rgb(255, 0, 0)
+@C
+Give the element with class `tag` a `background-color` of `yellow`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<p class="tag">Check me</p>
+~sol
+<style>
+  .tag { background-color: yellow; }
+</style>
+<p class="tag">Check me</p>
+~hint
+Classes start with a dot.
+~style
+.tag :: backgroundColor :: rgb(255, 255, 0)
+=L c1b | Color and text
+@T
+Colors can be names (`tomato`), hex codes (`#ff6347`), or `rgb(255, 99, 71)`. `rgba` adds transparency.
+
+Text properties: `font-family`, `font-size`, `font-weight`, `text-align`, `line-height`, `text-decoration`.
+
+Always give a fallback font, because a person's device may not have your first choice.
+~code
+<style>
+  body { font-family: Georgia, serif; }
+  h2 { text-align: center; font-weight: 400; }
+  p { line-height: 1.6; color: #335; }
+  a { text-decoration: none; }
+</style>
+<h2>Centered</h2>
+<p>Comfortable line spacing helps people read.</p>
+<a href="#">No underline</a>
+@Q
+What does `#ff0000` make?
+~opts
+* Red
+- Green
+- Blue
+~why
+Hex is red, green, blue pairs. `ff` is the maximum.
+@Q
+Which property centers text?
+~opts
+* `text-align`
+- `font-center`
+- `align`
+~why
+`text-align: center;`
+@C
+Style the `p`: `font-size` of `20px`, and `text-align` of `center`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<p>Hello</p>
+~sol
+<style>
+  p { font-size: 20px; text-align: center; }
+</style>
+<p>Hello</p>
+~hint
+Two declarations, each ending in a semicolon.
+~style
+p :: fontSize :: 20px
+p :: textAlign :: center
+=U cbox | The Box Model | Every element is a box.
+=L c2a | Margin, border, padding
+@T
+Every element is a box. From inside to outside: **content**, **padding** (space inside the border), **border**, and **margin** (space outside).
+
+Shorthand: `padding: 10px` sets all sides. `margin: 10px 20px` sets top and bottom, then left and right.
+~code
+<style>
+  .box {
+    width: 200px;
+    padding: 20px;
+    border: 4px solid teal;
+    margin: 30px;
+    background: lightyellow;
+  }
+</style>
+<div class="box">Look at the spacing.</div>
+@T
+By default, `width` only covers the content, so padding and border make a box larger than you asked.
+
+`box-sizing: border-box` makes `width` include them. Almost every site sets this on everything.
+
+`margin: 0 auto` centers a block that has a width.
+~code
+<style>
+  * { box-sizing: border-box; }
+  .box { width: 200px; padding: 20px; margin: 0 auto; background: lavender; }
+</style>
+<div class="box">Exactly 200px wide, centered.</div>
+@Q
+Which space is **inside** the border?
+~opts
+* Padding
+- Margin
+- Outline
+~why
+Margin is outside, pushing other elements away.
+@Q
+A box has `width: 100px`, `padding: 10px`, no border, and the default `box-sizing`. How wide does it end up?
+~opts
+* 120
+- 100
+- 110
+~why
+Padding is added on both sides.
+@C
+Give `.card` these: `padding` of `16px`, a `border` of `2px solid black`, and a `margin` of `8px`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="card">Card</div>
+~sol
+<style>
+  .card { padding: 16px; border: 2px solid black; margin: 8px; }
+</style>
+<div class="card">Card</div>
+~hint
+border: 2px solid black;
+~style
+.card :: paddingTop :: 16px
+.card :: borderLeftWidth :: 2px
+.card :: marginBottom :: 8px
+=L c2b | Display and sizing
+@T
+`display` controls how a box behaves. `block` fills the row, `inline` flows in text, `inline-block` flows but accepts a size, and `none` removes it.
+
+Units: `px` is fixed. `%` is relative to the parent. `rem` is relative to the root font size. `vw` and `vh` are percent of the screen.
+
+`max-width` lets a box shrink on small screens.
+~code
+<style>
+  .pill { display: inline-block; padding: 4px 12px; background: gold; border-radius: 999px; }
+  .wide { max-width: 300px; background: #eee; }
+  .gone { display: none; }
+</style>
+<span class="pill">One</span> <span class="pill">Two</span>
+<p class="wide">I stop growing at 300px.</p>
+<p class="gone">You won't see me.</p>
+@Q
+Which unit scales with the user's font settings?
+~opts
+* `rem`
+- `px`
+- `cm`
+~why
+It's a good choice for font sizes.
+@Q
+What does `display: none` do?
+~opts
+* Removes the element from the layout
+- Makes it transparent but keeps its space
+- Deletes it from the HTML
+~why
+`visibility: hidden` is the one that keeps the space.
+=U cflex | Flexbox | Lining things up in a row or column.
+=L c3a | Flex basics
+@T
+**Flexbox** arranges children along a line. Put `display: flex` on the **parent**.
+
+`justify-content` spaces them along the row. `align-items` lines them up across it. `gap` adds space between them.
+
+Try changing `space-between` to `center`.
+~code
+<style>
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px; background: #dfe7ee; }
+  .bar div { background: steelblue; color: white; padding: 8px 14px; }
+</style>
+<div class="bar">
+  <div>Logo</div>
+  <div>Menu</div>
+</div>
+@T
+`flex-direction: column` stacks children. `flex-wrap: wrap` lets them flow onto new rows.
+
+On a child, `flex: 1` means "take a share of the leftover space."
+~code
+<style>
+  .row { display: flex; gap: 8px; }
+  .side { width: 100px; background: gold; }
+  .fill { flex: 1; background: lightblue; }
+</style>
+<div class="row">
+  <div class="side">Side</div>
+  <div class="fill">I take the rest</div>
+</div>
+@Q
+Where does `display: flex` go?
+~opts
+* On the parent
+- On each child
+- On the `html` tag only
+~why
+The parent is the flex container, and its direct children are arranged.
+@Q
+Which property spaces items along the main direction?
+~opts
+* `justify-content`
+- `align-items`
+- `text-align`
+~why
+`align-items` works in the other direction.
+@C
+Make `.nav` a flex container with `justify-content: center` and a `gap` of `12px`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="nav"><a href="#">Home</a><a href="#">About</a></div>
+~sol
+<style>
+  .nav { display: flex; justify-content: center; gap: 12px; }
+</style>
+<div class="nav"><a href="#">Home</a><a href="#">About</a></div>
+~hint
+Three declarations on .nav.
+~style
+.nav :: display :: flex
+.nav :: justifyContent :: center
+.nav :: columnGap :: 12px
+=U cgrid | CSS Grid | Intermediate CSS. Rows and columns at once.
+=L c4a | Grid basics
+@T
+**Grid** lays things out in two directions. `grid-template-columns` defines columns, and `1fr` means one share of the free space.
+
+`repeat(3, 1fr)` makes three equal columns.
+~code
+<style>
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .grid div { background: mediumseagreen; color: white; padding: 16px; }
+  .big { grid-column: span 2; }
+</style>
+<div class="grid">
+  <div class="big">Wide</div>
+  <div>B</div>
+  <div>C</div>
+  <div>D</div>
+  <div>E</div>
+</div>
+@T
+Here's a pattern worth memorizing. Cards fit as many columns as there's room for, and wrap on their own, with no media queries.
+```
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+```
+Rule of thumb: flexbox for one direction, grid for two.
+@Q
+What does `1fr` mean?
+~opts
+* One share of the free space
+- One foot
+- One pixel
+~why
+`2fr 1fr` gives the first column twice as much.
+@Q
+You're laying out a whole page with a header, sidebar, and content. What fits best?
+~opts
+* Grid
+- Tables
+- `float`
+~why
+It handles rows and columns together.
+@C
+Make `.cards` a grid with `grid-template-columns: 1fr 1fr` and a `gap` of `10px`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="cards"><div>A</div><div>B</div></div>
+~sol
+<style>
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+</style>
+<div class="cards"><div>A</div><div>B</div></div>
+~hint
+display: grid; then the two other properties.
+~style
+.cards :: display :: grid
+.cards :: rowGap :: 10px
+~must
+1fr\s+1fr|repeat\(\s*2 :: Use two 1fr columns.
+=U cselect | Selectors and the Cascade | Intermediate CSS. Which rule wins, and why.
+=L c5a | Combining selectors
+@T
+Selectors combine. `nav a` means a link inside nav. `.card > h2` means a direct child. `h1, h2` means both.
+
+**Pseudo-classes** target states: `:hover`, `:focus`, `:first-child`, `:nth-child(2)`.
+
+**Pseudo-elements** target parts: `::before`, `::after`.
+~code
+<style>
+  li:nth-child(even) { background: #eef; }
+  a:hover { color: tomato; }
+  .note::before { content: "Note: "; font-weight: bold; }
+</style>
+<ul><li>One</li><li>Two</li><li>Three</li><li>Four</li></ul>
+<a href="#">Hover me</a>
+<p class="note">Check torque.</p>
+@Q
+What does `.menu a` select?
+~opts
+* Links inside `.menu`
+- Elements with both classes
+- Only the first link
+~why
+A space means "inside", at any depth.
+@Q
+Which one styles an element when the mouse is over it?
+~opts
+* `:hover`
+- `::hover`
+- `.hover`
+~why
+Don't forget `:focus` too, for keyboard users.
+@C
+Make links inside `.menu` have `color: green`, without changing the other link.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="menu"><a id="in" href="#">In</a></div>
+<a id="out" href="#">Out</a>
+~sol
+<style>
+  .menu a { color: green; }
+</style>
+<div class="menu"><a id="in" href="#">In</a></div>
+<a id="out" href="#">Out</a>
+~hint
+.menu a { ... }
+~style
+#in :: color :: rgb(0, 128, 0)
+=L c5b | The cascade and specificity
+@T
+When rules conflict, CSS decides by **specificity**: ids beat classes, and classes beat tags. If they tie, the **last** rule wins.
+
+Some properties, like `color` and `font`, **inherit** from the parent.
+
+`!important` overrides this, but it makes CSS hard to maintain, so avoid it.
+~code
+<style>
+  p { color: gray; }
+  .note { color: blue; }
+  p { color: green; }
+</style>
+<p class="note">The class beats both tag rules.</p>
+<p>The last tag rule wins here.</p>
+@Q
+`#a { color: red }` and `.b { color: blue }` both match an element. What color is it?
+~opts
+* Red
+- Blue
+- Purple
+~why
+An id is more specific than a class.
+@Q
+Two class rules tie. Which one applies?
+~opts
+* The one written later
+- The one written first
+- Neither
+~why
+That's the "cascading" in Cascading Style Sheets.
+@Q
+A paragraph has no color set, but its parent is blue. Why is it blue?
+~opts
+* Color is inherited
+- Browsers guess
+- Specificity
+~why
+Text properties inherit. `margin` and `border` don't.
+=U cresp | Responsive Design | Intermediate CSS. Pages that fit every screen.
+=L c6a | Media queries
+@T
+A **media query** applies CSS at certain screen sizes. **Mobile first** means writing the phone layout as the default, and adding `min-width` rules for larger screens.
+
+Resize your window with this preview to watch it.
+~code
+<style>
+  .layout { display: grid; gap: 8px; }
+  .layout div { background: skyblue; padding: 12px; }
+  @media (min-width: 600px) {
+    .layout { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+<div class="layout"><div>Left</div><div>Right</div></div>
+@T
+Flexible images: `img { max-width: 100%; height: auto; }`.
+
+`clamp()` sets a value with a minimum and maximum, like `font-size: clamp(1rem, 4vw, 2rem)`.
+@Q
+What does `@media (min-width: 600px)` mean?
+~opts
+* Apply at 600px wide and larger
+- Apply below 600px
+- Set the page to 600px
+~why
+`min-width` is the mobile-first choice.
+@Q
+What keeps an image from overflowing its container?
+~opts
+* `max-width: 100%`
+- `width: 2000px`
+- `overflow: image`
+~why
+It can shrink but never grows past its natural size.
+=U ceffects | Position, Motion and Variables | Intermediate CSS. Polish.
+=L c7a | Position
+@T
+`position: relative` nudges an element and becomes the anchor for its children. `absolute` places it relative to that anchor. `fixed` sticks to the screen. `sticky` sticks when scrolling reaches it.
+
+`top`, `left`, `right`, and `bottom` set the spot, and `z-index` sets what's on top.
+~code
+<style>
+  .card { position: relative; width: 200px; height: 80px; background: #eee; }
+  .badge { position: absolute; top: 8px; right: 8px; background: crimson; color: white; padding: 2px 8px; }
+</style>
+<div class="card"><span class="badge">New</span>Card</div>
+@Q
+An `absolute` element is placed relative to what?
+~opts
+* Its nearest positioned ancestor
+- The next element
+- The HTML file
+~why
+That's why the parent gets `position: relative`.
+@C
+Give `.sticker` `position: absolute` and `top: 10px`, and give its parent `.frame` `position: relative`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="frame"><span class="sticker">Hi</span></div>
+~sol
+<style>
+  .frame { position: relative; }
+  .sticker { position: absolute; top: 10px; }
+</style>
+<div class="frame"><span class="sticker">Hi</span></div>
+~hint
+Two rules, one on each element.
+~style
+.frame :: position :: relative
+.sticker :: position :: absolute
+.sticker :: top :: 10px
+=L c7b | Transitions, animation and variables
+@T
+`transition` animates a change over time. `transform` moves, scales, or rotates without shifting the layout.
+
+`@keyframes` builds an animation with steps.
+~code
+<style>
+  .btn { padding: 10px 16px; background: seagreen; color: white; border: 0; transition: transform .2s; }
+  .btn:hover { transform: scale(1.1); }
+  .dot { width: 20px; height: 20px; background: tomato; border-radius: 50%; animation: pulse 1s infinite alternate; }
+  @keyframes pulse { from { opacity: .3; } to { opacity: 1; } }
+</style>
+<button class="btn">Hover me</button>
+<div class="dot"></div>
+@T
+**CSS variables** store values, so you change a color in one place. Define them with `--name` and use them with `var()`.
+
+Dark mode: redefine the variables in `@media (prefers-color-scheme: dark)`.
+~code
+<style>
+  :root { --brand: rebeccapurple; --space: 12px; }
+  h2 { color: var(--brand); }
+  .box { padding: var(--space); border: 2px solid var(--brand); }
+</style>
+<h2>Themed</h2>
+<div class="box">One change updates everything.</div>
+@Q
+Which property smoothly animates a hover change?
+~opts
+* `transition`
+- `display`
+- `hover-time`
+~why
+Put it on the normal state.
+@Q
+How do you use a variable named `--main`?
+~opts
+* `var(--main)`
+- `$main`
+- `--main()`
+~why
+Variables are usually defined on `:root`.
+@C
+Define `--accent: blue` on `:root`, then use it for the `color` of `p`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<p>Themed</p>
+~sol
+<style>
+  :root { --accent: blue; }
+  p { color: var(--accent); }
+</style>
+<p>Themed</p>
+~hint
+color: var(--accent);
+~style
+p :: color :: rgb(0, 0, 255)
+~must
+var\(\s*--accent\s*\) :: Use var(--accent).
+=U cfire | CSS Projects | Hot fire tests for CSS.
+=F cfire1 | Hot fire: Navigation bar
+@C
+Style this nav bar. Make `.bar` flex with `justify-content: space-between`, `align-items: center`, and `padding` of `12px`. Set its `background-color` to `black` and `.bar a` to `color: white`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="bar"><a id="l" href="#">Logo</a><a href="#">Menu</a></div>
+~sol
+<style>
+  .bar { display: flex; justify-content: space-between; align-items: center; padding: 12px; background-color: black; }
+  .bar a { color: white; }
+</style>
+<div class="bar"><a id="l" href="#">Logo</a><a href="#">Menu</a></div>
+~hint
+One rule for .bar and one for .bar a.
+~style
+.bar :: display :: flex
+.bar :: justifyContent :: space-between
+.bar :: alignItems :: center
+.bar :: paddingTop :: 12px
+.bar :: backgroundColor :: rgb(0, 0, 0)
+#l :: color :: rgb(255, 255, 255)
+=F cfire2 | Hot fire: Card grid
+@C
+Make `.grid` a CSS grid using `repeat(auto-fit, minmax(150px, 1fr))` with a `gap` of `16px`.
+
+Give `.card` `padding` of `12px`, `border-radius` of `8px`, and on hover `transform: translateY(-2px)`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="grid"><div class="card">A</div><div class="card">B</div></div>
+~sol
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+  .card { padding: 12px; border-radius: 8px; }
+  .card:hover { transform: translateY(-2px); }
+</style>
+<div class="grid"><div class="card">A</div><div class="card">B</div></div>
+~hint
+The hover rule is a separate rule: .card:hover
+~style
+.grid :: display :: grid
+.grid :: rowGap :: 16px
+.card :: paddingTop :: 12px
+.card :: borderTopLeftRadius :: 8px
+~must
+auto-fit :: Use auto-fit in the columns.
+minmax\(\s*150px :: Use minmax(150px, 1fr).
+:hover :: Add a hover rule.
+=F cfire3 | Hot fire: Responsive page
+@C
+Mobile first: `.page` is a grid with a `gap` of `10px` and one column by default. At `min-width: 700px`, it gets `grid-template-columns: 200px 1fr`.
+
+Set `--brand: teal` on `:root`, and use it as the `color` of `h1`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="page"><aside>Side</aside><main><h1>Main</h1></main></div>
+~sol
+<style>
+  :root { --brand: teal; }
+  h1 { color: var(--brand); }
+  .page { display: grid; gap: 10px; }
+  @media (min-width: 700px) {
+    .page { grid-template-columns: 200px 1fr; }
+  }
+</style>
+<div class="page"><aside>Side</aside><main><h1>Main</h1></main></div>
+~hint
+Default rule first, then @media (min-width: 700px) { ... }
+~style
+.page :: display :: grid
+.page :: rowGap :: 10px
+h1 :: color :: rgb(0, 128, 128)
+~must
+@media\s*\(\s*min-width:\s*700px :: Add the min-width media query.
+var\(\s*--brand :: Use var(--brand).

@@ -1,0 +1,505 @@
+=U hstart | Your First Page | What HTML is and how a page is built.
+=L h1a | Tags and elements
+@T
+**HTML** is the language that describes what's on a web page: headings, paragraphs, links, images.
+
+It uses **tags** in angle brackets. Most come in pairs: an opening tag and a closing tag with a slash. The whole thing together is called an **element**.
+
+Edit the text below, then press **Run** to see the page.
+~code
+<h1>Hello, web!</h1>
+<p>This is my first page.</p>
+@T
+`<h1>` to `<h6>` are headings, with `h1` the biggest and most important. `<p>` is a paragraph.
+
+Browsers ignore extra spaces and line breaks in your HTML. To start a new line of text, use a new `<p>` or a `<br>` tag.
+~code
+<h1>Main title</h1>
+<h2>Smaller heading</h2>
+<p>A paragraph      with     extra spaces.</p>
+<p>Line one<br>Line two</p>
+@Q
+Which one is a closing tag?
+~opts
+* `</p>`
+- `<p>`
+- `<p/close>`
+~why
+The slash marks the end of the element.
+@Q
+Which heading is the most important?
+~opts
+* `<h1>`
+- `<h6>`
+- `<head>`
+~why
+Lower numbers mean higher importance. Use one `h1` for the page's main title.
+@O
+Put these lines in order to make a heading and a paragraph.
+~lines
+<h1>Tools</h1>
+<p>My favorite
+wrench.</p>
+~why
+The heading comes first, and the paragraph opens before its text and closes after it.
+@C
+Make a heading that says `My Page` using `h1`, and a paragraph below it that says `Welcome`.
+~start
+<!-- Write your HTML here -->
+
+~sol
+<h1>My Page</h1>
+<p>Welcome</p>
+~hint
+Each element needs an opening and closing tag.
+~after
+console.log(document.querySelector("h1").textContent);
+console.log(document.querySelector("p").textContent);
+~out
+My Page
+Welcome
+=L h1b | The page skeleton
+@T
+A full HTML file has a standard skeleton.
+
+`<!doctype html>` says this is modern HTML. `<html>` wraps everything. `<head>` holds information about the page, like its title. `<body>` holds what people see.
+
+The `lang` attribute tells browsers and screen readers the language.
+```
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My Page</title>
+  </head>
+  <body>
+    <h1>Hello</h1>
+  </body>
+</html>
+```
+@Q
+Where does visible page content go?
+~opts
+* In `<body>`
+- In `<head>`
+- In `<title>`
+~why
+`<head>` holds information about the page, and it isn't displayed on the page.
+@Q
+What does `<title>` control?
+~opts
+* The text on the browser tab
+- The biggest heading
+- The file name
+~why
+It also shows up in search results and bookmarks.
+@Q
+What are **attributes**, like `lang="en"`?
+~opts
+* Extra information inside an opening tag
+- A kind of closing tag
+- Text shown on the page
+~why
+They're written as `name="value"`.
+@T
+**Comments** are notes that browsers don't display.
+
+Elements can sit inside each other. This is called **nesting**. Close the inner one first, and indent so it's easy to read.
+~code
+<!-- This note won't appear on the page -->
+<p>This has <strong>bold</strong> and <em>italic</em> words.</p>
+@Q
+Which nesting is correct?
+~opts
+* `<p><strong>Hi</strong></p>`
+- `<p><strong>Hi</p></strong>`
+- `<strong><p>Hi</strong></p>`
+~why
+The last element opened is the first closed.
+=U hcontent | Links, Images and Lists | The everyday building blocks.
+=L h2a | Links and images
+@T
+`<a>` makes a link, and `href` says where it goes. Use `target="_blank"` to open a new tab.
+
+`<img>` shows an image. `src` is the file, and `alt` describes it for people who can't see it. `<img>` has no closing tag.
+
+This preview blocks outside addresses, so links won't leave the page and outside images won't load.
+~code
+<p>Visit <a href="https://example.com">my site</a>.</p>
+<img src="rocket.png" alt="A rocket on the pad" width="200">
+@Q
+Which attribute holds a link's address?
+~opts
+* `href`
+- `src`
+- `link`
+~why
+Images use `src`, and links use `href`.
+@Q
+Why does `alt` text matter?
+~opts
+* Screen readers read it, and it shows if the image fails
+- It makes images load faster
+- It's the image's file name
+~why
+Describe what the image means in the page.
+@B
+Finish this link.
+~code
+<a ___="about.html">About me</___>
+~opts
+* href
+* a
+- src
+- link
+~why
+Open with `<a href=...>` and close with `</a>`.
+@T
+Paths say where a file is. `about.html` means the same folder. `images/cat.png` is inside a folder. `../index.html` goes up one folder.
+@C
+Make a link to `https://example.com` with the text `Example`, and an image with `src` of `logo.png` and `alt` of `Company logo`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<a href="https://example.com">Example</a>
+<img src="logo.png" alt="Company logo">
+~hint
+<a href="...">text</a> and <img src="..." alt="...">
+~after
+let a = document.querySelector("a"), i = document.querySelector("img");
+console.log(a.getAttribute("href"), a.textContent);
+console.log(i.getAttribute("src"), i.getAttribute("alt"));
+~out
+https://example.com Example
+logo.png Company logo
+=L h2b | Lists
+@T
+`<ul>` is an unordered list with bullets. `<ol>` is an ordered list with numbers. Each item goes in `<li>`.
+
+Lists can go inside list items to make sub-lists.
+~code
+<h2>Parts</h2>
+<ul>
+  <li>Valve</li>
+  <li>Seal</li>
+</ul>
+<h2>Steps</h2>
+<ol>
+  <li>Inspect</li>
+  <li>Install</li>
+</ol>
+@Q
+Which list shows numbers?
+~opts
+* `<ol>`
+- `<ul>`
+- `<dl>`
+~why
+**O** is ordered, and **U** is unordered.
+@O
+Build a bullet list.
+~lines
+<ul>
+  <li>Milk</li>
+  <li>Eggs</li>
+</ul>
+~why
+Items go inside the list element.
+@C
+Make a numbered list with three items: `Plan`, `Build`, `Test`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<ol>
+  <li>Plan</li>
+  <li>Build</li>
+  <li>Test</li>
+</ol>
+~hint
+<ol> with three <li> elements inside.
+~after
+console.log(document.querySelectorAll("ol li").length, document.querySelectorAll("li")[2].textContent);
+~out
+3 Test
+=U htables | Tables and Forms | Showing data and collecting input.
+=L h3a | Tables
+@T
+Tables are for rows and columns of data. `<table>` wraps it, `<tr>` is a row, `<th>` is a header cell, and `<td>` is a data cell.
+
+`<thead>` and `<tbody>` group the header and the body.
+~code
+<table border="1">
+  <thead>
+    <tr><th>Part</th><th>Qty</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Valve</td><td>3</td></tr>
+    <tr><td>Seal</td><td>12</td></tr>
+  </tbody>
+</table>
+@Q
+What does `<tr>` stand for?
+~opts
+* Table row
+- Table record
+- Text row
+~why
+Rows hold cells: `td` for data and `th` for headers.
+@Q
+Should you use a table to lay out a whole page?
+~opts
+* No, tables are only for data. Use CSS for layout
+- Yes, always
+- Only on phones
+~why
+Layout tables are confusing for screen readers.
+@C
+Make a table with a header row of `Name` and `Age`, and one data row of `Ana` and `30`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<table>
+  <tr><th>Name</th><th>Age</th></tr>
+  <tr><td>Ana</td><td>30</td></tr>
+</table>
+~hint
+Two tr elements. The first uses th, and the second uses td.
+~after
+console.log(document.querySelectorAll("tr").length, document.querySelectorAll("th").length, document.querySelectorAll("td")[1].textContent);
+~out
+2 2 30
+=L h3b | Forms
+@T
+`<form>` collects input. `<input>` has many `type`s: `text`, `email`, `password`, `number`, `checkbox`, `radio`, `date`.
+
+Every input needs a `<label>`. Its `for` matches the input's `id`. `name` is what the data is called when it's sent.
+~code
+<form>
+  <label for="email">Email</label>
+  <input id="email" name="email" type="email" required>
+
+  <label for="msg">Message</label>
+  <textarea id="msg" name="msg"></textarea>
+
+  <label for="size">Size</label>
+  <select id="size" name="size">
+    <option>Small</option>
+    <option>Large</option>
+  </select>
+
+  <button type="submit">Send</button>
+</form>
+@Q
+What connects a label to its input?
+~opts
+* The label's `for` matches the input's `id`
+- They must be the same color
+- The input's `value`
+~why
+Clicking the label then focuses the input, and screen readers read it.
+@Q
+Which attribute stops a form sending when a field is empty?
+~opts
+* `required`
+- `needed`
+- `must`
+~why
+HTML can do basic checks with no JavaScript.
+@Q
+Which type hides what you type?
+~opts
+* `password`
+- `hidden`
+- `secret`
+~why
+`hidden` is a field users can't see at all.
+@C
+Make a form with a label `Name` connected to a text input with id `name`, and a submit button that says `Join`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<form>
+  <label for="name">Name</label>
+  <input id="name" type="text">
+  <button type="submit">Join</button>
+</form>
+~hint
+label for="name" must match input id="name".
+~after
+console.log(document.querySelector("label").getAttribute("for"), document.querySelector("input").id, document.querySelector("button").textContent);
+~out
+name name Join
+=U hsem | Semantic HTML | Intermediate HTML. Tags that say what things mean.
+=L h4a | Meaningful page sections
+@T
+`<div>` and `<span>` mean nothing on their own. `div` is a block box, and `span` is an inline piece of text.
+
+**Semantic** tags say what a section is: `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>`.
+
+They help screen readers, search engines, and whoever reads your code.
+~code
+<header><h1>Test Log</h1></header>
+<nav><a href="#today">Today</a></nav>
+<main>
+  <article>
+    <h2>Hot fire 12</h2>
+    <p>Nominal burn.</p>
+  </article>
+</main>
+<footer>Updated daily</footer>
+@T
+**Block** elements start on a new line and fill the width, like `div` and `p`. **Inline** elements sit within text, like `span`, `a`, and `strong`.
+
+Use `<strong>` for important text and `<em>` for emphasis. They carry meaning, while bold or italic is just a look.
+@Q
+How many `<main>` elements should a page have?
+~opts
+* One
+- One per section
+- As many as you like
+~why
+It marks the page's main content.
+@Q
+What fits a group of site navigation links?
+~opts
+* `<nav>`
+- `<aside>`
+- `<footer>`
+~why
+Screen readers can jump straight to `nav`.
+@Q
+A blog post that makes sense on its own belongs in which tag?
+~opts
+* `<article>`
+- `<span>`
+- `<nav>`
+~why
+`section` is a part of something larger, and `article` stands alone.
+@C
+Build a page with a `header` containing an `h1` of `Log`, a `main` containing a `p` of `All good`, and a `footer` that says `End`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<header><h1>Log</h1></header>
+<main><p>All good</p></main>
+<footer>End</footer>
+~hint
+Each of the three sections wraps its own content.
+~after
+console.log(document.querySelector("header h1").textContent, document.querySelector("main p").textContent, document.querySelector("footer").textContent);
+~out
+Log All good End
+=L h4b | Media, metadata and accessibility
+@T
+`<figure>` with `<figcaption>` pairs an image with a caption. `<video>` and `<audio>` play media, with `controls` to show the buttons.
+
+`<details>` and `<summary>` make a built-in open and close section. Try it.
+~code
+<details>
+  <summary>Show safety notes</summary>
+  <p>Wear eye protection.</p>
+</details>
+
+<figure>
+  <figcaption>Figure 1: Test stand layout</figcaption>
+</figure>
+@T
+The `<head>` needs a few more things. `viewport` makes pages fit phones. `description` is the summary search engines may show. `<link>` loads a CSS file, and `<script>` loads JavaScript.
+```
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Daily test logs">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+```
+@Q
+What does the viewport meta tag do?
+~opts
+* Makes the page fit the phone's screen width
+- Adds a video player
+- Sets the page title
+~why
+Without it, phones show a zoomed-out desktop page.
+@Q
+Which pair makes a built-in expand and collapse?
+~opts
+* `<details>` and `<summary>`
+- `<open>` and `<close>`
+- `<div>` and `<span>`
+~why
+It works with no JavaScript.
+@Q
+Which HTML helps accessibility the most?
+~opts
+* Real headings, labels, buttons and `alt` text
+- Lots of `div` elements
+- Tiny fonts
+~why
+Good HTML does most of the work for free.
+=U hfire | HTML Projects | Hot fire tests for HTML.
+=F hfire1 | Hot fire: Profile page
+@C
+Build a profile page with:
+
+A `header` with an `h1` of `Ada`
+
+A `main` with an `img` (`src` of `ada.png`, `alt` of `Ada smiling`) and a `ul` with 2 items
+
+A `footer` with a link to `https://example.com` that says `Contact`
+~start
+<!-- Your HTML here -->
+
+~sol
+<header><h1>Ada</h1></header>
+<main>
+  <img src="ada.png" alt="Ada smiling">
+  <ul><li>Math</li><li>Code</li></ul>
+</main>
+<footer><a href="https://example.com">Contact</a></footer>
+~hint
+Build the three sections first, then fill them in.
+~after
+console.log(document.querySelector("header h1").textContent);
+console.log(document.querySelector("main img").getAttribute("alt"));
+console.log(document.querySelectorAll("main ul li").length);
+console.log(document.querySelector("footer a").textContent);
+~out
+Ada
+Ada smiling
+2
+Contact
+=F hfire2 | Hot fire: Sign-up form
+@C
+Build a `form` with:
+
+A label `Email` tied to a `required` `email` input with id `email`
+
+A label `Plan` tied to a `select` with id `plan` and options `Free` and `Pro`
+
+A `submit` button that says `Sign up`
+~start
+<!-- Your HTML here -->
+
+~sol
+<form>
+  <label for="email">Email</label>
+  <input id="email" type="email" required>
+  <label for="plan">Plan</label>
+  <select id="plan"><option>Free</option><option>Pro</option></select>
+  <button type="submit">Sign up</button>
+</form>
+~hint
+Each label's for must match its field's id.
+~after
+let e = document.querySelector("#email");
+console.log(e.getAttribute("type"), e.hasAttribute("required"));
+console.log(document.querySelectorAll("#plan option").length);
+console.log(document.querySelectorAll("label").length, document.querySelector("button").textContent);
+~out
+email true
+2
+2 Sign up

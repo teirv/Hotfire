@@ -1,6 +1,6 @@
 # Hotfire
 
-Interactive JavaScript and Python lessons with a live editor, invite-only accounts and saved progress.
+Interactive lessons with a live editor, invite-only accounts and saved progress. Tracks: JavaScript, Python, HTML & CSS, and Japanese.
 
 ## Update the server
 
@@ -70,4 +70,4 @@ Add an Anthropic key to `ANTHROPIC_API_KEY=` in `.env`, then run `docker compose
 
 Lessons are in `course/`. Run `node build.js` after any change, which rebuilds `server/static/index.html`, then commit and push.
 
-Lesson format: `=U` starts a unit, `=L` a lesson, `=F` a hot fire. `@T` is a teaching card, `@Q` multiple choice, `@P` predict the output, `@B` fill in the blank, `@O` put in order, and `@C` a coding challenge.
+Lesson format: `=U` starts a unit, `=L` a lesson, `=F` a hot fire. `@T` is a teaching card, `@Q` multiple choice, `@P` predict the output, `@B` fill in the blank, `@O` put in order, and `@C` a coding challenge, and `@W` a typed answer. In Japanese lessons, `{漢字|かんじ}` adds furigana. Kana lessons are generated in `build.js`.

@@ -1,0 +1,847 @@
+=U jsound | Sounds of Japanese | How the language sounds, and how spelling shows it.
+=L js1 | Long vowels and small tsu
+@T
+You can read kana now. Here's what makes Japanese sound natural.
+
+Each kana gets one even beat. **Long vowels** last two beats, and length changes meaning: おばさん (obasan) is aunt, and おばあさん (obaasan) is grandmother.
+
+Long sounds are spelled by adding a vowel: ああ, いい, うう, ええ or えい, おう or おお. In katakana, a dash does it: コーヒー (koohii, coffee).
+
+Tap any Japanese text to hear it.
+@T
+A small っ means a tiny pause before the next sound. It doubles the consonant in romaji.
+
+きて (kite) means "come", and きって (kitte) means "stamp". がっこう (gakkou) means school.
+
+ん is a full beat of its own: にほん is ni-ho-n, three beats.
+@Q
+Which word means grandmother?
+~opts
+* おばあさん
+- おばさん
+- おはよう
+~why
+The long あ turns aunt into grandmother.
+@W
+Type the romaji for がっこう.
+~accept
+gakkou
+gakkoo
+gakkō
+~why
+The small っ doubles the k, and おう is a long o.
+@Q
+What does the small っ do?
+~opts
+* Adds a short pause, doubling the next consonant
+- Makes the word a question
+- Lengthens the vowel
+~why
+Feel the stop in きって.
+@W
+Type the romaji for コーヒー.
+~accept
+koohii
+kōhī
+kohi
+~why
+The dash stretches the vowel before it.
+=U jgreet | First Words | Greetings and polite phrases you'll use every day.
+=L jg1 | Greetings
+@T
+Learn these as whole phrases.
+
+おはようございます (ohayou gozaimasu): good morning
+
+こんにちは (konnichiwa): hello, good afternoon
+
+こんばんは (konbanwa): good evening
+
+さようなら (sayounara): goodbye, for a long parting
+
+おやすみなさい (oyasuminasai): good night
+
+The は in こんにちは and こんばんは is said "wa".
+@Q
+It's 8 AM at work. What do you say?
+~opts
+* おはようございます
+- こんばんは
+- おやすみなさい
+~why
+It's the polite morning greeting. Friends just say おはよう.
+@Q
+What does こんばんは mean?
+~opts
+* Good evening
+- Good morning
+- Goodbye
+~why
+ばん means evening.
+@W
+Type the romaji for こんにちは.
+~accept
+konnichiwa
+konnichi wa
+~why
+Double n, and the は sounds like "wa".
+@Q
+You're going to bed. What do you say?
+~opts
+* おやすみなさい
+- おはようございます
+- こんにちは
+~why
+Friends shorten it to おやすみ.
+=L jg2 | Polite phrases
+@T
+ありがとうございます (arigatou gozaimasu): thank you
+
+すみません (sumimasen): excuse me, sorry
+
+ごめんなさい (gomen nasai): I'm sorry
+
+はい (hai): yes
+
+いいえ (iie): no
+
+おねがいします (onegai shimasu): please
+
+いただきます (itadakimasu): said before eating
+
+ごちそうさまでした (gochisousama deshita): said after eating
+@Q
+You bump into someone on the train. What do you say?
+~opts
+* すみません
+- いただきます
+- はい
+~why
+It works for "excuse me" and small apologies.
+@Q
+What do you say before a meal?
+~opts
+* いただきます
+- ごちそうさまでした
+- おやすみなさい
+~why
+It's said after a meal that you say ごちそうさまでした.
+@W
+Type the romaji for はい.
+~accept
+hai
+~why
+It means yes.
+@Q
+Which one means "thank you" politely?
+~opts
+* ありがとうございます
+- ごめんなさい
+- おねがいします
+~why
+With friends, ありがとう is enough.
+=L jg3 | Introducing yourself
+@T
+A standard self-introduction:
+
+はじめまして。 (hajimemashite): nice to meet you
+
+わたしは ティアです。 (watashi wa Tia desu): I am Tia.
+
+よろしく おねがいします。 (yoroshiku onegai shimasu): pleased to meet you
+
+わたし means I. Names in foreign languages are written in katakana. Japanese speakers often leave out わたしは when it's obvious.
+
+You add さん after other people's names, never your own.
+@O
+Put this self-introduction in order.
+~lines
+はじめまして。
+わたしは タナカです。
+よろしく おねがいします。
+~why
+Greeting, name, then the closing phrase.
+@Q
+What do you add to someone else's name to be polite?
+~opts
+* さん
+- です
+- わたし
+~why
+Use it for others, not yourself: タナカさん.
+@Q
+What does はじめまして mean?
+~opts
+* Nice to meet you
+- See you later
+- Thank you
+~why
+You say it only the first time you meet someone.
+=U jnum | Numbers and Time | Counting, prices, clock times and dates.
+=L jn1 | Numbers
+@T
+1 いち, 2 に, 3 さん, 4 よん (or し), 5 ご, 6 ろく, 7 なな (or しち), 8 はち, 9 きゅう, 10 じゅう
+
+11 is "ten one": じゅういち. 20 is "two ten": にじゅう.
+
+100 ひゃく, 1,000 せん, 10,000 まん
+
+Japanese counts big numbers in ten-thousands, so 100,000 is じゅうまん (10 × 10,000).
+@W
+Type the romaji for the number 3 in Japanese.
+~accept
+san
+~why
+さん also means "Mr." or "Ms." after a name, but that's a different word.
+@Q
+How do you say 25?
+~opts
+* にじゅうご
+- ごじゅうに
+- にごじゅう
+~why
+Two tens and five.
+@Q
+What is さんじゅうはち?
+~opts
+* 38
+- 83
+- 308
+~why
+3 × 10 + 8.
+@Q
+How do you say 10,000?
+~opts
+* いちまん
+- まん
+- じゅうせん
+~why
+It takes いち in front, unlike ひゃく and せん.
+@T
+Some sounds change in hundreds and thousands: 300 さんびゃく, 600 ろっぴゃく, 800 はっぴゃく, 3,000 さんぜん, 8,000 はっせん.
+
+Prices use えん (yen): せんえん is ¥1,000. いくらですか means "how much is it?"
+@Q
+A shopkeeper says ごひゃくえん. How much is it?
+~opts
+* ¥500
+- ¥5,000
+- ¥50
+~why
+ご is 5, and ひゃく is hundred.
+=L jn2 | Telling time
+@T
+じ is o'clock. ふん or ぷん is minutes. はん is half past.
+
+Watch these: 4:00 is よじ, 7:00 is しちじ, 9:00 is くじ.
+
+Minutes: 1 いっぷん, 5 ごふん, 10 じゅっぷん.
+
+いま なんじですか means "what time is it now?" ごぜん is AM, and ごご is PM.
+@Q
+How do you say 9 o'clock?
+~opts
+* くじ
+- きゅうじ
+- きゅじ
+~why
+Time uses く for 9.
+@Q
+What does さんじはん mean?
+~opts
+* 3:30
+- 3:00
+- 30:00
+~why
+はん means half.
+@W
+Type the Japanese for "4 o'clock" in romaji.
+~accept
+yoji
+~why
+It's よじ, not よんじ.
+=L jn3 | Days and dates
+@T
+Today きょう, tomorrow あした, yesterday きのう, every day まいにち.
+
+Weekdays: げつようび Monday, かようび Tuesday, すいようび Wednesday, もくようび Thursday, きんようび Friday, どようび Saturday, にちようび Sunday.
+
+Months are simple: number + がつ. いちがつ is January. Note 4 しがつ, 7 しちがつ, 9 くがつ.
+@Q
+What does あした mean?
+~opts
+* Tomorrow
+- Yesterday
+- Today
+~why
+きのう is yesterday, and きょう is today.
+@Q
+Which day is どようび?
+~opts
+* Saturday
+- Sunday
+- Friday
+~why
+It's the day of earth, ど.
+@W
+Type the romaji for "April" in Japanese.
+~accept
+shigatsu
+~why
+Months are number + がつ, and April uses し.
+=U jbasic | Your First Sentences | How Japanese sentences are built.
+=L jb1 | Sentences with です
+@T
+Japanese word order is different: **the verb comes last**. Small words called **particles** mark each word's job.
+
+**A は B です** means "A is B." は marks the topic and is pronounced "wa" here.
+
+わたしは がくせいです。 I am a student.
+
+Past: でした. Negative: じゃありません (or ではありません).
+
+がくせいじゃありません。 I'm not a student.
+@B
+Say "I am a teacher."
+~code
+わたし___ せんせい___。
+~opts
+* は
+* です
+- を
+- か
+~why
+Topic は, then です at the end.
+@O
+Put the words in order: "Tanaka is a doctor."
+~lines
+タナカさんは
+いしゃ
+です。
+~why
+Topic first, then the description, then です.
+@Q
+How do you say "It was rain"?
+~opts
+* あめでした
+- あめです
+- あめじゃありません
+~why
+でした is the past of です.
+@Q
+Which particle marks the topic?
+~opts
+* は
+- を
+- に
+~why
+Written with は, said "wa".
+=L jb2 | Questions and this or that
+@T
+Add **か** at the end to make a question. No word order change, and no question mark is needed.
+
+がくせいですか。 Are you a student?
+
+Question words: なに what, だれ who, どこ where, いつ when, なぜ why, いくら how much.
+
+**これ** this (near me), **それ** that (near you), **あれ** that over there. With a noun: この, その, あの.
+
+これは なんですか。 What is this?
+@Q
+How do you turn a statement into a question?
+~opts
+* Add か at the end
+- Move the verb first
+- Add は at the start
+~why
+か acts like a spoken question mark.
+@Q
+Which one means "that thing over there"?
+~opts
+* あれ
+- これ
+- それ
+~why
+こ, そ, あ mean near me, near you, and far from both.
+@B
+Say "Who is that person?"
+~code
+あの ひとは ___ですか。
+~opts
+* だれ
+- なに
+- いつ
+~why
+だれ asks who.
+@Q
+What's the difference between これ and この?
+~opts
+* この must be followed by a noun
+- これ is more polite
+- They're the same
+~why
+この ほん is "this book." これ stands alone.
+=L jb3 | The particle の and も
+@T
+**の** links nouns, like English 's or "of".
+
+わたしの ほん: my book
+
+にほんの くるま: a Japanese car
+
+**も** means "also" and replaces は.
+
+わたしも がくせいです。 I'm a student too.
+@B
+Say "Tanaka's car."
+~code
+タナカさん___ くるま
+~opts
+* の
+- は
+- を
+~why
+の connects the owner to the thing.
+@Q
+How do you say "I also like it"-style "too" after わたし?
+~opts
+* わたしも
+- わたしの
+- わたしを
+~why
+も replaces は.
+@O
+Put the words in order: "This is my bag."
+~lines
+これは
+わたしの
+かばん
+です。
+~why
+Owner + の + thing.
+=U jverb | Verbs and Particles | Doing things in polite Japanese.
+=L jv1 | Polite verbs
+@T
+Polite verbs end in **ます**.
+
+たべます eat, のみます drink, いきます go, きます come, みます see, します do, かいます buy, よみます read
+
+Tenses:
+
+たべます: eat, will eat
+
+たべません: don't eat
+
+たべました: ate
+
+たべませんでした: didn't eat
+
+Japanese has no separate future tense. ます covers it.
+@Q
+How do you say "I drank"?
+~opts
+* のみました
+- のみます
+- のみません
+~why
+ました is the past.
+@Q
+What does いきません mean?
+~opts
+* Don't go, won't go
+- Went
+- Let's go
+~why
+ません is the negative.
+@B
+Say "I didn't watch."
+~code
+み___
+~opts
+* ませんでした
+- ました
+- ます
+~why
+Negative past.
+@W
+Type the romaji for "I eat" politely.
+~accept
+tabemasu
+~why
+たべます. The final u is nearly silent.
+=L jv2 | を, に, へ, で
+@T
+**を** marks what the verb acts on, the object. Pronounced "o".
+
+パンを たべます。 I eat bread.
+
+**に** marks a destination or a point in time.
+
+がっこうに いきます。 I go to school.
+
+ろくじに おきます。 I get up at 6.
+
+**へ** also marks direction. Pronounced "e".
+
+**で** marks where something happens, or the means.
+
+レストランで たべます。 I eat at a restaurant.
+
+バスで いきます。 I go by bus.
+@B
+Say "I read a book."
+~code
+ほん___ よみます。
+~opts
+* を
+- に
+- で
+~why
+The book is the object.
+@B
+Say "I study at the library."
+~code
+としょかん___ べんきょうします。
+~opts
+* で
+- を
+- に
+~why
+で marks where an action happens.
+@B
+Say "I go to Japan."
+~code
+にほん___ いきます。
+~opts
+* に
+- を
+- で
+~why
+に marks the destination. へ also works.
+@O
+Put the words in order: "I drink coffee at a cafe."
+~lines
+カフェで
+コーヒーを
+のみます。
+~why
+The verb comes last. Particles let the other parts move around.
+@Q
+How is the particle を pronounced?
+~opts
+* o
+- wo, always stressed
+- wa
+~why
+Modern speakers say "o".
+=L jv3 | と, から, まで
+@T
+**と** means "and" between nouns, or "with" a person.
+
+パンと たまご: bread and eggs
+
+ともだちと いきます: I go with a friend
+
+**から** means "from" and **まで** means "to, until".
+
+くじから ごじまで: from 9 to 5
+@B
+Say "I eat with my family."
+~code
+かぞく___ たべます。
+~opts
+* と
+- を
+- は
+~why
+と marks who you do something with.
+@Q
+What does とうきょうから おおさかまで mean?
+~opts
+* From Tokyo to Osaka
+- Tokyo and Osaka
+- Tokyo in Osaka
+~why
+から is from, and まで is to.
+=L jv4 | Existence: あります and います
+@T
+For "there is" or "I have":
+
+**あります** for things and plants
+
+**います** for people and animals
+
+The place takes に, and the thing takes が.
+
+つくえの うえに ほんが あります。 There's a book on the desk.
+
+こうえんに いぬが います。 There's a dog in the park.
+
+Positions: うえ on, した under, なか inside, まえ in front, うしろ behind, となり next to.
+@B
+Say "There's a cat."
+~code
+ねこが ___。
+~opts
+* います
+- あります
+- です
+~why
+Cats are alive, so います.
+@B
+Say "There's a station."
+~code
+えきが ___。
+~opts
+* あります
+- います
+- いきます
+~why
+Things use あります.
+@Q
+What does はこの なか mean?
+~opts
+* Inside the box
+- Under the box
+- On the box
+~why
+Location words follow の.
+=U jadj | Describing Things | Adjectives and preferences.
+=L ja1 | い and な adjectives
+@T
+Japanese has two adjective types.
+
+**い-adjectives** end in い: たかい expensive or tall, やすい cheap, おおきい big, ちいさい small, おいしい tasty, あつい hot, さむい cold, たのしい fun, いい good.
+
+**な-adjectives** add な before a noun: きれい pretty or clean, げんき healthy, しずか quiet, ゆうめい famous, すき liked, べんり convenient.
+
+おいしい すし: tasty sushi
+
+しずかな へや: a quiet room
+
+きれい ends in い, but it's a な-adjective.
+@B
+Say "a quiet town."
+~code
+しずか___ まち
+~opts
+* な
+- い
+- の
+~why
+しずか is a な-adjective.
+@Q
+Which one is a な-adjective?
+~opts
+* きれい
+- おいしい
+- たかい
+~why
+It's a common trap, along with ゆうめい.
+=L ja2 | Past and negative adjectives
+@T
+**い-adjectives** change their own ending:
+
+たかい → たかくない not expensive
+
+たかい → たかかった was expensive
+
+たかい → たかくなかった wasn't expensive
+
+いい is special: よくない, よかった.
+
+**な-adjectives** act like nouns:
+
+しずかです → しずかじゃありません → しずかでした
+@Q
+How do you say "It was delicious"?
+~opts
+* おいしかったです
+- おいしいでした
+- おいしいでしたです
+~why
+い-adjectives change in the past. Don't use でした with them.
+@Q
+What's the negative of いい?
+~opts
+* よくない
+- いいくない
+- いくない
+~why
+いい uses the older form よい.
+@W
+Type the romaji for "wasn't cold", from さむい (samui), in plain form.
+~accept
+samukunakatta
+~why
+Drop い, then add くなかった.
+=L ja3 | Likes and wants
+@T
+**すき** means liked, and **きらい** means disliked. **じょうず** is skilled, and **へた** is unskilled. The thing takes が.
+
+ねこが すきです。 I like cats.
+
+**ほしい** means want, for things: くるまが ほしいです。 I want a car.
+
+**〜たい** means want to, for actions. Take the ます-stem and add たい.
+
+たべます → たべたいです I want to eat.
+
+いきます → いきたいです I want to go.
+@B
+Say "I like Japanese food."
+~code
+にほんりょうり___ すきです。
+~opts
+* が
+- を
+- で
+~why
+すき takes が.
+@Q
+How do you say "I want to go to Japan"?
+~opts
+* にほんに いきたいです
+- にほんに いきほしいです
+- にほんを いきます
+~why
+Actions use たい.
+@B
+Say "I want to drink water."
+~code
+みずが のみ___です。
+~opts
+* たい
+- ほしい
+- ます
+~why
+ます-stem + たい.
+=U jjlpt5 | Everyday Talk | Asking, inviting and shopping.
+=L jr1 | Invitations and asking
+@T
+**〜ませんか** invites: "won't you?"
+
+いっしょに たべませんか。 Shall we eat together?
+
+**〜ましょう** means "let's".
+
+いきましょう。 Let's go.
+
+**〜をください** asks for something.
+
+みずを ください。 Water, please.
+
+Counting things uses general counters: ひとつ, ふたつ, みっつ, よっつ, いつつ.
+
+コーヒーを ふたつ ください。 Two coffees, please.
+@Q
+What does えいがを みませんか mean?
+~opts
+* Would you like to see a movie?
+- I don't watch movies.
+- I saw a movie.
+~why
+ませんか with a rising tone is an invitation.
+@B
+Say "One, please" at a restaurant.
+~code
+これを ___ ください。
+~opts
+* ひとつ
+- いち
+- いちじ
+~why
+Use general counters for items.
+@O
+Put it in order: "Please give me two coffees."
+~lines
+コーヒーを
+ふたつ
+ください。
+~why
+The count comes after the thing.
+=L jr2 | At a restaurant and shop
+@T
+いらっしゃいませ: welcome (staff say this, and you don't need to reply)
+
+なんめいさまですか: how many people?
+
+これは いくらですか: how much is this?
+
+おすすめは なんですか: what do you recommend?
+
+おかいけい おねがいします: the check, please
+
+トイレは どこですか: where's the bathroom?
+@Q
+You want to pay. What do you say?
+~opts
+* おかいけい おねがいします
+- いらっしゃいませ
+- いただきます
+~why
+You can also make an X with your fingers.
+@Q
+The staff says なんめいさまですか. What do they want to know?
+~opts
+* How many people are in your group
+- What you want to order
+- Where you're from
+~why
+Answer ふたりです for two.
+@T
+Counting people is irregular: ひとり 1, ふたり 2, さんにん 3, よにん 4, ごにん 5.
+@W
+Type the romaji for "two people".
+~accept
+futari
+~why
+ふたり is irregular.
+=F jfire1 | Hot fire: First conversation
+@Q
+**Hot fire** is a mixed test. Choose the natural reply.
+
+A: はじめまして。タナカです。
+
+B: ?
+~opts
+* はじめまして。ティアです。よろしく おねがいします。
+- おやすみなさい。
+- いただきます。
+~why
+Greet back the same way, give your name, then finish with よろしく.
+@B
+Say "I eat sushi at a restaurant."
+~code
+レストラン___ すし___ たべます。
+~opts
+* で
+* を
+- に
+- は
+~why
+で for place, and を for object.
+@O
+Put it in order: "Tomorrow I'll go to Tokyo by train."
+~lines
+あした
+でんしゃで
+とうきょうに
+いきます。
+~why
+Time usually comes first, and the verb last.
+@Q
+What does きのう ともだちと えいがを みました mean?
+~opts
+* Yesterday I watched a movie with a friend.
+- Tomorrow I'll watch a movie with a friend.
+- Yesterday my friend didn't watch a movie.
+~why
+きのう is yesterday, and ました is past.
+@W
+Type the romaji for "I want to eat".
+~accept
+tabetai
+tabetai desu
+~why
+たべたい, from たべます.

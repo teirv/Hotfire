@@ -1,5 +1,5 @@
 """Hotfire server: invite-only accounts and saved progress for the Hotfire learning app."""
-import datetime, hashlib, json, os, secrets, sqlite3, time, urllib.error, urllib.request
+import datetime, hashlib, json, math, os, secrets, sqlite3, time, urllib.error, urllib.request
 from functools import wraps
 from urllib.parse import urlparse
 
@@ -334,7 +334,10 @@ def put_progress():
     body = request.get_json(silent=True)
     if not isinstance(body, dict):
         return jsonify(error="invalid"), 400
-    doc = json.dumps(body, separators=(",", ":"))
+    try:
+        doc = json.dumps(body, separators=(",", ":"), allow_nan=False)
+    except ValueError:
+        return jsonify(error="invalid"), 400
     if len(doc) > MAX_DOC:
         return jsonify(error="too_large"), 413
     db().execute("INSERT INTO progress VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET doc=excluded.doc, updated_at=excluded.updated_at",
@@ -343,27 +346,41 @@ def put_progress():
     return jsonify(ok=True)
 
 
+def whole(value):
+    """Return a sensible whole number, or 0 for anything else."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+        return 0
+    return max(0, int(value))
+
+
 def board_stats(doc):
     """Work out a person's leaderboard numbers from their saved progress."""
     days = {}
-    for key, value in (doc.get("days") or {}).items():
+    saved_days = doc.get("days")
+    today = datetime.date.today()
+    # One day of slack, because the server's clock may be behind the learner's time zone.
+    latest = today + datetime.timedelta(days=1)
+    for key, value in (saved_days.items() if isinstance(saved_days, dict) else ()):
         try:
-            days[datetime.date.fromisoformat(key)] = int(value)
+            day = datetime.date.fromisoformat(key)
         except (TypeError, ValueError):
             continue
-    today = datetime.date.today()
-    week = sum(xp for day, xp in days.items() if 0 <= (today - day).days < 7 or day > today)
+        if day <= latest and whole(value) > 0:
+            days[day] = whole(value)
+    week = sum(xp for day, xp in days.items() if (today - day).days < 7)
     streak = 0
     if days:
         day = max(days)
-        # Allow a day of slack, because the server's clock may differ from the learner's time zone.
         if (today - day).days <= 1:
             while day in days:
                 streak += 1
                 day -= datetime.timedelta(days=1)
-    lessons = sum(1 for key in (doc.get("done") or {}) if not str(key).startswith("fix:"))
-    xp = doc.get("xp", 0)
-    return {"xp": xp if isinstance(xp, int) else 0, "week": week, "streak": streak, "lessons": lessons}
+    done = doc.get("done")
+    lessons = sum(1 for key in done if not str(key).startswith("fix:")) if isinstance(done, dict) else 0
+    return {"xp": whole(doc.get("xp")), "week": week, "streak": streak, "lessons": lessons}
+
+
+EMPTY_STATS = {"xp": 0, "week": 0, "streak": 0, "lessons": 0}
 
 
 @app.get("/api/leaderboard")
@@ -374,9 +391,11 @@ def leaderboard():
     for row in db().execute("SELECT u.id,u.username,p.doc FROM users u LEFT JOIN progress p ON p.user_id=u.id WHERE u.disabled=0"):
         try:
             doc = json.loads(row["doc"]) if row["doc"] else {}
-        except ValueError:
-            doc = {}
-        rows.append({"username": row["username"], "you": row["id"] == me_id, **board_stats(doc)})
+            stats = board_stats(doc if isinstance(doc, dict) else {})
+        except Exception:  # One damaged save must never take the board down for everyone.
+            app.logger.exception("Leaderboard skipped a damaged save for user %s", row["id"])
+            stats = EMPTY_STATS
+        rows.append({"username": row["username"], "you": row["id"] == me_id, **stats})
     return jsonify(rows=rows)
 
 

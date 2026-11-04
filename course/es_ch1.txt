@@ -1,0 +1,633 @@
+=U ssound | Sounds of Spanish | Spanish spelling is regular, so learn the sounds once.
+=L ss1 | Vowels and letters
+@T
+Spanish is almost always spoken the way it's written. Tap any Spanish word to hear it.
+
+The five vowels never change: `a` as in father, `e` as in hey, `i` as in machine, `o` as in go, `u` as in rule.
+
+Say them short and clean: `casa`, `mesa`, `sí`, `solo`, `luna`.
+@T
+Letters that differ from English:
+
+`h` is silent: `hola`
+
+`j` is a breathy h: `jefe`
+
+`ñ` sounds like ny in canyon: `año`
+
+`ll` and `y` sound like y in yes: `llave`, `yo`
+
+`rr` is a rolled r: `perro`
+
+`v` sounds like b: `vino`
+
+`qu` sounds like k: `queso`
+
+`z`, and `c` before e or i, sound like s in Latin America: `zapato`, `cena`
+
+`g` before e or i sounds like j: `gente`
+@Q
+What's special about the h in `hola`?
+~opts
+* It's silent
+- It sounds like English h
+- It sounds like j
+~why
+Spanish h makes no sound at all.
+@Q
+Which word has a sound like the ny in canyon?
+~opts
+* `niño`
+- `nido`
+- `nota`
+~why
+ñ is its own letter.
+@W
+How do you spell the Spanish word for yes? It has an accent mark.
+~accept
+sí
+~why
+`si` without the accent means if.
+=L ss2 | Stress and accent marks
+@T
+Which syllable gets stressed follows simple rules.
+
+Words ending in a vowel, n, or s stress the second-to-last syllable: `casa`, `hablan`.
+
+Other words stress the last syllable: `hablar`, `ciudad`.
+
+A written accent breaks the rule: `teléfono`, `café`.
+
+Accents can also change meaning: `el` the, `él` he.
+
+Questions and exclamations open with upside-down marks: `¿Cómo estás?`, `¡Hola!`
+@Q
+Where's the stress in `hablo`?
+~opts
+* On ha
+- On blo
+- Equal on both
+~why
+It ends in a vowel, so the second-to-last syllable is stressed.
+@Q
+Which mark opens a question in Spanish?
+~opts
+* `¿`
+- `¡`
+- `?`
+~why
+`¡` opens an exclamation.
+@Q
+What's the difference between `el` and `él`?
+~opts
+* The and he
+- He and she
+- There's no difference
+~why
+The accent changes the meaning here.
+=U sgreet | First Words | Greetings and polite phrases.
+=L sg1 | Greetings
+@T
+`Hola`: hello
+
+`Buenos días`: good morning
+
+`Buenas tardes`: good afternoon
+
+`Buenas noches`: good evening, good night
+
+`¿Cómo estás?`: how are you? (friendly)
+
+`¿Cómo está usted?`: how are you? (formal)
+
+`Bien, gracias`: fine, thanks
+
+`Adiós`: goodbye
+
+`Hasta luego`: see you later
+@Q
+It's 9 PM. What do you say?
+~opts
+* `Buenas noches`
+- `Buenos días`
+- `Buenas tardes`
+~why
+It's both a greeting and a goodbye at night.
+@W
+Type the Spanish for "thank you".
+~accept
+gracias
+~why
+`Gracias` is one of the words you'll use the most.
+@Q
+You're greeting an older stranger. Which fits best?
+~opts
+* `¿Cómo está usted?`
+- `¿Cómo estás?`
+- `Hasta luego`
+~why
+`usted` is the formal "you".
+=L sg2 | Polite phrases
+@T
+`Por favor`: please
+
+`Gracias`: thank you
+
+`De nada`: you're welcome
+
+`Perdón`: sorry, excuse me
+
+`Con permiso`: excuse me, passing through
+
+`Lo siento`: I'm sorry
+
+`No entiendo`: I don't understand
+
+`¿Hablas inglés?`: do you speak English?
+
+`Más despacio, por favor`: slower, please
+@Q
+Someone says `gracias`. What do you reply?
+~opts
+* `De nada`
+- `Por favor`
+- `Lo siento`
+~why
+It literally means "of nothing".
+@Q
+What does `No entiendo` mean?
+~opts
+* I don't understand
+- I don't know him
+- I'm not coming
+~why
+It's a lifesaver for beginners.
+@W
+Type the Spanish for "please".
+~accept
+por favor
+~why
+Two words.
+=L sg3 | Introducing yourself
+@T
+`Me llamo Teir`: my name is Teir
+
+`¿Cómo te llamas?`: what's your name?
+
+`Mucho gusto`: nice to meet you
+
+`Soy de Texas`: I'm from Texas
+
+`¿De dónde eres?`: where are you from?
+
+`Tengo treinta años`: I'm 30 years old (literally, I have 30 years)
+@O
+Put the conversation in order.
+~lines
+Hola, ¿cómo te llamas?
+Me llamo Ana.
+Mucho gusto, Ana.
+~why
+Greet, ask, answer, then respond.
+@Q
+How do you say your age in Spanish?
+~opts
+* `Tengo veinte años`
+- `Soy veinte años`
+- `Estoy veinte años`
+~why
+Spanish uses "have" for age. Keep the ñ: `ano` is a very different word.
+@B
+Say "I'm from Mexico."
+~code
+___ de México.
+~opts
+* Soy
+- Tengo
+- Estoy
+~why
+`Ser` tells origin.
+=U snum | Numbers and Time | Counting, dates and the clock.
+=L sn1 | Numbers
+@T
+1 `uno`, 2 `dos`, 3 `tres`, 4 `cuatro`, 5 `cinco`, 6 `seis`, 7 `siete`, 8 `ocho`, 9 `nueve`, 10 `diez`
+
+11 `once`, 12 `doce`, 13 `trece`, 14 `catorce`, 15 `quince`
+
+16 to 19: `dieciséis`, `diecisiete`, `dieciocho`, `diecinueve`
+
+20 `veinte`, 21 `veintiuno`, 30 `treinta`, 31 `treinta y uno`, 40 `cuarenta`, 50 `cincuenta`, 60 `sesenta`, 70 `setenta`, 80 `ochenta`, 90 `noventa`, 100 `cien`, 1,000 `mil`
+
+`¿Cuánto cuesta?` means how much does it cost?
+@W
+Type the Spanish for 7.
+~accept
+siete
+~why
+1 to 10 are worth memorizing first.
+@Q
+What's `cuarenta y cinco`?
+~opts
+* 45
+- 54
+- 405
+~why
+`cuarenta` is 40, and `y` means and.
+@Q
+How do you say 15?
+~opts
+* `quince`
+- `cincuenta`
+- `diecicinco`
+~why
+`cincuenta` is 50.
+=L sn2 | Days, months, time
+@T
+Days: `lunes`, `martes`, `miércoles`, `jueves`, `viernes`, `sábado`, `domingo`. They aren't capitalized.
+
+Months: `enero`, `febrero`, `marzo`, `abril`, `mayo`, `junio`, `julio`, `agosto`, `septiembre`, `octubre`, `noviembre`, `diciembre`.
+
+`hoy` today, `mañana` tomorrow, `ayer` yesterday
+
+`¿Qué hora es?` what time is it?
+
+`Es la una`: it's 1:00
+
+`Son las tres`: it's 3:00
+
+`Son las tres y media`: it's 3:30
+@Q
+Which day is `jueves`?
+~opts
+* Thursday
+- Tuesday
+- Saturday
+~why
+`martes` is Tuesday.
+@B
+Say "It's 8 o'clock."
+~code
+___ las ocho.
+~opts
+* Son
+- Es
+- Está
+~why
+Use `son` for every hour except one.
+@Q
+What does `mañana` mean?
+~opts
+* Tomorrow, or morning
+- Yesterday
+- Tonight
+~why
+Context tells you which.
+=U sbasic | Building Sentences | Gender, articles and the verb to be.
+=L sb1 | Nouns and articles
+@T
+Every Spanish noun is **masculine** or **feminine**. Most ending in `-o` are masculine, and most ending in `-a` are feminine.
+
+The: `el libro`, `la casa`, `los libros`, `las casas`
+
+A, some: `un libro`, `una casa`, `unos libros`, `unas casas`
+
+Plurals add `-s` after a vowel, and `-es` after a consonant: `ciudades`.
+
+Exceptions to learn: `el día`, `el problema`, `la mano`.
+@Q
+Which article goes with `mesa`?
+~opts
+* `la`
+- `el`
+- `los`
+~why
+It ends in -a, so it's feminine.
+@Q
+What's the plural of `el amigo`?
+~opts
+* `los amigos`
+- `las amigas`
+- `el amigos`
+~why
+The article and the noun both change.
+@B
+Say "a house."
+~code
+___ casa
+~opts
+* una
+- un
+- la
+~why
+Feminine "a" is `una`.
+=L sb2 | Pronouns and ser
+@T
+Subject pronouns: `yo` I, `tú` you, `él` he, `ella` she, `usted` you (formal), `nosotros` we, `ustedes` you all, `ellos` they.
+
+Spain also uses `vosotros` for "you all". Latin America doesn't.
+
+**ser** (to be) is for identity, jobs, origin, and traits:
+
+`soy`, `eres`, `es`, `somos`, `son`
+
+`Soy mecánico`: I'm a mechanic. No "a" before jobs.
+
+You can usually drop the pronoun, since the verb shows who.
+@B
+Say "We are from Texas."
+~code
+___ de Texas.
+~opts
+* Somos
+- Son
+- Soy
+~why
+`nosotros` goes with `somos`.
+@Q
+What does `Ella es ingeniera` mean?
+~opts
+* She's an engineer
+- He's an engineer
+- She was an engineer
+~why
+`ella` is she.
+@W
+Type the form of `ser` for "you" with tú.
+~accept
+eres
+~why
+`tú eres`.
+=L sb3 | Estar: the other to be
+@T
+**estar** is also "to be", for location and temporary states:
+
+`estoy`, `estás`, `está`, `estamos`, `están`
+
+`Estoy cansado`: I'm tired
+
+`¿Dónde está el baño?`: where's the bathroom?
+
+Compare: `Es aburrido` means he's boring. `Está aburrido` means he's bored.
+
+Memory aid: how you feel and where you are, always use estar.
+@B
+Say "I'm at home."
+~code
+___ en casa.
+~opts
+* Estoy
+- Soy
+- Tengo
+~why
+Location uses `estar`.
+@B
+Say "Madrid is in Spain."
+~code
+Madrid ___ en España.
+~opts
+* está
+- es
+- son
+~why
+Location, even permanent, uses `estar`.
+@Q
+Which one means "He's a nice person"?
+~opts
+* `Es simpático`
+- `Está simpático`
+- `Estoy simpático`
+~why
+Personality uses `ser`.
+=L sb4 | Adjectives and asking questions
+@T
+Adjectives come **after** the noun and match it: `el coche rojo`, `la casa roja`, `los coches rojos`.
+
+Those ending in `-e` or a consonant only change for plural: `grande`, `grandes`.
+
+Question words all carry accents: `qué` what, `quién` who, `dónde` where, `cuándo` when, `por qué` why, `cómo` how, `cuánto` how much.
+
+`Hay` means there is, or there are: `Hay un problema`.
+@B
+Say "the white cars."
+~code
+los coches ___
+~opts
+* blancos
+- blanco
+- blancas
+~why
+Masculine plural.
+@Q
+Which one asks "where"?
+~opts
+* `¿Dónde?`
+- `¿Cuándo?`
+- `¿Quién?`
+~why
+`cuándo` is when, and `quién` is who.
+@O
+Put the words in order: "the big house."
+~lines
+la
+casa
+grande
+~why
+The adjective follows the noun.
+=U sverb | Present Tense | Saying what you do.
+=L sv1 | Regular verbs
+@T
+Verbs end in `-ar`, `-er`, or `-ir`. Remove the ending, then add a new one for the person.
+
+`hablar`: `hablo`, `hablas`, `habla`, `hablamos`, `hablan`
+
+`comer`: `como`, `comes`, `come`, `comemos`, `comen`
+
+`vivir`: `vivo`, `vives`, `vive`, `vivimos`, `viven`
+
+Make it negative with `no` before the verb: `No hablo francés`.
+@B
+Say "We eat at home."
+~code
+___ en casa.
+~opts
+* Comemos
+- Comen
+- Como
+~why
+-emos goes with nosotros.
+@W
+Conjugate `hablar` for yo (I speak).
+~accept
+hablo
+~why
+Yo forms usually end in -o.
+@Q
+What does `Viven en Austin` mean?
+~opts
+* They live in Austin
+- I live in Austin
+- We live in Austin
+~why
+-en is the they form.
+@B
+Say "I don't work."
+~code
+___ trabajo.
+~opts
+* No
+- Nada
+- Sin
+~why
+`no` goes right before the verb.
+=L sv2 | Tener, ir, hacer
+@T
+Common irregular verbs:
+
+`tener` (have): `tengo`, `tienes`, `tiene`, `tenemos`, `tienen`
+
+`ir` (go): `voy`, `vas`, `va`, `vamos`, `van`
+
+`hacer` (do, make): `hago`, `haces`, `hace`, `hacemos`, `hacen`
+
+`querer` (want): `quiero`, `quieres`, `quiere`, `queremos`, `quieren`
+
+`poder` (can): `puedo`, `puedes`, `puede`, `podemos`, `pueden`
+
+**Going to:** `Voy a comer`, I'm going to eat. That's an easy way to talk about the future.
+@B
+Say "I'm going to work."
+~code
+___ a trabajar.
+~opts
+* Voy
+- Va
+- Soy
+~why
+ir + a + verb.
+@Q
+What does `Tengo hambre` mean?
+~opts
+* I'm hungry
+- I have a man
+- I'm tired
+~why
+Spanish "has" hunger. Also `tengo sed` and `tengo frío`.
+@Q
+How do you say "Can you help me?"
+~opts
+* `¿Puedes ayudarme?`
+- `¿Quieres ayudarme?`
+- `¿Tienes ayudarme?`
+~why
+`poder` means can.
+@B
+Say "I want coffee."
+~code
+___ café.
+~opts
+* Quiero
+- Quieres
+- Tengo
+~why
+Yo form of `querer`.
+=L sv3 | Stem changes
+@T
+Some verbs change a vowel inside, except in the nosotros form.
+
+**e → ie:** `pensar`: `pienso`, `piensas`, `pensamos`
+
+**o → ue:** `dormir`: `duermo`, `duermes`, `dormimos`
+
+**e → i:** `pedir`: `pido`, `pides`, `pedimos`
+
+Others: `empezar`, `volver`, `servir`, `jugar` (`juego`).
+@W
+Conjugate `dormir` for yo.
+~accept
+duermo
+~why
+o changes to ue.
+@B
+Say "We think."
+~code
+___
+~opts
+* Pensamos
+- Piensamos
+- Pienso
+~why
+Nosotros doesn't change the stem.
+=L sv4 | Gustar: what you like
+@T
+`gustar` works backward: something is pleasing to you.
+
+`Me gusta el café`: I like coffee
+
+`Me gustan los perros`: I like dogs
+
+Use `gusta` with one thing or a verb, and `gustan` with many.
+
+`me` to me, `te` to you, `le` to him or her, `nos` to us, `les` to them
+
+`¿Te gusta bailar?`: do you like to dance?
+@B
+Say "I like tacos."
+~code
+Me ___ los tacos.
+~opts
+* gustan
+- gusta
+- gusto
+~why
+Tacos are plural.
+@Q
+What does `Nos gusta viajar` mean?
+~opts
+* We like to travel
+- They like to travel
+- You like to travel
+~why
+`nos` means to us.
+=F sfire1 | Hot fire: First conversation
+@Q
+**Hot fire** is a mixed test. Pick the natural reply to `¿Cómo te llamas?`
+~opts
+* `Me llamo Teir.`
+- `Tengo treinta años.`
+- `Estoy bien.`
+~why
+It asks your name.
+@B
+Say "I'm from Texas, and I'm tired."
+~code
+___ de Texas y ___ cansado.
+~opts
+* soy
+* estoy
+- tengo
+- es
+~why
+Origin uses `ser`, and a feeling uses `estar`.
+@O
+Put the words in order: "I don't speak much Spanish."
+~lines
+No
+hablo
+mucho
+español.
+~why
+`No` comes before the verb.
+@W
+Type the Spanish for "I have".
+~accept
+tengo
+~why
+From `tener`.
+@Q
+What does `Vamos a comer tacos mañana` mean?
+~opts
+* We're going to eat tacos tomorrow
+- We ate tacos yesterday
+- I eat tacos every morning
+~why
+`Vamos a` plus a verb is the near future.

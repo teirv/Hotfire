@@ -1,0 +1,334 @@
+=U slife | Daily Life | Family, routines and getting around.
+=L sl1 | Family and possession
+@T
+`la madre` mother, `el padre` father, `los padres` parents, `el hijo` son, `la hija` daughter, `el hermano` brother, `la hermana` sister, `el esposo` husband, `la esposa` wife, `el abuelo` grandfather
+
+Possessives: `mi` my, `tu` your, `su` his, her, their, `nuestro` our. Add `-s` for plural: `mis hijos`.
+
+Spanish uses `de` where English uses 's: `la casa de Ana`, Ana's house.
+@Q
+How do you say "Ana's car"?
+~opts
+* `el coche de Ana`
+- `Ana's coche`
+- `Ana el coche`
+~why
+Spanish has no 's.
+@B
+Say "my children."
+~code
+___ hijos
+~opts
+* mis
+- mi
+- su
+~why
+Plural noun, plural possessive.
+=L sl2 | Daily routine
+@T
+**Reflexive verbs** mean you do it to yourself. They use `me`, `te`, `se`, `nos`, `se`.
+
+`Me levanto a las seis`: I get up at six
+
+`Me ducho`: I shower
+
+`Se viste`: she gets dressed
+
+`Nos acostamos tarde`: we go to bed late
+
+Frequency: `siempre` always, `a veces` sometimes, `nunca` never, `todos los días` every day.
+@B
+Say "I get up at seven."
+~code
+___ levanto a las siete.
+~opts
+* Me
+- Te
+- Se
+~why
+Yo goes with `me`.
+@Q
+What does `Nunca como carne` mean?
+~opts
+* I never eat meat
+- I always eat meat
+- I sometimes eat meat
+~why
+`nunca` means never.
+=L sl3 | Food and restaurants
+@T
+`La cuenta, por favor`: the check, please
+
+`¿Qué me recomienda?`: what do you recommend?
+
+`Quisiera un café`: I'd like a coffee
+
+`Para mí, el pollo`: the chicken for me
+
+`agua` water, `pollo` chicken, `carne` meat, `pescado` fish, `arroz` rice, `frijoles` beans, `pan` bread, `queso` cheese
+@Q
+How do you ask for the bill?
+~opts
+* `La cuenta, por favor`
+- `Hasta luego, por favor`
+- `Tengo la mesa`
+~why
+`cuenta` means account or bill.
+@W
+Type the Spanish for "water".
+~accept
+agua
+~why
+It takes `el` (`el agua`) though it's feminine.
+@Q
+Which one's the most polite way to order?
+~opts
+* `Quisiera un café`
+- `Dame café`
+- `Café ahora`
+~why
+`Quisiera` is a soft "I would like".
+=L sl4 | Directions and travel
+@T
+`¿Dónde está la estación?`: where's the station?
+
+`a la derecha` to the right, `a la izquierda` to the left, `todo recto` straight ahead
+
+`cerca` near, `lejos` far, `al lado de` next to
+
+`Necesito un boleto`: I need a ticket
+
+`¿A qué hora sale?`: what time does it leave?
+
+Note: `a` + `el` becomes `al`, and `de` + `el` becomes `del`.
+@Q
+What does `a la izquierda` mean?
+~opts
+* To the left
+- To the right
+- Straight ahead
+~why
+`derecha` is right.
+@B
+Say "I'm going to the market."
+~code
+Voy ___ mercado.
+~opts
+* al
+- a el
+- del
+~why
+`a` + `el` always contracts.
+=U spast | Talking About the Past | Two past tenses, and when to use each.
+=L sp1 | Preterite: finished actions
+@T
+The **preterite** tells what happened, once and done.
+
+`-ar`: `hablé`, `hablaste`, `habló`, `hablamos`, `hablaron`
+
+`-er/-ir`: `comí`, `comiste`, `comió`, `comimos`, `comieron`
+
+Time words: `ayer`, `anoche` last night, `la semana pasada` last week.
+
+The accent matters: `hablo` is I speak, and `habló` is he spoke.
+@B
+Say "Yesterday I ate tacos."
+~code
+Ayer ___ tacos.
+~opts
+* comí
+- como
+- comió
+~why
+Preterite, yo form.
+@Q
+What's the difference between `hablo` and `habló`?
+~opts
+* I speak, and he spoke
+- They mean the same thing
+- He speaks, and I spoke
+~why
+Stress changes the meaning.
+@W
+Conjugate `hablar` in the preterite for ellos.
+~accept
+hablaron
+~why
+-aron for -ar verbs.
+=L sp2 | Irregular preterite
+@T
+`ser` and `ir` share the same form: `fui`, `fuiste`, `fue`, `fuimos`, `fueron`. Context tells you which: `Fui al cine`, I went to the movies.
+
+`tener`: `tuve`, `tuviste`, `tuvo`, `tuvimos`, `tuvieron`
+
+`hacer`: `hice`, `hiciste`, `hizo`, `hicimos`, `hicieron`
+
+`estar`: `estuve`, `estuviste`, `estuvo`, `estuvimos`, `estuvieron`
+
+`decir`: `dije`, `dijiste`, `dijo`, `dijimos`, `dijeron`
+
+These have no accent marks.
+@B
+Say "I went home."
+~code
+___ a casa.
+~opts
+* Fui
+- Voy
+- Fue
+~why
+Preterite of `ir`, yo.
+@Q
+What does `¿Qué hiciste ayer?` mean?
+~opts
+* What did you do yesterday?
+- What are you doing tomorrow?
+- Who did it yesterday?
+~why
+`hiciste` comes from `hacer`.
+=L sp3 | Imperfect: how things were
+@T
+The **imperfect** describes the background: habits and how things used to be.
+
+`-ar`: `hablaba`, `hablabas`, `hablaba`, `hablábamos`, `hablaban`
+
+`-er/-ir`: `comía`, `comías`, `comía`, `comíamos`, `comían`
+
+Irregular: `era` (ser), `iba` (ir), `veía` (ver).
+
+`Cuando era niño, jugaba mucho`: when I was a kid, I played a lot.
+
+Think of a movie: the imperfect is the scene, and the preterite is what happens next. `Llovía cuando llegué`: it was raining when I arrived.
+@Q
+Which one fits "I used to live in Mexico"?
+~opts
+* `Vivía en México`
+- `Viví en México ayer`
+- `Vivo en México`
+~why
+Past habits use the imperfect.
+@B
+Say "I was reading when she called."
+~code
+___ cuando ella llamó.
+~opts
+* Leía
+- Leí
+- Leo
+~why
+Background action uses the imperfect.
+=U sfuture | Plans and Opinions | The future, the conditional and pronouns.
+=L sf1 | Future and conditional
+@T
+**Future:** add endings to the whole infinitive: `hablaré`, `hablarás`, `hablará`, `hablaremos`, `hablarán`.
+
+**Conditional (would):** `hablaría`, `hablarías`, `hablaría`, `hablaríamos`, `hablarían`.
+
+Irregular stems for both: `tendr-`, `har-`, `podr-`, `saldr-`, `vendr-`, `dir-`, `querr-`.
+
+`Mañana iré`: I'll go tomorrow. `Me gustaría viajar`: I'd like to travel.
+@B
+Say "I would like a coffee."
+~code
+Me ___ un café.
+~opts
+* gustaría
+- gustará
+- gusto
+~why
+Conditional for polite wishes.
+@W
+Put `tener` in the future for yo.
+~accept
+tendré
+~why
+Irregular stem `tendr-`.
+=L sf2 | Object pronouns
+@T
+**Direct objects** replace the thing: `lo`, `la`, `los`, `las`. `Lo veo`: I see it.
+
+**Indirect objects** say to whom: `me`, `te`, `le`, `nos`, `les`. `Le doy el libro`: I give him the book.
+
+Pronouns go before a conjugated verb, or attach to an infinitive: `Quiero verlo`.
+
+With both, indirect goes first: `Me lo das`. `le` + `lo` becomes `se lo`.
+@B
+Say "I see her."
+~code
+___ veo.
+~opts
+* La
+- Le
+- Lo
+~why
+She's the direct object.
+@Q
+Which sentence is correct?
+~opts
+* `Quiero comprarlo`
+- `Quiero lo comprar`
+- `Comprarlo quiero lo`
+~why
+It attaches to the infinitive, or comes before `quiero`.
+=L sf3 | Commands
+@T
+**Tú commands:** use the él form: `Habla`, `Come`. Irregular: `ven`, `pon`, `haz`, `ten`, `di`, `sal`, `ve`.
+
+**Negative tú:** swap the ending: `No hables`, `No comas`.
+
+**Formal usted:** `Hable`, `Coma`.
+
+Pronouns attach to positive commands: `Dímelo`, tell it to me.
+@Q
+How do you tell a friend "Eat!"?
+~opts
+* `¡Come!`
+- `¡Coma!`
+- `¡Comes!`
+~why
+Tú commands use the él form.
+@B
+Say "Don't talk!"
+~code
+¡No ___!
+~opts
+* hables
+- hablas
+- habla
+~why
+Negative commands swap the vowel.
+=L sf4 | Por and para
+@T
+Both can mean "for".
+
+**para** points to a goal: purpose, recipient, deadline, destination. `Es para ti`. `Estudio para aprender`.
+
+**por** looks at cause and path: reason, exchange, duration, through. `Gracias por todo`. `Pagué diez dólares por esto`. `Caminé por el parque`.
+@B
+Say "This is for you."
+~code
+Esto es ___ ti.
+~opts
+* para
+- por
+- de
+~why
+A recipient uses `para`.
+@B
+Say "Thanks for everything."
+~code
+Gracias ___ todo.
+~opts
+* por
+- para
+- de
+~why
+A reason uses `por`.
+@Q
+Which one means "I study in order to learn"?
+~opts
+* `Estudio para aprender`
+- `Estudio por aprender`
+- `Estudio a aprender`
+~why
+Purpose uses `para`.

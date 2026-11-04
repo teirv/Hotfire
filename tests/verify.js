@@ -19,7 +19,7 @@ const res=await p.evaluate(async()=>{const {COURSES,run,grade,norm}=__hf;const b
   if(s.k==='W'&&(!s.accept||!s.accept.length))bad.push(id+' no accept');
   if(s.k==='T'&&s.code&&lang!=='html'){const r=await run(lang,s.code,s.stdin||[],s.html?{html:s.html}:undefined);if(r.timedOut&&!s.html)bad.push(id+' timeout');if(r.error&&!/bug|error|Error/i.test(s.text))bad.push(id+' T err '+JSON.stringify(r.error)+' out '+r.out)}
   if(s.k==='B'&&s.code.split('___').length-1!==s.ans.length)bad.push(id+' blanks');
-  if(s.k==='B'&&lang!=='japanese'&&lang!=='html'){const parts=s.code.split('___');if(parts.length-1!==s.ans.length)bad.push(id+' blanks');let src=parts[0];s.ans.forEach((a,i)=>src+=a+parts[i+1]);if(s.vout){const r=await run(lang,src,s.vout.stdin);if(norm(r.out)!==norm(s.vout.out))bad.push(id+' B got '+JSON.stringify(r)+' want '+s.vout.out)}}
+  if(s.k==='B'&&lang!=='japanese'&&lang!=='spanish'&&lang!=='html'){const parts=s.code.split('___');if(parts.length-1!==s.ans.length)bad.push(id+' blanks');let src=parts[0];s.ans.forEach((a,i)=>src+=a+parts[i+1]);if(s.vout){const r=await run(lang,src,s.vout.stdin);if(norm(r.out)!==norm(s.vout.out))bad.push(id+' B got '+JSON.stringify(r)+' want '+s.vout.out)}}
   if(s.k==='O'&&s.vout){const r=await run(lang,s.lines.join('\n'),[]);if(norm(r.out)!==norm(s.vout.out))bad.push(id+' O '+JSON.stringify(r))}
   }catch(e){bad.push(id+' EXC '+e)}}
  return {n,bad}});

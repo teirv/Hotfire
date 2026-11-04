@@ -1,0 +1,274 @@
+=U sperf | Perfect Tenses | What has happened.
+=L spf1 | Present perfect
+@T
+**have + done:** `he`, `has`, `ha`, `hemos`, `han` + participle.
+
+Participles: `-ar` → `-ado` (`hablado`), `-er/-ir` → `-ido` (`comido`).
+
+Irregular: `hecho`, `dicho`, `visto`, `escrito`, `puesto`, `vuelto`, `abierto`, `roto`.
+
+`¿Has comido?`: have you eaten?
+
+`Nunca he estado en España`: I've never been to Spain.
+
+Spain uses this a lot for today's events. Latin America often prefers the preterite.
+@W
+Type the participle of `hacer`.
+~accept
+hecho
+~why
+It's irregular.
+@B
+Say "We have seen the movie."
+~code
+___ visto la película.
+~opts
+* Hemos
+- Han
+- Somos
+~why
+`haber` forms the perfect, not `ser`.
+=U ssubj | The Subjunctive | Wishes, doubts and feelings.
+=L sj1 | Present subjunctive
+@T
+The **subjunctive** is a mood for things that aren't plain facts: wishes, doubts, feelings.
+
+Take the yo form, drop `-o`, and swap vowels: `-ar` verbs get e, and `-er/-ir` verbs get a.
+
+`hablar` → `hable`, `hables`, `hable`, `hablemos`, `hablen`
+
+`comer` → `coma`, `comas`, `coma`, `comamos`, `coman`
+
+`tener` → `tenga`. `hacer` → `haga`.
+
+Irregular: `sea`, `esté`, `vaya`, `haya`, `sepa`, `dé`.
+@W
+Type the subjunctive of `hablar` for yo.
+~accept
+hable
+~why
+-ar verbs swap to e.
+@Q
+What's the subjunctive of `tener` for yo?
+~opts
+* `tenga`
+- `tena`
+- `tengo`
+~why
+It starts from the yo form, `tengo`.
+=L sj2 | When to use it
+@T
+It usually follows `que` after a change of subject, triggered by WEIRDO:
+
+**Wishes:** `Quiero que vengas`
+
+**Emotion:** `Me alegra que estés aquí`
+
+**Impersonal:** `Es importante que estudies`
+
+**Recommendations:** `Te recomiendo que descanses`
+
+**Doubt:** `Dudo que sea verdad`
+
+**Ojalá:** `Ojalá llueva`
+
+Facts use the indicative: `Creo que es verdad`. Doubt flips it: `No creo que sea verdad`.
+
+`Cuando` about the future also takes it: `Cuando llegues, llámame`.
+@B
+Say "I want you to come."
+~code
+Quiero que ___.
+~opts
+* vengas
+- vienes
+- venir
+~why
+A wish plus a new subject.
+@B
+Say "I don't think it's true."
+~code
+No creo que ___ verdad.
+~opts
+* sea
+- es
+- está
+~why
+Doubt triggers the subjunctive.
+@B
+Say "I think it's true."
+~code
+Creo que ___ verdad.
+~opts
+* es
+- sea
+- esté
+~why
+Belief takes the indicative.
+@Q
+What does `Ojalá` express?
+~opts
+* A hope, as in "I hope"
+- A fact
+- A command
+~why
+It comes from Arabic, and it's always followed by the subjunctive.
+=U sadv | Advanced Patterns | Sounding more natural.
+=L sa1 | If clauses and past subjunctive
+@T
+**Likely:** `Si llueve, no voy`: if it rains, I won't go.
+
+**Unlikely:** `Si tuviera dinero, viajaría`: if I had money, I'd travel.
+
+The **past subjunctive** comes from the preterite ellos form: `hablaron` → `hablara`, `tuvieron` → `tuviera`, `fueron` → `fuera`.
+
+`Si yo fuera tú...`: if I were you...
+@B
+Say "If I had time, I'd go."
+~code
+Si ___ tiempo, iría.
+~opts
+* tuviera
+- tengo
+- tuve
+~why
+Unlikely conditions use the past subjunctive.
+@Q
+What does `Si llueve, no voy` mean?
+~opts
+* If it rains, I won't go
+- If it rained, I wouldn't go
+- It's raining, so I went
+~why
+A real possibility uses the present.
+=L sa2 | Everyday connectors
+@T
+`pero` but, `porque` because, `aunque` although, `entonces` so, then, `sin embargo` however, `además` besides, `mientras` while, `todavía` still, `ya` already, `antes de` before, `después de` after
+
+**Natural fillers:** `bueno` well, `pues` well, `o sea` I mean, `¿verdad?` right?, `claro` of course
+
+**Regional:** Mexico: `¿mande?` (pardon?), `ahorita` (right now, soon). Spain: `vale` (OK), `coche` (car). `carro` is common in Latin America.
+@Q
+Which word means "although"?
+~opts
+* `aunque`
+- `porque`
+- `entonces`
+~why
+`porque` means because.
+@Q
+What does `Claro` mean in conversation?
+~opts
+* Of course
+- Clear water only
+- Never
+~why
+It's a very common way to agree.
+=U sread | Reading and Next Steps | Putting it together.
+=L sr1 | Short reading
+@T
+Tap the text to hear it.
+
+`Me llamo Laura y vivo en Austin con mi familia. Todos los días me levanto a las seis y voy al trabajo en coche. El fin de semana pasado fuimos a San Antonio. Hacía mucho calor, pero comimos muy bien. El próximo año quiero viajar a México.`
+@Q
+How does Laura get to work?
+~opts
+* By car
+- By bus
+- On foot
+~why
+`en coche` means by car.
+@Q
+What was the weather like in San Antonio?
+~opts
+* Very hot
+- Cold
+- Rainy
+~why
+`Hacía mucho calor`.
+@Q
+What does Laura want to do next year?
+~opts
+* Travel to Mexico
+- Move to San Antonio
+- Change jobs
+~why
+`quiero viajar`.
+=L sr2 | What comes next
+@T
+You've now seen the core of Spanish grammar. Fluency comes from using it, and Spanish is among the quicker languages for English speakers to learn.
+
+**Vocabulary:** Learn the most common 2,000 words with a spaced repetition app like Anki.
+
+**Listening:** Try slow Spanish podcasts, then shows and music you enjoy.
+
+**Reading:** Start with graded readers, then news and novels.
+
+**Speaking:** Talk every week. It's the fastest way to improve, and Texas gives you lots of chances.
+
+**Testing yourself:** The DELE and SIELE exams use levels from A1 to C2.
+@Q
+What matters most after learning the grammar?
+~opts
+* Lots of listening, reading and speaking
+- Rereading verb tables
+- Avoiding mistakes by not speaking
+~why
+Mistakes are how you learn.
+=F sfire2 | Hot fire: Final test
+@B
+Say "When I was a kid, I lived in Texas."
+~code
+Cuando ___ niño, ___ en Texas.
+~opts
+* era
+* vivía
+- fui
+- viví
+~why
+Background and habits use the imperfect.
+@B
+Say "I hope you come."
+~code
+Espero que ___.
+~opts
+* vengas
+- vienes
+- vendrás
+~why
+Hope triggers the subjunctive.
+@Q
+What does `Si tuviera más tiempo, aprendería japonés` mean?
+~opts
+* If I had more time, I'd learn Japanese.
+- I have more time, so I'm learning Japanese.
+- I had more time, so I learned Japanese.
+~why
+Past subjunctive plus conditional.
+@O
+Put the words in order: "I've never been to Spain."
+~lines
+Nunca
+he
+estado
+en
+España.
+~why
+`he` stays right next to the participle.
+@B
+Say "Yesterday I went to the store, and I bought bread."
+~code
+Ayer ___ a la tienda y ___ pan.
+~opts
+* fui
+* compré
+- iba
+- compro
+~why
+Finished actions use the preterite.
+@W
+Type the Spanish for "see you later".
+~accept
+hasta luego
+~why
+You've reached the end of this path. ¡Felicidades!

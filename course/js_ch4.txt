@@ -1,0 +1,349 @@
+=U jq1 | Getting Started with jQuery | Book sections 4.1 and 4.2. A shorter way to work with pages.
+=L jq11 | The $ function
+@T
+**jQuery** is a library that shortens common browser tasks. Lots of older sites use it. This app runs the real jQuery 3.
+
+`$()` finds elements with a CSS selector and wraps them. Then methods act on **every match** at once, with no loop needed.
+~html
+<p class="tip">One</p><p class="tip">Two</p>
+~code
+$(".tip").text("Changed");
+console.log($(".tip").length);
+console.log($("p").first().text());
+@T
+You can wait for the page with `$(function () { ... })`.
+
+Most methods return the same selection, so you can **chain** them. Calling `.text()` with no argument reads. Calling it with an argument writes.
+
+Traversal methods move around: `.parent()`, `.children()`, `.find()`, `.first()`, `.eq(n)`.
+~html
+<ul id="u"><li>A</li><li>B</li></ul>
+~code
+$(function () {
+  $("#u li").eq(1).text("Second").addClass("hot");
+  console.log($("#u").find("li").length);
+  console.log($("#u li").last().text());
+});
+@Q
+What does `$(".row").addClass("on")` affect?
+~opts
+* Every element with class `row`
+- Only the first match
+- Nothing, it needs a loop
+~why
+jQuery methods apply to the whole set.
+@Q
+What's the difference between `.text()` and `.text("Hi")`?
+~opts
+* The first reads, and the second writes
+- They do the same thing
+- The first deletes the text
+~why
+Many jQuery methods work as both a getter and a setter.
+@Q
+Which selector matches the second `li`, using jQuery?
+~opts
+* `$("li").eq(1)`
+- `$("li").eq(2)`
+- `$("li").second()`
+~why
+`eq` counts from 0.
+@C
+Set the text of every element with class `cell` to `OK`, and add the class `ready` to them.
+~html
+<p class="cell">a</p><p class="cell">b</p>
+~start
+// Your code here
+
+~sol
+$(".cell").text("OK").addClass("ready");
+~hint
+Chain .text() and .addClass()
+~after
+console.log($(".cell").first().text(), $(".ready").length);
+~out
+OK 2
+=U jq2 | jQuery Events | Book section 4.3. Handling clicks and typing.
+=L jq21 | on and friends
+@T
+`.on("click", fn)` attaches a handler to every match. `$(this)` inside the handler is the element that was used. `.val()` reads a form field.
+
+**Delegation** puts one handler on a parent, and it still works for children added later: `.on("click", "li", fn)`.
+~html
+<ul id="u"><li>One</li></ul><button id="b">Add</button><p id="o"></p>
+~code
+$("#u").on("click", "li", function () {
+  $("#o").text("You clicked " + $(this).text());
+});
+
+$("#b").on("click", () => {
+  $("#u").append("<li>New</li>");
+});
+@Q
+Why use `$("#list").on("click", "li", fn)` instead of `$("li").on("click", fn)`?
+~opts
+* It also works for items added later
+- It's required for lists
+- It only fires once
+~why
+The parent is already on the page when the child is added.
+@Q
+How do you read an input's current text in jQuery?
+~opts
+* `$("#a").val()`
+- `$("#a").value`
+- `$("#a").text()`
+~why
+`.value` is the plain DOM property, and a jQuery object doesn't have it.
+@C
+When `#up` is clicked, add 1 to the number in `#n` using jQuery.
+~html
+<span id="n">0</span><button id="up">Up</button>
+~start
+// Your code here
+
+~sol
+$("#up").on("click", () => {
+  $("#n").text(Number($("#n").text()) + 1);
+});
+~hint
+Read with .text(), convert to a number, and write it back.
+~after
+$("#up").trigger("click");
+$("#up").trigger("click");
+console.log($("#n").text());
+~out
+2
+=U jq3 | Styles, Animation and DOM Changes | Book sections 4.4 and 4.5.
+=L jq31 | Styles and animation
+@T
+`.css()` reads or sets styles. `.addClass`, `.removeClass`, and `.toggleClass` handle classes. `.hide()`, `.show()`, and `.toggle()` control visibility.
+
+Animations include `.fadeIn()`, `.slideUp()`, and `.animate()`. They run over time and can take a function to run when finished.
+~html
+<p id="a">Status</p>
+~code
+$("#a").css("color", "firebrick").css({ fontWeight: "bold" });
+$("#a").toggleClass("flag");
+console.log($("#a").hasClass("flag"));
+console.log($("#a").css("color"));
+@Q
+How do you run code **after** a `fadeOut` finishes?
+~opts
+* Pass a function to `fadeOut`
+- Put the code on the next line
+- Use `.then` on the CSS
+~why
+Animations are asynchronous, so the next line runs right away.
+=L jq32 | Changing elements
+@T
+`.append` adds inside at the end, `.prepend` adds inside at the start, and `.before` and `.after` add beside. `.remove` deletes, `.empty` clears the children, `.attr` handles attributes, and `.html` sets HTML.
+~html
+<ul id="u"><li>Two</li></ul>
+~code
+$("#u").prepend("<li>One</li>");
+$("#u").append("<li>Three</li>");
+$("#u li").last().attr("title", "end");
+console.log($("#u li").length);
+console.log($("#u").children().first().text());
+@P
+What's the order of items after this? (Plain arrays show the idea.)
+~code
+let u = ["b"];
+u.unshift("a");
+u.push("c");
+console.log(u.join(""));
+~opts
+* abc
+- bac
+- cba
+~why
+`prepend` is like `unshift`, and `append` is like `push`.
+@C
+Append an `li` with the text `Seal` to `#parts`, then remove the first `li`.
+~html
+<ul id="parts"><li>Old</li><li>Valve</li></ul>
+~start
+// Your code here
+
+~sol
+$("#parts").append("<li>Seal</li>");
+$("#parts li").first().remove();
+~hint
+.append("<li>...</li>"), then .first().remove()
+~after
+console.log($("#parts li").map(function () { return $(this).text(); }).get().join(","));
+~out
+Valve,Seal
+=U jq4 | jQuery Ajax and Plugins | Book sections 4.6 to 4.9.
+=L jq41 | Ajax with jQuery
+@T
+`$.get` and `$.getJSON` load data. `$.ajax` gives full control. They return a promise-like object with `.done` and `.fail`.
+
+They use the same practice server as earlier lessons.
+~html
+<p id="w"></p>
+~code
+$.getJSON("https://api.example.com/weather?city=Austin")
+  .done((data) => {
+    $("#w").text(`${data.city}: ${data.tempF}`);
+    console.log(data.condition);
+  })
+  .fail(() => $("#w").text("Failed"));
+@T
+Calling third-party APIs works the same way: read the docs for the URL, pass `data` for query values, and handle failure.
+
+A **plugin** adds new methods to jQuery by extending `$.fn`. jQuery UI is a well-known set of plugins. Inside a plugin, `this` is the jQuery selection.
+~html
+<p class="x">a</p>
+~code
+$.fn.shout = function () {
+  return this.each(function () {
+    $(this).text($(this).text().toUpperCase() + "!");
+  });
+};
+
+$(".x").shout();
+console.log($(".x").text());
+@Q
+Which method runs when a jQuery Ajax request fails?
+~opts
+* `.fail()`
+- `.done()`
+- `.error404()`
+~why
+`.done` is the success path, and `.always` runs either way.
+@Q
+How do you add a new jQuery method called `glow`?
+~opts
+* `$.fn.glow = function () { ... }`
+- `jQuery.addMethod("glow")`
+- `window.glow = true`
+~why
+`$.fn` is shared by all jQuery objects.
+@C
+Use `$.getJSON` to load `https://api.example.com/users` and put the first user's `name` in `#u`.
+~html
+<p id="u"></p>
+~start
+// Your code here
+
+~sol
+$.getJSON("https://api.example.com/users").done((users) => {
+  $("#u").text(users[0].name);
+});
+~hint
+.done((users) => ...)
+~after
+await wait(60);
+console.log($("#u").text());
+~out
+Ana
+=U labs4 | Chapter 4 Labs | Practice problems in the style of book sections 4.10 to 4.13.
+=F lab410 | Lab: Currency conversion
+@C
+When `#go` is clicked, read the dollars in `#usd`, load `https://api.example.com/rates` with `$.getJSON`, and show the euro value with 2 decimals in `#eur`.
+~html
+<input id="usd"><button id="go">Convert</button><p id="eur"></p>
+~start
+// Your code here
+
+~sol
+$("#go").on("click", () => {
+  let usd = Number($("#usd").val());
+  $.getJSON("https://api.example.com/rates").done((rates) => {
+    $("#eur").text((usd * rates.EUR).toFixed(2));
+  });
+});
+~hint
+Read .val() first. rates.EUR holds the rate.
+~after
+$("#usd").val("100");
+$("#go").trigger("click");
+await wait(60);
+console.log($("#eur").text());
+~out
+90.00
+=F lab411 | Lab: Quote API with jQuery
+@C
+When `#get` is clicked, load `https://api.example.com/quote` and show `author: quote` in `#q`. Use `.fail` to show `Error`.
+~html
+<button id="get">Get</button><p id="q"></p>
+~start
+// Your code here
+
+~sol
+$("#get").on("click", () => {
+  $.getJSON("https://api.example.com/quote")
+    .done((d) => $("#q").text(`${d.author}: ${d.quote}`))
+    .fail(() => $("#q").text("Error"));
+});
+~hint
+Chain .done and .fail.
+~after
+$("#get").trigger("click");
+await wait(60);
+console.log($("#q").text());
+~out
+Proverb: Measure twice, cut once.
+=F lab412 | Lab: To-do list with jQuery
+@C
+When `#add` is clicked, append the text in `#t` to `#list` as an `li` and clear the input. Clicking any `li`, even a new one, removes it.
+~html
+<input id="t"><button id="add">Add</button><ul id="list"></ul>
+~start
+// Your code here
+
+~sol
+$("#add").on("click", () => {
+  let text = $("#t").val().trim();
+  if (text) {
+    $("#list").append($("<li>").text(text));
+    $("#t").val("");
+  }
+});
+
+$("#list").on("click", "li", function () {
+  $(this).remove();
+});
+~hint
+Use delegation so new items respond to clicks.
+~after
+$("#t").val("Check"); $("#add").trigger("click");
+$("#t").val("Seal"); $("#add").trigger("click");
+console.log($("#list li").length, $("#t").val() === "");
+$("#list li").first().trigger("click");
+console.log($("#list li").text());
+~out
+2 true
+Seal
+=F lab413 | Lab: Memory game
+@C
+Write `matchGame(cards)` logic with a `flip(i)` function. Keep the first flipped index. On the second flip, return `match` if the two cards are equal, otherwise `miss`, and then reset. The first flip returns `first`.
+
+Make `flip` come from `makeGame(cards)`.
+~start
+function makeGame(cards) {
+
+}
+
+~sol
+function makeGame(cards) {
+  let first = null;
+  return function flip(i) {
+    if (first === null) {
+      first = i;
+      return "first";
+    }
+    let result = cards[first] === cards[i] ? "match" : "miss";
+    first = null;
+    return result;
+  };
+}
+~hint
+A closure keeps the first index between calls.
+~after
+let flip = makeGame(["A", "B", "A"]);
+console.log(flip(0), flip(2), flip(0), flip(1));
+~out
+first match first miss

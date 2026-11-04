@@ -1,0 +1,135 @@
+=U a11y1 | Accessibility Basics | Book sections 7.1 and 7.2.
+=L a111 | Who this is for
+@T
+**Accessibility**, or **a11y**, means people can use your site whatever their abilities. Some users rely on screen readers, keyboards, captions, or high contrast.
+
+Tools: a **screen reader** (VoiceOver, NVDA), browser dev tools, and checkers like Lighthouse and WAVE. Automated tools only find some problems, so also try your page with only a keyboard.
+@Q
+Why is it called a11y?
+~opts
+* There are 11 letters between the a and the y
+- It's version 11
+- It's an HTML tag
+~why
+It's a shorthand, like i18n for internationalization.
+@Q
+What's a quick manual test you can do without any tools?
+~opts
+* Use the page with only the keyboard
+- Resize the logo
+- Turn off the CSS file forever
+~why
+Tab, Enter, and Space should reach everything, with a visible focus.
+=U a11y2 | Page Structure and ARIA | Book sections 7.3 and 7.4.
+=L a121 | Meaningful HTML
+@T
+**Semantic** tags say what things are: `header`, `nav`, `main`, `footer`, `button`, and headings in order. Screen reader users jump between these landmarks.
+
+A `div` with a click handler isn't a button for a keyboard user. A real `<button>` gets focus and keyboard support for free.
+
+**ARIA** attributes add meaning when HTML alone can't: `aria-label`, `aria-expanded`, `role`. The first rule of ARIA: use native HTML if you can.
+@Q
+What's better for something you click?
+~opts
+* `<button>`
+- `<div onclick="...">`
+- `<span>`
+~why
+It's focusable and works with the keyboard already.
+@Q
+When should you use ARIA?
+~opts
+* When native HTML can't express the meaning
+- On every element
+- To replace all buttons
+~why
+Bad ARIA is worse than none.
+@B
+Give an icon-only button a name for screen readers.
+~code
+<button ___="Close">✕</button>
+~opts
+* aria-label
+- alt
+- title-text
+~why
+`aria-label` provides the accessible name.
+=U a11y3 | Color, Images and Links | Book sections 7.5 to 7.7.
+=L a131 | Seeing and following
+@T
+**Color:** text needs enough contrast with its background. WCAG AA asks for 4.5:1 for normal text. Don't use color alone: pair red errors with an icon or words.
+
+**Images:** give `alt` text that describes the purpose. Decorative images get an empty `alt=""`.
+
+**Links:** the text should make sense alone. "Download the report" beats "Click here".
+@Q
+A form shows errors only by turning a border red. What's the problem?
+~opts
+* Color alone isn't enough, so add text
+- Red is banned
+- Borders can't be colored
+~why
+Colorblind users can miss it, so say what's wrong in words.
+@Q
+What `alt` should a decorative divider image have?
+~opts
+* `alt=""`
+- `alt="image"`
+- No attribute at all
+~why
+Empty tells screen readers to skip it. A missing `alt` may read the file name.
+@Q
+What's the minimum WCAG AA contrast for normal text?
+~opts
+* 4.5:1
+- 1:1
+- 2:1
+~why
+Large text can use 3:1.
+@Q
+Which link text is best?
+~opts
+* View the test schedule
+- Click here
+- More
+~why
+Screen reader users often skim a list of links.
+=U a11y4 | Text and Forms | Book sections 7.8 and 7.9.
+=L a141 | Readable text and labeled forms
+@T
+**Text:** use relative sizes like `rem` so people can zoom. Keep good line spacing and don't justify long text.
+
+**Forms:** each input needs a `<label>` tied to it with `for`. A `placeholder` isn't a label, because it disappears. Error messages should say how to fix the problem, and link to the field with `aria-describedby`.
+```
+<label for="email">Email</label>
+<input id="email" type="email" aria-describedby="email-help">
+<p id="email-help">We'll only use this for updates.</p>
+```
+@Q
+Why can't a placeholder replace a label?
+~opts
+* It vanishes when you type, and it isn't reliably announced
+- It's too expensive
+- Inputs can't have placeholders
+~why
+Always use a real `<label>`.
+@B
+Connect the label to the input.
+~code
+<label ___="age">Age</label>
+<input ___="age">
+~opts
+* for
+* id
+- name
+- href
+~why
+The label's `for` matches the input's `id`.
+@Q
+Which font size unit respects a user's browser settings best?
+~opts
+* `rem`
+- `px`
+- `pt`
+~why
+`rem` scales with the root size the user chose.

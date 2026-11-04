@@ -1,0 +1,837 @@
+=U webjs | JavaScript with HTML | Book section 2.1. How code gets onto a page.
+=L webjs1 | Adding code to a page
+@T
+**HTML** describes what is on a page. **CSS** describes how it looks. **JavaScript** makes it do things.
+
+The `<script>` tag runs JavaScript. It can hold code directly, or load a file with `src`.
+
+The browser reads HTML from top to bottom, so a script in the `<head>` runs before the body exists. Put scripts at the end of the body, or add `defer` to wait for the page.
+~html
+<h1 id="title">Hello</h1>
+~code
+// This runs after the page is ready.
+let title = document.getElementById("title");
+title.textContent = "Hello from JavaScript";
+@Q
+Which tag loads code from a file named `app.js`?
+~opts
+* `<script src="app.js"></script>`
+- `<link href="app.js">`
+- `<javascript file="app.js">`
+~why
+`src` points to the file. Keep the closing tag, even though it's empty.
+@Q
+A script in the `<head>` can't find an element in the body. What's the simplest fix?
+~opts
+* Add `defer` to the script tag
+- Rename the element
+- Add `await` to the HTML
+~why
+`defer` waits until the page has been read. Moving the script to the end of the body also works.
+@Q
+What does `document.addEventListener("DOMContentLoaded", start)` do?
+~opts
+* Runs `start` once the HTML is ready
+- Downloads the page again
+- Deletes the document
+~why
+It's another way to wait until elements exist.
+=U dom | The Document Object Model | Book section 2.2. The page as objects.
+=L dom1 | Finding elements
+@T
+The **DOM** is the browser's live model of a page. Each tag becomes an object you can read and change.
+
+`document` is the top of the tree. `getElementById` finds one element. `querySelector` finds the first match for a CSS selector. `querySelectorAll` finds them all.
+~html
+<h1 id="title">Parts</h1>
+<ul>
+  <li class="part">Valve</li>
+  <li class="part">Seal</li>
+</ul>
+~code
+let title = document.getElementById("title");
+console.log(title.textContent);
+
+let first = document.querySelector(".part");
+console.log(first.textContent);
+
+let all = document.querySelectorAll(".part");
+console.log(all.length);
+@T
+CSS selectors: `#name` is an id, `.name` is a class, and `li` is a tag. `ul li` means an `li` inside a `ul`.
+
+`textContent` reads or sets plain text. `innerHTML` reads or sets HTML. Never put text typed by users in `innerHTML`, because it could run as code.
+~html
+<p id="msg">Old text</p>
+~code
+let msg = document.querySelector("#msg");
+msg.textContent = "New text";
+msg.innerHTML = "<b>Bold</b> text";
+@Q
+Which selector finds an element with `class="warn"`?
+~opts
+* `.warn`
+- `#warn`
+- `warn`
+~why
+A dot means class, a hash means id, and a plain word means a tag.
+@Q
+What does `querySelector` return when nothing matches?
+~opts
+* `null`
+- An empty array
+- `undefined`
+~why
+Calling a method on `null` is where "Cannot read properties of null" comes from.
+@C
+Change the text of the element with id `status` to `Ready`.
+~html
+<p id="status">Waiting</p>
+~start
+// Your code here
+
+~sol
+document.getElementById("status").textContent = "Ready";
+~hint
+document.getElementById("status").textContent = ...
+~after
+console.log(document.getElementById("status").textContent);
+~out
+Ready
+=U dommod | Changing the Page | Book section 2.3. Adding, removing and editing elements.
+=L dommod1 | Create and remove
+@T
+Three steps add something new: `createElement` makes it, you fill it in, then `appendChild` puts it on the page.
+
+`remove()` takes an element off. `setAttribute` and `getAttribute` handle attributes.
+~html
+<ul id="list"><li id="old">Old item</li></ul>
+~code
+let item = document.createElement("li");
+item.textContent = "New item";
+
+let list = document.getElementById("list");
+list.appendChild(item);
+
+document.getElementById("old").remove();
+list.setAttribute("title", "My list");
+console.log(list.getAttribute("title"));
+@O
+Put these in order to add a paragraph to the page.
+~lines
+let p = document.createElement("p");
+p.textContent = "Hi";
+document.body.appendChild(p);
+~why
+Create it, fill it, then attach it. Until it's attached, it isn't on the page.
+@P
+What does this print?
+~code
+let box = { children: [] };
+box.children.push("a");
+console.log(box.children.length);
+~opts
+* 1
+- 0
+- a
+~why
+Elements work the same way: `appendChild` adds to a list of children.
+@Q
+You made an element with `createElement`, but it isn't showing. What's the likely cause?
+~opts
+* It was never added with `appendChild`
+- `createElement` needs a semicolon
+- The element needs an id
+~why
+Creating isn't the same as attaching.
+@C
+Add a new `li` with the text `Gasket` to the list with id `parts`.
+~html
+<ul id="parts"><li>Valve</li></ul>
+~start
+// Your code here
+
+~sol
+let item = document.createElement("li");
+item.textContent = "Gasket";
+document.getElementById("parts").appendChild(item);
+~hint
+createElement, then textContent, then appendChild.
+~after
+let rows = document.querySelectorAll("#parts li");
+console.log(rows.length, rows[1].textContent);
+~out
+2 Gasket
+=U events | Event-Driven Programming | Book section 2.4. Reacting to clicks and typing.
+=L events1 | Listening for events
+@T
+An **event** is something that happens: a click, a key press, typing. Instead of running top to bottom and ending, a page waits and reacts.
+
+`addEventListener` takes the event name and a function to run. That function is called a **handler**. Run this, then press the button in the preview.
+~html
+<button id="go">Press me</button>
+<p id="out">Not pressed</p>
+~code
+let count = 0;
+let button = document.getElementById("go");
+
+button.addEventListener("click", function () {
+  count++;
+  document.getElementById("out").textContent = `Pressed ${count} times`;
+});
+@T
+The handler receives an **event object**. `event.target` is the element that was used. `event.key` gives the key pressed. `event.preventDefault()` stops the browser's normal action, like a form reloading the page.
+
+Common events: `click`, `input`, `change`, `submit`, `keydown`, `mouseover`, `load`.
+~html
+<input id="name" placeholder="Type here">
+<p id="echo"></p>
+~code
+document.getElementById("name").addEventListener("input", (event) => {
+  document.getElementById("echo").textContent = event.target.value;
+});
+@Q
+What's wrong with `button.addEventListener("click", doThing());`?
+~opts
+* It calls `doThing` right away instead of passing it
+- `click` should be capitalized
+- Handlers can't have names
+~why
+Pass the function itself: `doThing`, with no parentheses.
+@Q
+Clicking a button inside a `div` also triggers a click listener on the `div`. What's this called?
+~opts
+* Event bubbling
+- Hoisting
+- Shadowing
+~why
+Events travel up through the parent elements. Listening on a parent for many children is called **delegation**.
+@C
+When the button `#add` is clicked, add 1 to the number shown in `#count`.
+~html
+<span id="count">0</span> <button id="add">Add</button>
+~start
+// Your code here
+
+~sol
+let n = 0;
+document.getElementById("add").addEventListener("click", () => {
+  n++;
+  document.getElementById("count").textContent = n;
+});
+~hint
+Keep a number in a variable. Update textContent inside the handler.
+~after
+__click("#add");
+__click("#add");
+console.log(document.getElementById("count").textContent);
+~out
+2
+=U timers | Timers | Book section 2.5. Running code later.
+=L timers1 | Delays and repeats
+@T
+`setTimeout` runs a function once, after a delay in milliseconds. 1000 ms is one second.
+
+`setInterval` keeps running it on a schedule until you stop it with `clearInterval`.
+
+Timers don't pause your program. The next line runs right away, and the timer fires later.
+~code
+console.log("first");
+
+setTimeout(() => {
+  console.log("third");
+}, 100);
+
+console.log("second");
+@T
+Save the id that `setInterval` gives you, so you can stop it.
+~code
+let n = 3;
+
+let id = setInterval(() => {
+  console.log(n);
+  n--;
+  if (n === 0) {
+    clearInterval(id);
+    console.log("Liftoff");
+  }
+}, 100);
+@P
+What does this print?
+~code
+setTimeout(() => console.log("A"), 0);
+console.log("B");
+~opts
+* B
+A
+- A
+B
+- A
+~why
+Even a 0 delay waits until the current code finishes.
+@Q
+Which call stops `let t = setInterval(tick, 1000);`?
+~opts
+* `clearInterval(t)`
+- `stop(t)`
+- `t.cancel()`
+~why
+`clearTimeout` is the matching call for `setTimeout`.
+@C
+Write `countdown(start)` that prints `start` down to 1, one number every 20 ms, then stops.
+~start
+function countdown(start) {
+
+}
+
+countdown(3);
+~sol
+function countdown(start) {
+  let n = start;
+  let id = setInterval(() => {
+    console.log(n);
+    n--;
+    if (n === 0) {
+      clearInterval(id);
+    }
+  }, 20);
+}
+
+countdown(3);
+~hint
+Use setInterval, and call clearInterval when n reaches 0.
+~out
+3
+2
+1
+~must
+setInterval|setTimeout :: Use a timer.
+=U cssjs | Changing CSS from JavaScript | Book section 2.6. Styles and classes.
+=L cssjs1 | Styles and classes
+@T
+`element.style` sets inline styles. CSS names with dashes become camelCase, so `background-color` becomes `backgroundColor`.
+
+A cleaner way is to define a class in CSS and use `classList` with `add`, `remove`, `toggle`, and `contains`.
+~html
+<style>.alarm { color: white; background: firebrick; padding: 6px; }</style>
+<p id="s">Tank pressure</p>
+<button id="b">Toggle alarm</button>
+~code
+let s = document.getElementById("s");
+s.style.fontWeight = "bold";
+
+document.getElementById("b").addEventListener("click", () => {
+  s.classList.toggle("alarm");
+});
+@Q
+How do you set `font-size` in JavaScript?
+~opts
+* `el.style.fontSize = "20px"`
+- `el.style.font-size = "20px"`
+- `el.fontSize("20px")`
+~why
+A dash would mean subtraction, so the name becomes camelCase. Don't forget the unit.
+@Q
+What does `classList.toggle("on")` do?
+~opts
+* Adds the class if missing, removes it if present
+- Always adds the class
+- Deletes every class
+~why
+It's ideal for on and off buttons.
+@C
+When `#check` is clicked, toggle the class `done` on `#task`.
+~html
+<p id="task">Inspect valve</p><button id="check">Done</button>
+~start
+// Your code here
+
+~sol
+document.getElementById("check").addEventListener("click", () => {
+  document.getElementById("task").classList.toggle("done");
+});
+~hint
+Use classList.toggle inside a click listener.
+~after
+__click("#check");
+console.log(document.getElementById("task").classList.contains("done"));
+__click("#check");
+console.log(document.getElementById("task").classList.contains("done"));
+~out
+true
+false
+=U formsjs | Form Validation | Book section 2.7. Checking input before it's sent.
+=L forms1 | Checking a form
+@T
+Listen for the form's `submit` event. Read each field's `.value`. If something's wrong, call `event.preventDefault()` to stop it and show a message.
+
+`.value` is always a string, and `.trim()` removes spaces people add by accident.
+~html
+<form id="f"><input id="email" placeholder="Email"><button>Send</button></form>
+<p id="err"></p>
+~code
+document.getElementById("f").addEventListener("submit", (event) => {
+  event.preventDefault();
+  let email = document.getElementById("email").value.trim();
+  let err = document.getElementById("err");
+  if (!email.includes("@")) {
+    err.textContent = "Enter a valid email.";
+  } else {
+    err.textContent = "Thanks!";
+  }
+});
+@Q
+Why is checking only in the browser not enough for a real site?
+~opts
+* Users can bypass it, so the server must check too
+- Browsers can't compare strings
+- It's too slow
+~why
+Browser checks are for a better experience. The server is what enforces the rules.
+@Q
+Which HTML attribute makes a field required without any JavaScript?
+~opts
+* `required`
+- `must`
+- `validate`
+~why
+HTML also has `type="email"`, `min`, `max`, and `pattern`.
+@C
+When `#signup` is submitted, stop the page from reloading. If `#age` is under 18, put `Too young` in `#msg`. Otherwise, put `Welcome`.
+~html
+<form id="signup"><input id="age"><button type="submit">Go</button></form><p id="msg"></p>
+~start
+// Your code here
+
+~sol
+document.getElementById("signup").addEventListener("submit", (event) => {
+  event.preventDefault();
+  let age = Number(document.getElementById("age").value);
+  document.getElementById("msg").textContent = age < 18 ? "Too young" : "Welcome";
+});
+~hint
+Convert with Number(). Remember preventDefault().
+~after
+__type("#age", "12");
+__click("button");
+console.log(document.getElementById("msg").textContent);
+__type("#age", "30");
+__click("button");
+console.log(document.getElementById("msg").textContent);
+~out
+Too young
+Welcome
+=U jsonu | JSON | Book section 2.8. The format data travels in.
+=L json1 | JSON text
+@T
+**JSON** is text that looks like JavaScript objects. It's how programs swap data.
+
+`JSON.stringify` turns a value into text. `JSON.parse` turns text back into a value.
+
+JSON rules: keys need double quotes, strings use double quotes, and functions aren't allowed.
+~code
+let part = { name: "valve", qty: 3, tags: ["fuel"] };
+
+let text = JSON.stringify(part);
+console.log(text);
+console.log(typeof text);
+
+let back = JSON.parse(text);
+console.log(back.tags[0]);
+@Q
+Which one is valid JSON?
+~opts
+* `{"name": "Ana"}`
+- `{name: "Ana"}`
+- `{'name': 'Ana'}`
+~why
+JSON requires double quotes around keys and strings.
+@P
+What does this print?
+~code
+let o = JSON.parse('{"a": [1, 2, 3]}');
+console.log(o.a.length);
+~opts
+* 3
+- 1
+- 7
+~why
+`parse` rebuilt a real object with a real array.
+@C
+Parse `data`, add a new item `"seal"` to its `parts` array, and print the result as JSON text.
+~start
+let data = '{"parts":["valve"]}';
+// Your code here
+
+~sol
+let data = '{"parts":["valve"]}';
+let obj = JSON.parse(data);
+obj.parts.push("seal");
+console.log(JSON.stringify(obj));
+~hint
+Parse, push, then stringify.
+~out
+{"parts":["valve","seal"]}
+=U xhr | XMLHttpRequest and Web APIs | Book sections 2.9 to 2.11. Getting data from servers.
+=L xhr1 | Asking a server for data
+@T
+**Ajax** means loading data without reloading the page. `XMLHttpRequest` is the original tool for it.
+
+The app can't reach the real internet, so it answers these lessons with a built-in practice server at `api.example.com`. It has `/weather?city=Austin`, `/quote`, `/users`, `/rates`, and `/forecast?city=Austin`.
+
+Requests are **asynchronous**: `send` returns right away, and the `load` event fires when the answer arrives.
+~code
+let xhr = new XMLHttpRequest();
+
+xhr.addEventListener("load", function () {
+  console.log(this.status);
+  let data = JSON.parse(this.responseText);
+  console.log(data.tempF);
+});
+
+xhr.open("GET", "https://api.example.com/weather?city=Austin");
+xhr.send();
+console.log("Sent");
+@T
+A **web API** is a service your code talks to over the internet, like a weather service. You read its documentation to learn the URLs, and many need an API key.
+
+Status codes tell you what happened: 200 is OK, 404 is not found, and 500 is a server error.
+
+Browsers block most requests to other sites unless that site allows it. That rule is the **same-origin policy**, and the allowing system is **CORS**.
+
+Browsers also differ in what they support, so test across them. Check support before using something new. This is called **feature detection**.
+~code
+if ("localStorage" in window) {
+  console.log("This browser has localStorage");
+}
+@Q
+What order do you call things on an XMLHttpRequest?
+~opts
+* Add the listener, `open`, then `send`
+- `send`, `open`, then add the listener
+- `open`, `send`, then `create`
+~why
+The listener has to be ready before the answer can arrive.
+@Q
+Your code gets a CORS error. What does that mean?
+~opts
+* The other server hasn't allowed requests from your site
+- Your JavaScript has a typo
+- The JSON is invalid
+~why
+The browser blocked reading the response. The other server, or your own server acting as a go-between, has to allow it.
+@Q
+What does a status of 404 mean?
+~opts
+* The resource wasn't found
+- Everything worked
+- The server crashed
+~why
+Always check the status before using the data.
+@C
+Use XMLHttpRequest to get `https://api.example.com/quote` and print the `quote` field.
+~start
+// Your code here
+
+~sol
+let xhr = new XMLHttpRequest();
+xhr.addEventListener("load", function () {
+  let data = JSON.parse(this.responseText);
+  console.log(data.quote);
+});
+xhr.open("GET", "https://api.example.com/quote");
+xhr.send();
+~hint
+Listener, open, send. Inside, JSON.parse(this.responseText).
+~out
+Measure twice, cut once.
+~must
+XMLHttpRequest :: Use XMLHttpRequest here.
+=U ex2 | Chapter 2 Examples | Book sections 2.12 and 2.13. Lights Out and Weather Comparison.
+=L ex21 | Lights Out game
+@T
+**Lights Out** is a grid of lights. Pressing one toggles it and its neighbors, and you win when they're all off.
+
+Good programs split the **game logic** from the **display**. Here, a 2D array holds the state, and a render function draws it. Press the squares.
+~html
+<style>#g{display:grid;grid-template-columns:repeat(3,44px);gap:4px}#g button{height:44px;background:#222}#g button.on{background:gold}</style>
+<div id="g"></div><p id="s"></p>
+~code
+let on = [[true, false, true], [false, true, false], [true, false, true]];
+
+function toggle(r, c) {
+  if (on[r] && on[r][c] !== undefined) on[r][c] = !on[r][c];
+}
+
+function press(r, c) {
+  toggle(r, c);
+  toggle(r - 1, c);
+  toggle(r + 1, c);
+  toggle(r, c - 1);
+  toggle(r, c + 1);
+  render();
+}
+
+function render() {
+  let g = document.getElementById("g");
+  g.innerHTML = "";
+  on.forEach((row, r) => row.forEach((lit, c) => {
+    let b = document.createElement("button");
+    if (lit) b.classList.add("on");
+    b.addEventListener("click", () => press(r, c));
+    g.appendChild(b);
+  }));
+  let won = on.flat().every((lit) => !lit);
+  document.getElementById("s").textContent = won ? "You win!" : "";
+}
+
+render();
+@Q
+Why does `toggle` check `on[r]` first?
+~opts
+* Neighbors can fall off the edge of the grid
+- To make it run faster
+- Arrays require it
+~why
+`on[-1]` is `undefined`, and reading `[c]` from it would crash.
+@Q
+What's the benefit of separating game logic from display?
+~opts
+* You change state in one place and redraw from it
+- The code gets longer
+- CSS stops being needed
+~why
+The array is the single source of truth. React and Angular are built on this same idea.
+=L ex22 | Weather Comparison
+@T
+This is the shape of a web API app: read input, request data, check it worked, then show it.
+
+Try Austin, Seattle, or Chicago, then something made-up to see the error path.
+~html
+<input id="city" value="Austin"><button id="go">Get weather</button><p id="out"></p>
+~code
+document.getElementById("go").addEventListener("click", () => {
+  let city = document.getElementById("city").value;
+  let xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", function () {
+    let out = document.getElementById("out");
+    if (this.status === 200) {
+      let w = JSON.parse(this.responseText);
+      out.textContent = `${w.city}: ${w.tempF}°F, ${w.condition}`;
+    } else {
+      out.textContent = "City not found";
+    }
+  });
+  xhr.open("GET", "https://api.example.com/weather?city=" + encodeURIComponent(city));
+  xhr.send();
+});
+@Q
+Why use `encodeURIComponent(city)`?
+~opts
+* Spaces and symbols must be made safe for a URL
+- It translates the city name
+- It's required by JSON
+~why
+`San Antonio` needs its space encoded, or the URL breaks.
+=U labs2 | Chapter 2 Labs | Practice problems in the style of book sections 2.14 to 2.19.
+=F lab214 | Lab: Grade distribution
+@C
+Write `distribution(scores)` that returns an object counting grades: A is 90 and up, B is 80 to 89, C is 70 to 79, D is 60 to 69, and F is below 60.
+
+Then show `A:1 B:0 C:1 D:0 F:1` style text in `#out` for the list `[95, 72, 40]`.
+~html
+<p id="out"></p>
+~start
+function distribution(scores) {
+
+}
+
+// Show the result in #out
+
+~sol
+function distribution(scores) {
+  let d = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+  for (let s of scores) {
+    if (s >= 90) d.A++;
+    else if (s >= 80) d.B++;
+    else if (s >= 70) d.C++;
+    else if (s >= 60) d.D++;
+    else d.F++;
+  }
+  return d;
+}
+
+let d = distribution([95, 72, 40]);
+document.getElementById("out").textContent = `A:${d.A} B:${d.B} C:${d.C} D:${d.D} F:${d.F}`;
+~hint
+Start with { A: 0, B: 0, ... } and add 1 in an if / else if chain.
+~after
+console.log(document.getElementById("out").textContent);
+console.log(distribution([85, 85, 61]).B);
+~out
+A:1 B:0 C:1 D:0 F:1
+2
+=F lab215 | Lab: Temperature converter
+@C
+When the user types in `#c`, show the Fahrenheit value in `#f`. When they type in `#f`, show the Celsius value in `#c`.
+
+Use `f = c * 9 / 5 + 32`, and clear the other box if the input isn't a number.
+~html
+<input id="c" placeholder="C"> <input id="f" placeholder="F">
+~start
+// Your code here
+
+~sol
+let c = document.getElementById("c");
+let f = document.getElementById("f");
+
+c.addEventListener("input", () => {
+  let n = parseFloat(c.value);
+  f.value = Number.isNaN(n) ? "" : n * 9 / 5 + 32;
+});
+
+f.addEventListener("input", () => {
+  let n = parseFloat(f.value);
+  c.value = Number.isNaN(n) ? "" : (n - 32) * 5 / 9;
+});
+~hint
+Listen for "input" on both boxes. parseFloat gives NaN for bad input.
+~after
+__type("#c", "100");
+console.log(document.getElementById("f").value);
+__type("#f", "32");
+console.log(document.getElementById("c").value);
+__type("#c", "abc");
+console.log(document.getElementById("f").value === "");
+~out
+212
+0
+true
+=F lab216 | Lab: Tic-Tac-Toe
+@C
+Write `winner(board)` for a 9-item array of `"X"`, `"O"`, or `""`. Return `"X"` or `"O"` if someone has three in a row, or `""` if nobody does.
+~start
+function winner(board) {
+
+}
+
+~sol
+function winner(board) {
+  let lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (let [a, b, c] of lines) {
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      return board[a];
+    }
+  }
+  return "";
+}
+~hint
+List the 8 winning lines as index triples, then loop through them.
+~after
+console.log(winner(["X","X","X","","","","","",""]) === "X");
+console.log(winner(["O","","","","O","","","","O"]) === "O");
+console.log(winner(["X","O","X","","","","","",""]) === "");
+~out
+true
+true
+true
+=F lab217 | Lab: Quote API with XMLHttpRequest
+@C
+When `#get` is clicked, request `https://api.example.com/quote` with XMLHttpRequest and show the text as `quote - author` in `#q`.
+~html
+<button id="get">New quote</button><p id="q"></p>
+~start
+// Your code here
+
+~sol
+document.getElementById("get").addEventListener("click", () => {
+  let xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", function () {
+    let d = JSON.parse(this.responseText);
+    document.getElementById("q").textContent = `${d.quote} - ${d.author}`;
+  });
+  xhr.open("GET", "https://api.example.com/quote");
+  xhr.send();
+});
+~hint
+Put the whole request inside the click handler.
+~after
+__click("#get");
+await wait(60);
+console.log(document.getElementById("q").textContent);
+~out
+Measure twice, cut once. - Proverb
+=F lab218 | Lab: Heart animation
+@C
+Make `#heart` grow and shrink. Every 20 ms, change a `size` value by a `step`, and set `style.fontSize` in pixels. Start at 20, reverse the step at 30 and at 20, and start with a step of 1.
+
+Store the timer in `timer`, and stop it when `#stop` is clicked.
+~html
+<div id="heart">♥</div><button id="stop">Stop</button>
+~start
+// Your code here
+
+~sol
+let size = 20;
+let step = 1;
+let timer = setInterval(() => {
+  size += step;
+  if (size >= 30 || size <= 20) {
+    step = -step;
+  }
+  document.getElementById("heart").style.fontSize = size + "px";
+}, 20);
+
+document.getElementById("stop").addEventListener("click", () => {
+  clearInterval(timer);
+});
+~hint
+Flip step with step = -step when you reach an end. Size needs "px".
+~after
+await wait(90);
+let a = parseInt(document.getElementById("heart").style.fontSize);
+console.log(a > 20);
+__click("#stop");
+await wait(10);
+let b = document.getElementById("heart").style.fontSize;
+await wait(70);
+console.log(b === document.getElementById("heart").style.fontSize);
+~out
+true
+true
+=F lab219 | Lab: To-do list
+@C
+When `#add` is clicked, add the text from `#item` to `#list` as a new `li`, then clear the input. Ignore empty text.
+
+Clicking an `li` should remove it.
+~html
+<input id="item"><button id="add">Add</button><ul id="list"></ul>
+~start
+// Your code here
+
+~sol
+document.getElementById("add").addEventListener("click", () => {
+  let input = document.getElementById("item");
+  let text = input.value.trim();
+  if (!text) return;
+  let li = document.createElement("li");
+  li.textContent = text;
+  li.addEventListener("click", () => li.remove());
+  document.getElementById("list").appendChild(li);
+  input.value = "";
+});
+~hint
+Add a click listener to each new li before appending it.
+~after
+__type("#item", "Inspect");
+__click("#add");
+__type("#item", "   ");
+__click("#add");
+__type("#item", "Torque");
+__click("#add");
+console.log(document.querySelectorAll("#list li").length);
+__click("#list li");
+console.log(document.querySelector("#list li").textContent, document.getElementById("item").value === "");
+~out
+2
+Torque true

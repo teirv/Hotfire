@@ -1,0 +1,1756 @@
+=U first | First Steps | What code is, and how to make the computer talk.
+=L hello | Your first line of code
+@T
+**JavaScript** is the language that makes websites do things. Buttons, menus, games in your browser: most of that is JavaScript.
+
+A **program** is a list of instructions. The computer does them one at a time, from the top down.
+
+Here is a complete program. Press **Run** to see it work.
+~code
+console.log("Hello!");
+@T
+`console.log()` means "show this on the screen." The thing inside the parentheses is what gets shown.
+
+The bottom box is called the **console**. It is where your program's output appears.
+
+The semicolon `;` marks the end of an instruction, like a period ends a sentence.
+~code
+console.log("Line one");
+console.log("Line two");
+@P
+What shows up in the console?
+~code
+console.log("Go");
+console.log("Team");
+~opts
+* Go
+Team
+- Team
+Go
+- GoTeam
+~why
+Each `console.log` prints on its own line, and instructions run from top to bottom.
+@B
+Finish the instruction so it prints a word.
+~code
+___.log("Ready");
+~opts
+* console
+- print
+- screen
+~why
+`console.log` is the name to memorize. Other languages use `print`, but JavaScript does not.
+~out
+Ready
+@C
+Print the word `Launch` to the console.
+~start
+// Type your code below this line
+
+~sol
+console.log("Launch");
+~hint
+Copy the shape: console.log("your text here");
+~out
+Launch
+=L values | Text and numbers
+@T
+Programs work with **values**. The two you will use first:
+
+**Strings** are text. They always go inside quotes: `"pizza"`.
+
+**Numbers** are just numbers, with no quotes: `42` or `3.5`.
+~code
+console.log("I am text");
+console.log(42);
+console.log(3.5);
+@T
+JavaScript can do math for you. Put the math inside `console.log` and you get the answer.
+
+Watch what the quotes change. With quotes, it is only text, so nothing gets calculated.
+~code
+console.log(2 + 3);
+console.log("2 + 3");
+@P
+What does this print?
+~code
+console.log(10 + 5);
+~opts
+* 15
+- 10 + 5
+- 105
+~why
+There are no quotes, so JavaScript does the math.
+@P
+What does this print?
+~code
+console.log("10 + 5");
+~opts
+* 10 + 5
+- 15
+- "10 + 5"
+~why
+Quotes make it a string, so the text is shown exactly. The quote marks themselves do not print.
+@T
+A **comment** is a note for humans. The computer skips anything after `//` on that line.
+
+Use comments to explain what your code is doing.
+~code
+// This line is ignored
+console.log("This one runs");
+@Q
+Which line does the computer skip?
+~opts
+* `// console.log("hi");`
+- `console.log("// hi");`
+- `console.log("hi");`
+~why
+Starting a line with `//` turns it into a comment. In the second option, the `//` is inside a string, so it is just text.
+@C
+Print the answer to `7 + 8`. Let JavaScript do the math, so don't use quotes.
+~start
+// Print the answer to 7 + 8
+
+~sol
+console.log(7 + 8);
+~hint
+Numbers go inside console.log with no quotes.
+~out
+15
+~must
+\+ :: Let JavaScript do the adding: put 7 + 8 in your code.
+=F fire1 | Hot fire: Status board
+@C
+**Hot fire** is the final test for this unit, with no multiple choice.
+
+Print these three lines, in this order. Calculate the last line with math (`60 * 3`) instead of typing the answer.
+
+```
+Status report
+All systems ready
+180
+```
+~start
+// Three console.log lines
+
+~sol
+console.log("Status report");
+console.log("All systems ready");
+console.log(60 * 3);
+~hint
+You need one console.log per line of output. In code, * means multiply.
+~out
+Status report
+All systems ready
+180
+~must
+\* :: Use 60 * 3 to calculate the last line.
+=U vars | Variables
+=L boxes | Boxes with names
+@T
+A **variable** is a labeled box that holds a value. You put something in once, then use the label whenever you need it.
+
+`let` means "make a new box." The `=` means "put this value inside."
+~code
+let age = 30;
+console.log(age);
+@T
+Important detail: in code, `=` does **not** mean "equals." It means **store**. Read it right to left: take `30` and store it in `age`.
+
+No quotes around a variable name. Quotes would give you the word itself.
+~code
+let city = "Waco";
+console.log(city);
+console.log("city");
+@P
+What does this print?
+~code
+let food = "tacos";
+console.log(food);
+~opts
+* tacos
+- food
+- "tacos"
+~why
+With no quotes, `food` is the variable's name, so you see what is inside the box.
+@T
+Boxes made with `let` can get new values. Leave off `let` the second time, because the box already exists.
+
+The old value is replaced.
+~code
+let score = 10;
+score = 25;
+console.log(score);
+@P
+What does this print?
+~code
+let lives = 3;
+lives = 2;
+lives = 1;
+console.log(lives);
+~opts
+* 1
+- 3
+- 6
+~why
+Each `=` replaces what was in the box. The last value stored was `1`.
+@T
+Use `const` for a box that should never change, like a birthday. Trying to change it gives an error, which protects you from mistakes.
+
+A good habit: use `const` by default, and `let` only if the value needs to change.
+~code
+const birthYear = 1995;
+console.log(birthYear);
+@Q
+You are storing a score that goes up during a game. Which keyword fits?
+~opts
+* `let`
+- `const`
+~why
+The score changes, so it needs `let`. A `const` value can't be replaced.
+@C
+Make a variable called `name` with `let` and store your name as a string. Then print the variable.
+~start
+// Make the variable, then print it
+
+~sol
+let name = "Teir";
+console.log(name);
+~hint
+let name = "something"; then console.log(name);
+~must
+\blet\s+name\s*= :: Create the variable with: let name = ...
+console\.log\(\s*name\s*\) :: Print the variable with no quotes: console.log(name)
+~anyout
+=L names | Mixing text and variables
+@T
+You can glue strings together with `+`. Gluing text is called **concatenation**.
+
+Mind the space inside the quotes, or the words will run together.
+~code
+let name = "Sam";
+console.log("Hi " + name);
+console.log("Hi" + name);
+@T
+There is an easier way called a **template literal**. Use backticks (the key above Tab) instead of quotes, then put variables in `${ }`.
+
+It reads almost like a normal sentence.
+~code
+let name = "Sam";
+let age = 30;
+console.log(`${name} is ${age} years old`);
+@B
+Finish the template literal.
+~code
+let pet = "dog";
+console.log(`My ___ pet ___`);
+~opts
+* favorite
+* is a ${pet}
+- is a pet
+- ${favorite}
+~why
+Plain words stay as they are. `${pet}` swaps in the value of the variable.
+~out
+My favorite pet is a dog
+@P
+What does this print?
+~code
+let item = "bolt";
+let count = 4;
+console.log(`I need ${count} of ${item}`);
+~opts
+* I need 4 of bolt
+- I need count of item
+- I need ${count} of ${item}
+~why
+Everything inside `${ }` is replaced by its value.
+@T
+Good variable names say what is inside. JavaScript style is **camelCase**: the first word is lowercase and each new word starts with a capital.
+
+Names can't have spaces or start with a number, and capitals matter: `Score` and `score` are different boxes.
+~code
+let tankPressure = 450;
+let isReady = true;
+console.log(tankPressure);
+console.log(isReady);
+@Q
+Which variable name works in JavaScript?
+~opts
+* `totalPrice`
+- `total price`
+- `2total`
+~why
+No spaces, and no number at the start. `totalPrice` is also in camelCase.
+@C
+The variables are already made. Use a template literal to print exactly:
+
+`Mia scored 90`
+~start
+let player = "Mia";
+let points = 90;
+// Print the sentence below
+
+~sol
+let player = "Mia";
+let points = 90;
+console.log(`${player} scored ${points}`);
+~hint
+Use backticks: console.log(`${player} ...`);
+~out
+Mia scored 90
+~must
+\$\{\s*player\s*\} :: Put ${player} inside a template literal.
+=F fire2 | Hot fire: Name badge
+@C
+Make three variables: `firstName` set to `"Ada"`, `role` set to `"Engineer"`, and `shift` set to `2`.
+
+Print these lines using your variables:
+
+```
+Name: Ada
+Role: Engineer
+Shift 2 is on site
+```
+~start
+// Your variables go here
+
+~sol
+const firstName = "Ada";
+const role = "Engineer";
+const shift = 2;
+console.log(`Name: ${firstName}`);
+console.log(`Role: ${role}`);
+console.log(`Shift ${shift} is on site`);
+~hint
+Make the three variables first. Then write one console.log with backticks for each line.
+~out
+Name: Ada
+Role: Engineer
+Shift 2 is on site
+~must
+\$\{\s*firstName\s*\}|\+\s*firstName :: Use your firstName variable instead of typing Ada into the output.
+=U math | Math and Text Tools
+=L arith | Doing math
+@T
+The math symbols: `+` add, `-` subtract, `*` multiply, `/` divide.
+
+Math goes in the usual order: multiply and divide first, unless you use parentheses.
+~code
+console.log(6 + 2);
+console.log(6 * 2);
+console.log(6 / 2);
+console.log(2 + 3 * 4);
+console.log((2 + 3) * 4);
+@T
+`%` is called **remainder** (or modulo). It gives what is left over after dividing.
+
+`7 % 3` is `1`, because 3 goes into 7 twice and leaves 1. It is often used to check for even numbers: an even number has a remainder of 0 when divided by 2.
+~code
+console.log(7 % 3);
+console.log(10 % 2);
+console.log(11 % 2);
+@P
+What does this print?
+~code
+console.log(9 % 4);
+~opts
+* 1
+- 2
+- 2.25
+~why
+4 goes into 9 twice, which makes 8. The leftover is 1.
+@T
+Updating a variable is so common that it has shortcuts.
+
+`score += 5` means "add 5 to score." `score++` means "add 1."
+~code
+let score = 10;
+score += 5;
+console.log(score);
+score++;
+console.log(score);
+@P
+What does this print?
+~code
+let total = 20;
+total -= 5;
+total++;
+console.log(total);
+~opts
+* 16
+- 15
+- 21
+~why
+20 minus 5 is 15, and `++` adds 1 to make 16.
+@C
+A tank holds `120` liters and you add `35` more.
+
+Make a variable `liters` set to `120`, add `35` to it with `+=`, then print `liters`.
+~start
+// Your code here
+
+~sol
+let liters = 120;
+liters += 35;
+console.log(liters);
+~hint
+let liters = 120; then liters += 35; then print it.
+~out
+155
+~must
+\+= :: Use += to update the variable.
+=L strtools | Working with strings
+@T
+Strings come with built-in tools.
+
+`.length` tells you how many characters are in a string. Spaces count.
+
+`.toUpperCase()` and `.toLowerCase()` give you a new version in different letter case.
+~code
+let word = "rocket";
+console.log(word.length);
+console.log(word.toUpperCase());
+console.log("LOUD".toLowerCase());
+@T
+Computers count from **0**. The first character is at position 0, and the second is at position 1. Square brackets get one character.
+
+This trips up most beginners, so go slowly here.
+~code
+let word = "rocket";
+console.log(word[0]);
+console.log(word[1]);
+console.log(word[5]);
+@P
+What does this print?
+~code
+let tool = "wrench";
+console.log(tool[2]);
+~opts
+* e
+- r
+- w
+~why
+Count from 0: w is 0, r is 1, e is 2.
+@T
+Two more useful tools. `.includes()` answers yes or no: is this text inside? The answer is `true` or `false`.
+
+`.trim()` removes extra spaces from the ends.
+~code
+let message = "  all clear  ";
+console.log(message.trim());
+console.log(message.includes("clear"));
+console.log(message.includes("abort"));
+@T
+A value's type matters. `"5"` is a string and `5` is a number. Adding a string glues instead of adding.
+
+`Number()` turns text into a number. `String()` does the reverse. `typeof` tells you the type.
+~code
+console.log("5" + 5);
+console.log(Number("5") + 5);
+console.log(typeof "5");
+console.log(typeof 5);
+@P
+What does this print?
+~code
+console.log("3" + 4);
+~opts
+* 34
+- 7
+- An error
+~why
+One side is a string, so `+` glues them together. This is a very common beginner bug.
+@C
+`price` holds a string. Convert it with `Number()`, add `10`, and print the result.
+~start
+let price = "25";
+// Turn price into a number, add 10, print it
+
+~sol
+let price = "25";
+console.log(Number(price) + 10);
+~hint
+Number(price) gives you 25 as a real number.
+~out
+35
+~must
+Number\( :: Use Number() to convert the string.
+=F fire3 | Hot fire: Tip calculator
+@C
+Your bill is `40` dollars and you want to leave a 20% tip.
+
+Make `bill` set to `40` and `tip` calculated as `bill * 0.2`. Make `total` by adding them. Then print:
+
+```
+Tip: 8
+Total: 48
+```
+~start
+// Your code here
+
+~sol
+const bill = 40;
+const tip = bill * 0.2;
+const total = bill + tip;
+console.log(`Tip: ${tip}`);
+console.log(`Total: ${total}`);
+~hint
+Variables can be made from other variables: const total = bill + tip;
+~out
+Tip: 8
+Total: 48
+~must
+bill\s*\*\s*0?\.2 :: Calculate the tip with bill * 0.2.
+=U decide | Making Decisions
+=L compare | True or false
+@T
+A **boolean** is a value that is either `true` or `false`. There are no quotes, and only those two options exist.
+
+Comparing two values gives you a boolean. Think of each comparison as a yes-or-no question.
+~code
+console.log(5 > 3);
+console.log(5 < 3);
+console.log(5 >= 5);
+@T
+To ask "are these equal?" use three equals signs: `===`. To ask "are these different?" use `!==`.
+
+Remember: one `=` stores a value. Three `===` compares.
+~code
+let code = 1234;
+console.log(code === 1234);
+console.log(code === 9999);
+console.log(code !== 9999);
+@P
+What does this print?
+~code
+let pressure = 80;
+console.log(pressure >= 100);
+~opts
+* false
+- true
+- 80
+~why
+Is 80 greater than or equal to 100? No, so the answer is `false`.
+@Q
+Which line **checks** whether `x` equals 10?
+~opts
+* `x === 10`
+- `x = 10`
+- `x == = 10`
+~why
+`x = 10` stores 10 in `x`. `===` compares, and it has no spaces inside.
+@T
+There is also a loose `==` that can treat `"5"` and `5` as equal. That causes confusing bugs, so always use the strict `===`.
+~code
+console.log(5 == "5");
+console.log(5 === "5");
+@C
+Make `temp` set to `72`. Print whether `temp` is less than `100`.
+~start
+// Your code here
+
+~sol
+let temp = 72;
+console.log(temp < 100);
+~hint
+console.log(temp < 100);
+~out
+true
+~must
+< :: Use the < comparison.
+=L ifelse | If this, then that
+@T
+An `if` statement runs code only when a condition is true.
+
+The test goes in parentheses. The code to run goes in curly braces `{ }`.
+~code
+let fuel = 80;
+
+if (fuel > 50) {
+  console.log("Good to go");
+}
+console.log("Check done");
+@T
+`else` is the backup plan. It runs when the condition is false, so exactly one of the two blocks runs.
+
+The inside of a block is indented with spaces so it is easy to read.
+~code
+let fuel = 20;
+
+if (fuel > 50) {
+  console.log("Good to go");
+} else {
+  console.log("Refuel first");
+}
+@P
+What does this print?
+~code
+let hour = 21;
+if (hour < 12) {
+  console.log("Morning");
+} else {
+  console.log("Not morning");
+}
+~opts
+* Not morning
+- Morning
+- Morning
+Not morning
+~why
+21 is not less than 12, so the `else` block runs.
+@T
+Use `else if` for more than two choices. JavaScript checks from the top down and stops at the first true one.
+~code
+let score = 85;
+
+if (score >= 90) {
+  console.log("A");
+} else if (score >= 80) {
+  console.log("B");
+} else {
+  console.log("Keep going");
+}
+@O
+Put these lines in order to make a working check.
+~lines
+let age = 20;
+if (age >= 18) {
+  console.log("Adult");
+} else {
+  console.log("Minor");
+}
+~why
+The variable comes first, then the `if`, then the `else` block.
+~out
+Adult
+@C
+Make a variable `speed` set to `70`. If it's greater than `65`, print `Slow down`. Otherwise, print `OK`.
+~start
+// Your code here
+
+~sol
+let speed = 70;
+if (speed > 65) {
+  console.log("Slow down");
+} else {
+  console.log("OK");
+}
+~hint
+if (speed > 65) { ... } else { ... }
+~out
+Slow down
+~must
+\bif\s*\( :: Use an if statement.
+\belse\b :: Add an else block.
+=L andor | And, or, not
+@T
+You can combine checks.
+
+`&&` means **and**: both sides must be true.
+
+`||` means **or**: at least one side must be true.
+
+`!` means **not**: it flips true to false.
+~code
+let hasTicket = true;
+let hasID = false;
+
+console.log(hasTicket && hasID);
+console.log(hasTicket || hasID);
+console.log(!hasID);
+@P
+What does this print?
+~code
+let age = 25;
+let member = false;
+if (age > 18 && member) {
+  console.log("Welcome");
+} else {
+  console.log("Sign up");
+}
+~opts
+* Sign up
+- Welcome
+~why
+With `&&`, both sides must be true. `member` is false, so the `else` block runs.
+@B
+Print `Open` when it's the weekend **or** a holiday.
+~code
+let weekend = false;
+let holiday = true;
+if (weekend ___ holiday) {
+  console.log("Open");
+}
+~opts
+* ||
+- &&
+- !
+~why
+Only one needs to be true, so use **or**.
+~out
+Open
+@T
+JavaScript treats some values as false inside an `if`. These are called **falsy**: `0`, `""` (an empty string), `null`, `undefined`, and `NaN`.
+
+Almost everything else counts as true, or **truthy**. This is a quick way to check whether a box has something in it.
+~code
+let nickname = "";
+
+if (nickname) {
+  console.log("Hi " + nickname);
+} else {
+  console.log("No nickname yet");
+}
+@C
+Make `pressure` set to `50`. Print `Safe` if it is at least `30` **and** at most `60`. Otherwise, print `Check gauge`.
+~start
+// Your code here
+
+~sol
+let pressure = 50;
+if (pressure >= 30 && pressure <= 60) {
+  console.log("Safe");
+} else {
+  console.log("Check gauge");
+}
+~hint
+You need two comparisons joined by &&.
+~out
+Safe
+~must
+&& :: Join the two checks with &&.
+=F fire4 | Hot fire: Grade check
+@C
+The variable `score` is set for you. Print the letter grade:
+
+90 or above is `A`, 80 or above is `B`, 70 or above is `C`, and anything lower is `Retake`.
+
+The test will try your code with several scores, so don't type the answer directly.
+~start
+let score = 85;
+// Your if / else if / else here
+
+~sol
+let score = 85;
+if (score >= 90) {
+  console.log("A");
+} else if (score >= 80) {
+  console.log("B");
+} else if (score >= 70) {
+  console.log("C");
+} else {
+  console.log("Retake");
+}
+~hint
+Start with the highest grade and work down. Use else if between each check.
+~replace
+let score = \d+;
+~out with=let score = 95;
+A
+~out with=let score = 85;
+B
+~out with=let score = 70;
+C
+~out with=let score = 12;
+Retake
+=U loops | Loops
+=L forloop | Repeat with for
+@T
+A **loop** runs the same code many times, so you don't have to write it over and over.
+
+This `for` loop prints 1, 2, 3. Run it, then we will go through its three parts.
+~code
+for (let i = 1; i <= 3; i++) {
+  console.log(i);
+}
+@T
+The parentheses hold three parts, separated by semicolons:
+
+**Start:** `let i = 1` makes a counter.
+
+**Keep going while:** `i <= 3` is checked before every round.
+
+**After each round:** `i++` adds 1 to the counter.
+
+`i` is the traditional name for the counter. It stands for index.
+~code
+for (let i = 0; i < 5; i++) {
+  console.log("Round " + i);
+}
+@P
+How many lines does this print?
+~code
+for (let i = 0; i < 4; i++) {
+  console.log("beep");
+}
+~opts
+* 4
+- 3
+- 5
+~why
+`i` takes the values 0, 1, 2, 3. At 4 the condition is false, so the loop stops.
+@B
+Count down from 3 to 1.
+~code
+for (let i = 3; i >= 1; ___) {
+  console.log(i);
+}
+~opts
+* i--
+- i++
+- i = 1
+~why
+`i--` subtracts 1 each round. With `i++`, the count would go up and never stop.
+~out
+3
+2
+1
+@T
+A very common pattern: keep a running total. Start at 0 before the loop, then add to it inside the loop.
+~code
+let total = 0;
+
+for (let i = 1; i <= 4; i++) {
+  total += i;
+}
+console.log(total);
+@C
+Use a `for` loop to print the numbers `1` to `5`, one on each line.
+~start
+// Your loop here
+
+~sol
+for (let i = 1; i <= 5; i++) {
+  console.log(i);
+}
+~hint
+for (let i = 1; i <= 5; i++) { ... }
+~out
+1
+2
+3
+4
+5
+~must
+\bfor\s*\( :: Use a for loop.
+@C
+Add up the numbers from `1` to `10` with a loop, then print the total. Print once, after the loop ends.
+~start
+let total = 0;
+// Your loop here
+
+// Print total
+
+~sol
+let total = 0;
+for (let i = 1; i <= 10; i++) {
+  total += i;
+}
+console.log(total);
+~hint
+Inside the loop, write total += i; Put console.log after the closing brace.
+~out
+55
+~must
+\bfor\s*\(|\bwhile\s*\( :: Use a loop to add the numbers.
+=L whileloop | Repeat with while
+@T
+A `while` loop keeps going as long as its condition is true. Use it when you don't know how many rounds you need.
+
+It is like saying: "while the tank isn't full, keep filling."
+~code
+let tank = 0;
+
+while (tank < 100) {
+  tank += 30;
+  console.log(tank);
+}
+@T
+Careful: something inside the loop must change, or the condition stays true forever. That is an **infinite loop**.
+
+Here it would be `count` never going up. If that happens here, the app stops your code after a few seconds.
+~code
+let count = 3;
+
+while (count > 0) {
+  console.log(count);
+  count--;
+}
+console.log("Liftoff");
+@P
+What is the last line printed?
+~code
+let n = 1;
+while (n < 8) {
+  n = n * 2;
+  console.log(n);
+}
+~opts
+* 8
+- 4
+- 16
+~why
+`n` goes 2, 4, 8. At 8 the condition is false, so the loop ends.
+@T
+`break` jumps out of a loop right away. `continue` skips to the next round.
+~code
+for (let i = 1; i <= 5; i++) {
+  if (i === 2) {
+    continue;
+  }
+  if (i === 4) {
+    break;
+  }
+  console.log(i);
+}
+@T
+Loops can go through a string one letter at a time. `word.length` gives the stopping point, and `word[i]` gets each letter.
+~code
+let word = "go";
+
+for (let i = 0; i < word.length; i++) {
+  console.log(word[i]);
+}
+@C
+Use a `while` loop to print `10`, `8`, `6`, `4`, `2`, each on its own line.
+~start
+let n = 10;
+// Your while loop here
+
+~sol
+let n = 10;
+while (n > 0) {
+  console.log(n);
+  n -= 2;
+}
+~hint
+Print n, then subtract 2 inside the loop.
+~out
+10
+8
+6
+4
+2
+~must
+\bwhile\s*\( :: Use a while loop.
+=F fire5 | Hot fire: Countdown
+@C
+Print a countdown from `5` to `1`, then `Ignition`.
+
+Use the `%` remainder trick so even numbers print with `(check)` after them:
+
+```
+5
+4 (check)
+3
+2 (check)
+1
+Ignition
+```
+~start
+// Your code here
+
+~sol
+for (let i = 5; i >= 1; i--) {
+  if (i % 2 === 0) {
+    console.log(`${i} (check)`);
+  } else {
+    console.log(i);
+  }
+}
+console.log("Ignition");
+~hint
+Put an if inside the loop. A number is even when i % 2 === 0.
+~out
+5
+4 (check)
+3
+2 (check)
+1
+Ignition
+~must
+% :: Use % to find the even numbers.
+=U funcs | Functions
+=L define | Make your own command
+@T
+A **function** is a named set of steps. You write it once and then use it whenever you want, like a saved recipe.
+
+Writing it is called **defining**. Using it is called **calling**. Nothing happens until you call it.
+~code
+function greet() {
+  console.log("Hello there");
+}
+
+greet();
+greet();
+@T
+**Parameters** are inputs. They work like variables that get filled in when you call the function.
+
+The value you pass in is called an **argument**.
+~code
+function greet(name) {
+  console.log("Hello " + name);
+}
+
+greet("Ana");
+greet("Leo");
+@P
+What does this print?
+~code
+function shout(word) {
+  console.log(word + "!");
+}
+shout("Go");
+~opts
+* Go!
+- word!
+- Nothing
+~why
+`"Go"` is passed in, so inside the function `word` holds `"Go"`.
+@P
+What does this print?
+~code
+function hi() {
+  console.log("hi");
+}
+~opts
+* Nothing
+- hi
+- function
+~why
+The function was defined but never called. It needs `hi();`.
+@B
+Define the function, then call it.
+~code
+___ beep() {
+  console.log("beep");
+}
+___;
+~opts
+* function
+* beep()
+- def
+- beep
+~why
+`function` starts a definition. The parentheses in `beep()` are what actually run it.
+~out
+beep
+@C
+Write a function called `sayTwice` with one parameter called `text`. It should print `text` two times. Then call it with `"Check"`.
+~start
+// Define sayTwice here
+
+// Call it here
+
+~sol
+function sayTwice(text) {
+  console.log(text);
+  console.log(text);
+}
+sayTwice("Check");
+~hint
+function sayTwice(text) { two console.log lines }
+~out
+Check
+Check
+~must
+function\s+sayTwice|sayTwice\s*=\s* :: Define a function called sayTwice.
+=L returns | Getting answers back
+@T
+So far our functions print. Most useful functions **return** a value, handing the answer back to the code that called them.
+
+Think of `return` like a vending machine. You put something in, and it hands something back. You can then store it in a variable.
+~code
+function add(a, b) {
+  return a + b;
+}
+
+let sum = add(2, 3);
+console.log(sum);
+console.log(add(10, 1));
+@T
+`console.log` shows a value to a person. `return` hands a value to the program.
+
+A function with no `return` hands back `undefined`, which means "no value."
+~code
+function printIt() {
+  console.log(5);
+}
+function returnIt() {
+  return 5;
+}
+
+let a = printIt();
+let b = returnIt();
+console.log(a);
+console.log(b);
+@P
+What does this print?
+~code
+function double(n) {
+  return n * 2;
+}
+console.log(double(4) + 1);
+~opts
+* 9
+- 10
+- 8
+~why
+`double(4)` hands back 8, and then 8 + 1 is 9.
+@P
+What does this print?
+~code
+function test() {
+  return "first";
+  console.log("second");
+}
+console.log(test());
+~opts
+* first
+- second
+- first
+second
+~why
+`return` ends the function at once. Lines after it never run.
+@T
+**Arrow functions** are a shorter way to write the same thing. You'll see these everywhere in modern JavaScript.
+
+The `=>` replaces the `function` keyword. A one-line version returns its answer automatically.
+~code
+const square = (n) => n * n;
+
+const add = (a, b) => {
+  return a + b;
+};
+
+console.log(square(4));
+console.log(add(2, 2));
+@T
+A **parameter** can have a default, used when nothing is passed in.
+
+Also, a variable made inside a function only exists there. This is called **scope**.
+~code
+function welcome(name = "friend") {
+  let message = `Welcome, ${name}`;
+  return message;
+}
+
+console.log(welcome("Ana"));
+console.log(welcome());
+@C
+Write a function `area(width, height)` that **returns** the width times the height. Use `return`, not `console.log`, inside the function.
+~start
+function area(width, height) {
+  // Your code here
+}
+
+~sol
+function area(width, height) {
+  return width * height;
+}
+~hint
+return width * height;
+~after
+console.log(area(3, 4));
+console.log(area(10, 2));
+~out
+12
+20
+~must
+\breturn\b :: Use return to hand back the answer.
+=F fire6 | Hot fire: Temperature tool
+@C
+Write a function `toFahrenheit(c)` that returns the temperature in Fahrenheit, using `c * 9 / 5 + 32`.
+
+Then write `describe(c)`. It calls `toFahrenheit`, then returns a string:
+
+`Hot` if the Fahrenheit value is over `90`, or `Fine` if it isn't.
+~start
+function toFahrenheit(c) {
+
+}
+
+function describe(c) {
+
+}
+
+~sol
+function toFahrenheit(c) {
+  return c * 9 / 5 + 32;
+}
+
+function describe(c) {
+  if (toFahrenheit(c) > 90) {
+    return "Hot";
+  }
+  return "Fine";
+}
+~hint
+One function can call another: let f = toFahrenheit(c);
+~after
+console.log(toFahrenheit(0));
+console.log(toFahrenheit(100));
+console.log(describe(40));
+console.log(describe(10));
+~out
+32
+212
+Hot
+Fine
+=U arrays | Arrays
+=L lists | Lists of things
+@T
+An **array** is a list of values in square brackets, separated by commas. One variable can hold a whole list.
+
+Items are numbered from 0, just like letters in a string.
+~code
+let tools = ["wrench", "torque", "meter"];
+
+console.log(tools[0]);
+console.log(tools[2]);
+console.log(tools.length);
+@T
+You can change an item with its position. You can also add and remove items:
+
+`.push()` adds to the end.
+
+`.pop()` removes from the end.
+~code
+let queue = ["Ana", "Leo"];
+
+queue[0] = "Mia";
+queue.push("Sam");
+console.log(queue);
+
+queue.pop();
+console.log(queue);
+@P
+What does this print?
+~code
+let nums = [4, 8, 15];
+console.log(nums[1]);
+~opts
+* 8
+- 4
+- 15
+~why
+Position 1 is the second item, because counting starts at 0.
+@P
+What does this print?
+~code
+let list = ["a", "b"];
+list.push("c");
+list.pop();
+list.pop();
+console.log(list.length);
+~opts
+* 1
+- 2
+- 3
+~why
+It starts at 2 items, grows to 3, then shrinks twice to 1.
+@T
+Use a `for...of` loop to visit each item. It's easier than counting with `i` because you get the item itself.
+~code
+let readings = [31, 28, 35];
+
+for (let value of readings) {
+  console.log(value);
+}
+@B
+Print each name.
+~code
+let crew = ["Ana", "Leo"];
+for (let person ___ crew) {
+  console.log(___);
+}
+~opts
+* of
+* person
+- in
+- crew
+~why
+`for...of` gives you each item, stored here in `person`.
+~out
+Ana
+Leo
+@C
+Use a loop to add up all the numbers in `prices`, then print the total.
+~start
+let prices = [5, 12, 3, 20];
+let total = 0;
+// Your loop here
+
+~sol
+let prices = [5, 12, 3, 20];
+let total = 0;
+for (let price of prices) {
+  total += price;
+}
+console.log(total);
+~hint
+for (let price of prices) { total += price; }
+~out
+40
+~must
+\bfor\b|\breduce\b :: Use a loop to go through the array.
+=L arrtools | Array tools
+@T
+`.includes()` checks whether an item is in the list. `.indexOf()` tells you where it is, or gives `-1` if it isn't there.
+
+`.join()` turns a list into one string.
+~code
+let colors = ["red", "green", "blue"];
+
+console.log(colors.includes("green"));
+console.log(colors.indexOf("blue"));
+console.log(colors.join(" and "));
+@T
+`.map()` makes a **new** array by running a small function on every item. The original stays the same.
+
+Read it as: "for each `n`, give me `n * 2`."
+~code
+let nums = [1, 2, 3];
+let doubled = nums.map((n) => n * 2);
+
+console.log(doubled);
+console.log(nums);
+@T
+`.filter()` makes a new array containing only the items that pass a test.
+
+Read it as: "keep each `n` where `n > 10`."
+~code
+let readings = [5, 12, 8, 30];
+let high = readings.filter((n) => n > 10);
+
+console.log(high);
+@Q
+You want to keep only the even numbers from a list. Which tool do you use?
+~opts
+* `.filter()`
+- `.map()`
+- `.push()`
+~why
+`.filter()` keeps some items. `.map()` changes every item but keeps them all.
+@P
+What does this print?
+~code
+let a = [1, 2, 3, 4];
+let b = a.filter((n) => n > 2);
+console.log(b.length);
+~opts
+* 2
+- 4
+- 3
+~why
+Only 3 and 4 pass the test, so the new array has 2 items.
+@C
+Use `.filter()` to make `passing`, with only the scores of `60` or more. Then print `passing.length`.
+~start
+let scores = [55, 90, 72, 40, 60];
+// Your code here
+
+~sol
+let scores = [55, 90, 72, 40, 60];
+let passing = scores.filter((s) => s >= 60);
+console.log(passing.length);
+~hint
+let passing = scores.filter((s) => s >= 60);
+~out
+3
+~must
+\.filter\( :: Use .filter().
+=F fire7 | Hot fire: Sensor log
+@C
+Write a function `summarize(readings)` that takes an array of numbers and returns a string with the count, highest value, and average, like this:
+
+`3 readings, max 30, average 20`
+
+Use a loop to find the highest value and the sum. The average is the sum divided by the count.
+~start
+function summarize(readings) {
+
+}
+
+~sol
+function summarize(readings) {
+  let max = readings[0];
+  let sum = 0;
+  for (let value of readings) {
+    sum += value;
+    if (value > max) {
+      max = value;
+    }
+  }
+  return `${readings.length} readings, max ${max}, average ${sum / readings.length}`;
+}
+~hint
+Start max at readings[0]. In the loop, add to sum, and replace max when a value is bigger.
+~after
+console.log(summarize([10, 20, 30]));
+console.log(summarize([4, 9, 2, 5]));
+~out
+3 readings, max 30, average 20
+4 readings, max 9, average 5
+=U objects | Objects
+=L keys | Labeled information
+@T
+An array is numbered. An **object** is labeled. It stores information as **key: value** pairs inside curly braces, like a form with fields.
+
+You read a value with a dot: `truck.color`.
+~code
+let truck = {
+  color: "white",
+  miles: 42000,
+  diesel: true,
+};
+
+console.log(truck.color);
+console.log(truck.miles);
+@T
+You can change a value or add a new key with a plain `=`.
+~code
+let part = {
+  name: "valve",
+  size: 2,
+};
+
+part.size = 4;
+part.inStock = true;
+
+console.log(part);
+@T
+There is also a bracket style: `part["name"]`. You need this when the key is stored in a variable.
+~code
+let part = { name: "valve", size: 2 };
+let field = "name";
+
+console.log(part[field]);
+@P
+What does this print?
+~code
+let user = { name: "Ana", level: 3 };
+user.level = 4;
+console.log(user.level + 1);
+~opts
+* 5
+- 4
+- 31
+~why
+`level` is changed to 4, and then 4 + 1 is 5.
+@B
+Print the city.
+~code
+let place = { ___: "Austin", state: "TX" };
+console.log(place.___);
+~opts
+* city
+* city
+- name
+- "city"
+~why
+The key name must match in both places. Keys don't need quotes here.
+~out
+Austin
+@Q
+What's the best choice for storing one person's name, age, and email?
+~opts
+* An object
+- An array
+- Three separate programs
+~why
+Each piece of information has a label, so an object fits. Arrays suit lists of similar things.
+@C
+Make an object `car` with `make` set to `"Kia"` and `year` set to `2026`. Then print `Kia 2026` using the object's values.
+~start
+// Your code here
+
+~sol
+let car = {
+  make: "Kia",
+  year: 2026,
+};
+console.log(`${car.make} ${car.year}`);
+~hint
+console.log(`${car.make} ${car.year}`);
+~out
+Kia 2026
+~must
+car\.make|car\[ :: Read the values from the object, like car.make.
+=L objlist | Lists of objects
+@T
+Real programs mix these two. An **array of objects** is the shape of most data on the web, like a list of products or users.
+~code
+let team = [
+  { name: "Ana", shift: 1 },
+  { name: "Leo", shift: 2 },
+];
+
+console.log(team[1].name);
+
+for (let person of team) {
+  console.log(`${person.name}: shift ${person.shift}`);
+}
+@T
+Objects can hold functions, too. A function stored inside an object is called a **method**. That's what `console.log` is: the `log` method of the `console` object.
+
+Inside a method, `this` means "this object."
+~code
+let counter = {
+  count: 0,
+  add() {
+    this.count++;
+  },
+};
+
+counter.add();
+counter.add();
+console.log(counter.count);
+@P
+What does this print?
+~code
+let items = [
+  { name: "bolt", qty: 3 },
+  { name: "nut", qty: 7 },
+];
+console.log(items[0].qty + items[1].qty);
+~opts
+* 10
+- 37
+- 3
+~why
+3 + 7 is 10, because both values are numbers.
+@C
+Loop through `orders` and print each one's name with its total (`price` times `qty`), like `Gloves: 20`.
+~start
+let orders = [
+  { name: "Gloves", price: 5, qty: 4 },
+  { name: "Tape", price: 3, qty: 2 },
+];
+// Your loop here
+
+~sol
+let orders = [
+  { name: "Gloves", price: 5, qty: 4 },
+  { name: "Tape", price: 3, qty: 2 },
+];
+for (let order of orders) {
+  console.log(`${order.name}: ${order.price * order.qty}`);
+}
+~hint
+for (let order of orders) { use order.price * order.qty }
+~out
+Gloves: 20
+Tape: 6
+=F fire8 | Hot fire: Inventory check
+@C
+Write a function `lowStock(parts)` that takes an array of part objects and returns an array of the **names** of parts with `qty` under `5`.
+
+Tip: use `.filter()`, then `.map()`. A loop with `.push()` also works.
+~start
+function lowStock(parts) {
+
+}
+
+~sol
+function lowStock(parts) {
+  return parts.filter((p) => p.qty < 5).map((p) => p.name);
+}
+~hint
+parts.filter(...) keeps the low ones. .map((p) => p.name) keeps only the names.
+~after
+let stock = [
+  { name: "O-ring", qty: 2 },
+  { name: "Fitting", qty: 40 },
+  { name: "Gasket", qty: 4 },
+];
+console.log(lowStock(stock).join(", "));
+console.log(lowStock([{ name: "Hose", qty: 9 }]).length);
+~out
+O-ring, Gasket
+0
+=U bugs | Fixing Bugs
+=L errors | Reading error messages
+@T
+A **bug** is a mistake in code. Everyone writes bugs, every day. An error message isn't a failure. It's the computer telling you where to look.
+
+Run this to see one. The message names the problem and the line.
+~code
+let score = 10;
+console.log(scor);
+@T
+The three errors you will see most:
+
+**SyntaxError:** the code isn't written correctly, like a missing bracket. Nothing runs.
+
+**ReferenceError:** you used a name that doesn't exist, often a typo.
+
+**TypeError:** you did something a value can't do, like calling a method on `undefined`.
+~code
+let user = {};
+console.log(user.name.length);
+@Q
+You see `ReferenceError: totl is not defined`. What is the most likely cause?
+~opts
+* A typo in a variable name
+- A missing semicolon
+- The computer is out of memory
+~why
+"Not defined" means JavaScript has never heard of that name. Check the spelling.
+@Q
+A closing `}` is missing. Which error do you get?
+~opts
+* SyntaxError
+- ReferenceError
+- TypeError
+~why
+Broken structure is a syntax error.
+@T
+The most useful debugging move is to print values while the program runs. When the result is wrong, print what you think you know, and find where reality differs.
+
+You'll also see `undefined` (no value yet) and `NaN` ("not a number," the result of bad math).
+~code
+let price = "abc";
+let total = Number(price) * 2;
+
+console.log(price);
+console.log(total);
+@C
+This code has two bugs. Fix them so it prints `Total: 30`.
+~start
+let quantity = 3;
+let price = 10;
+let total = quantity * prce;
+console.log("Total: " + totl);
+~sol
+let quantity = 3;
+let price = 10;
+let total = quantity * price;
+console.log("Total: " + total);
+~hint
+Look for two misspelled variable names.
+~out
+Total: 30
+=L trycatch | Handling problems
+@T
+`try` and `catch` let your program survive an error. If anything goes wrong in `try`, JavaScript jumps to `catch` and keeps going.
+
+`error.message` holds the description.
+~code
+try {
+  let user = null;
+  console.log(user.name);
+} catch (error) {
+  console.log("Something went wrong");
+  console.log(error.message);
+}
+console.log("Still running");
+@T
+You can create your own error with `throw`. Use it when the values you got make no sense.
+~code
+function setSpeed(mph) {
+  if (mph < 0) {
+    throw new Error("Speed can't be negative");
+  }
+  return mph;
+}
+
+try {
+  setSpeed(-5);
+} catch (error) {
+  console.log(error.message);
+}
+@P
+What does this print?
+~code
+try {
+  console.log("A");
+  throw new Error("oops");
+  console.log("B");
+} catch (error) {
+  console.log("C");
+}
+~opts
+* A
+C
+- A
+B
+C
+- C
+~why
+Once `throw` happens, the rest of `try` is skipped, and `catch` runs.
+@O
+Put these lines in order.
+~lines
+try {
+  throw new Error("bad part");
+} catch (error) {
+  console.log(error.message);
+}
+~why
+`try` wraps the risky code, and `catch` handles what goes wrong.
+~out
+bad part
+@C
+Write `safeDivide(a, b)`. If `b` is `0`, `throw` a new Error with the message `Cannot divide by zero`. Otherwise, return `a / b`.
+~start
+function safeDivide(a, b) {
+
+}
+
+~sol
+function safeDivide(a, b) {
+  if (b === 0) {
+    throw new Error("Cannot divide by zero");
+  }
+  return a / b;
+}
+~hint
+if (b === 0) { throw new Error("..."); }
+~after
+console.log(safeDivide(10, 2));
+try {
+  safeDivide(1, 0);
+} catch (error) {
+  console.log(error.message);
+}
+~out
+5
+Cannot divide by zero
+=F fire9 | Hot fire: Checkout
+@C
+This is everything so far. Write `checkout(cart)`.
+
+`cart` is an array of objects, each with `name`, `price`, and `qty`.
+
+Return the total cost. If any `qty` is below `1`, throw a new Error with the message `Bad quantity for NAME`, using the item's real name.
+~start
+function checkout(cart) {
+
+}
+
+~sol
+function checkout(cart) {
+  let total = 0;
+  for (let item of cart) {
+    if (item.qty < 1) {
+      throw new Error(`Bad quantity for ${item.name}`);
+    }
+    total += item.price * item.qty;
+  }
+  return total;
+}
+~hint
+Loop through the cart. Check qty first, then add price * qty to a running total.
+~after
+console.log(checkout([{ name: "Tape", price: 3, qty: 2 }, { name: "Glue", price: 4, qty: 1 }]));
+console.log(checkout([]));
+try {
+  checkout([{ name: "Rope", price: 9, qty: 0 }]);
+} catch (error) {
+  console.log(error.message);
+}
+~out
+10
+0
+Bad quantity for Rope

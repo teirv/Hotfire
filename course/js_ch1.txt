@@ -1,0 +1,615 @@
+=U scope | Scope and the Global Object | Book section 1.7. Where a variable can be seen.
+=L scope1 | Who can see this variable?
+@T
+**Scope** means where in your code a name can be used.
+
+A variable made inside `{ }` with `let` or `const` only exists inside those braces. That's called **block scope**. Think of it as a box that can't be seen from outside the room.
+~code
+let outside = "visible everywhere";
+
+if (true) {
+  let inside = "only in this block";
+  console.log(inside);
+  console.log(outside);
+}
+
+console.log(outside);
+@T
+`var` is the older way to make a variable. It ignores blocks and only stops at functions. That surprises people, so modern code uses `let` and `const`.
+~code
+if (true) {
+  var old = "I escape the block";
+}
+console.log(old);
+
+function test() {
+  var local = "stuck in the function";
+}
+test();
+console.log(typeof local);
+@P
+What does this print?
+~code
+let x = 1;
+if (true) {
+  let x = 2;
+  console.log(x);
+}
+console.log(x);
+~opts
+* 2
+1
+- 2
+2
+- 1
+1
+~why
+The inner `let x` is a brand-new box that hides the outer one until the block ends. This is called **shadowing**.
+@T
+In a browser, the **global object** is `window`. Things like `alert` and `document` are really `window.alert` and `window.document`.
+
+A top-level `var` or function in a regular script becomes a property of `window`. `let` and `const` don't. Too many globals cause name clashes, so keep variables inside functions when you can.
+
+`globalThis` is the name for the global object that works everywhere.
+@Q
+In a regular browser script, which line creates a `window.count` property?
+~opts
+* `var count = 1;`
+- `let count = 1;`
+- `const count = 1;`
+~why
+Only top-level `var` attaches to `window`.
+@Q
+Assigning to a name that was never declared, like `total = 5;`, outside strict mode does what?
+~opts
+* Creates a global variable by accident
+- Always throws an error
+- Does nothing
+~why
+This accidental global is a classic bug. Strict mode, covered later, turns it into an error.
+@T
+**Hoisting** means declarations are noticed before the code runs. A function declaration can be called above where it's written.
+
+A `var` is known early but holds `undefined` until its line. A `let` can't be touched before its line.
+~code
+console.log(sayHi());
+
+function sayHi() {
+  return "hi";
+}
+
+console.log(early);
+var early = 5;
+@C
+Fix the scope bug so this prints `10`. Declare `total` where the last line can see it.
+~start
+function run() {
+  if (true) {
+    let total = 10;
+  }
+  console.log(total);
+}
+run();
+~sol
+function run() {
+  let total;
+  if (true) {
+    total = 10;
+  }
+  console.log(total);
+}
+run();
+~hint
+Declare total before the if block, then only assign it inside.
+~out
+10
+=U maps | Maps | Book section 1.10. Key and value lookups.
+=L map1 | The Map object
+@T
+A **Map** stores key and value pairs, like an object, but it's built for lookups that change a lot. Keys can be any type.
+
+`set` adds, `get` reads, `has` checks, `delete` removes, and `size` counts.
+~code
+let stock = new Map();
+
+stock.set("valve", 3);
+stock.set("seal", 12);
+
+console.log(stock.get("valve"));
+console.log(stock.has("hose"));
+console.log(stock.size);
+
+stock.delete("seal");
+console.log(stock.size);
+@T
+Loop over a Map with `for...of`. Each round gives you a `[key, value]` pair, which you can unpack into two names. Maps keep their insertion order.
+~code
+let ages = new Map([
+  ["Ana", 30],
+  ["Leo", 41],
+]);
+
+for (let [name, age] of ages) {
+  console.log(`${name} is ${age}`);
+}
+@P
+What does this print?
+~code
+let m = new Map();
+m.set("a", 1);
+m.set("a", 2);
+console.log(m.size, m.get("a"));
+~opts
+* 1 2
+- 2 2
+- 2 1
+~why
+Keys are unique, so the second `set` replaces the value.
+@P
+What does this print?
+~code
+let m = new Map();
+console.log(m.get("missing"));
+~opts
+* undefined
+- null
+- 0
+~why
+A missing key gives `undefined`.
+@B
+Count how many times a word appears.
+~code
+let counts = new Map();
+let word = "go";
+counts.___(word, (counts.get(word) || 0) + 1);
+console.log(counts.___(word));
+~opts
+* set
+* get
+- add
+- push
+~why
+`counts.get(word) || 0` starts at 0 when the word is new.
+~out
+1
+@C
+Write `countLetters(text)` that returns a Map from each letter to how many times it appears.
+~start
+function countLetters(text) {
+
+}
+
+~sol
+function countLetters(text) {
+  let counts = new Map();
+  for (let letter of text) {
+    counts.set(letter, (counts.get(letter) || 0) + 1);
+  }
+  return counts;
+}
+~hint
+for (let letter of text) gives each letter. Use get with || 0, then set.
+~after
+let c = countLetters("banana");
+console.log(c.get("a"), c.get("n"), c.get("b"), c.size);
+~out
+3 2 1 3
+=U strobj | The String Object | Book section 1.11. Tools for working with text.
+=L str1 | Searching and slicing text
+@T
+Strings have many built-in methods. They never change the original. They hand back a new value, so store the result.
+
+`indexOf` finds a position. `slice` copies a piece. `replace` swaps text. `split` breaks text into an array.
+~code
+let s = "test stand three";
+
+console.log(s.indexOf("stand"));
+console.log(s.indexOf("nope"));
+console.log(s.slice(5, 10));
+console.log(s.slice(-5));
+console.log(s.replace("three", "four"));
+console.log(s.split(" "));
+@T
+`startsWith`, `endsWith`, and `includes` answer yes or no. `charAt` reads one character. `padStart` adds characters to reach a length. `repeat` copies text. `replaceAll` swaps every match.
+~code
+let id = "42";
+
+console.log(id.padStart(5, "0"));
+console.log("ab".repeat(3));
+console.log("a-b-c".replaceAll("-", "+"));
+console.log("rocket".startsWith("ro"));
+console.log("rocket".charAt(2));
+@P
+What does this print?
+~code
+let s = "abcdef";
+console.log(s.slice(1, 3));
+~opts
+* bc
+- abc
+- bcd
+~why
+`slice` stops before the second number.
+@P
+What does this print?
+~code
+let s = "hello";
+s.toUpperCase();
+console.log(s);
+~opts
+* hello
+- HELLO
+- undefined
+~why
+The result wasn't saved. Strings can't be changed in place.
+@C
+Write `initials(name)` that returns the capitalized first letter of each word.
+
+`initials("ada king lovelace")` returns `AKL`.
+~start
+function initials(name) {
+
+}
+
+~sol
+function initials(name) {
+  return name.split(" ").map((w) => w[0].toUpperCase()).join("");
+}
+~hint
+Split on spaces, take the first letter of each word, uppercase it, then join.
+~after
+console.log(initials("ada king lovelace"));
+console.log(initials("teir"));
+~out
+AKL
+T
+=U dateobj | The Date Object | Book section 1.12. Working with dates and times.
+=L date1 | Dates and times
+@T
+`new Date()` gives the current date and time. You can also build a specific date.
+
+Watch out: **months start at 0**. January is 0 and December is 11. Days of the month start at 1.
+~code
+let launch = new Date(2026, 10, 3);
+
+console.log(launch.getFullYear());
+console.log(launch.getMonth());
+console.log(launch.getDate());
+console.log(launch.getDay());
+@T
+`getDay()` gives the day of the week, with Sunday as 0.
+
+Set parts with methods like `setDate`, which rolls over into the next month for you.
+
+Subtracting dates gives **milliseconds**. Divide to convert: there are 1000 ms in a second.
+~code
+let a = new Date(2026, 0, 1);
+let b = new Date(2026, 0, 11);
+
+let ms = b - a;
+console.log(ms / (1000 * 60 * 60 * 24));
+
+a.setDate(a.getDate() + 40);
+console.log(a.getMonth(), a.getDate());
+@P
+What month does `new Date(2026, 1, 14)` mean? This prints the month name.
+~code
+let names = ["January", "February", "March"];
+let d = new Date(2026, 1, 14);
+console.log(names[d.getMonth()]);
+~opts
+* February
+- January
+- March
+~why
+Month 1 is February, because counting starts at 0.
+@Q
+What does `getDay()` return?
+~opts
+* The day of the week, 0 to 6
+- The day of the month, 1 to 31
+- The number of days since 1970
+~why
+`getDate()` gives the day of the month. The names are easy to mix up.
+@C
+Write `daysBetween(a, b)` that returns the whole number of days from Date `a` to Date `b`.
+~start
+function daysBetween(a, b) {
+
+}
+
+~sol
+function daysBetween(a, b) {
+  return Math.round((b - a) / (1000 * 60 * 60 * 24));
+}
+~hint
+b - a gives milliseconds. Divide by 1000 * 60 * 60 * 24.
+~after
+console.log(daysBetween(new Date(2026, 0, 1), new Date(2026, 0, 31)));
+console.log(daysBetween(new Date(2026, 10, 3), new Date(2026, 10, 4)));
+~out
+30
+1
+=U mathobj | The Math Object | Book section 1.13. Rounding, random numbers and more.
+=L math1 | Math tools
+@T
+`Math` holds ready-made math tools. There's no `new`: you call them directly.
+
+`round`, `floor`, and `ceil` round to a whole number. `abs` drops a minus sign. `max` and `min` compare. `pow` is exponents. `sqrt` is square root.
+~code
+console.log(Math.round(2.5));
+console.log(Math.floor(2.9));
+console.log(Math.ceil(2.1));
+console.log(Math.abs(-7));
+console.log(Math.max(3, 9, 2));
+console.log(Math.pow(2, 5));
+console.log(Math.sqrt(49));
+console.log(Math.PI);
+@T
+`Math.random()` gives a decimal from 0 up to, but not including, 1. To get a whole number from 1 to 6, stretch it and floor it.
+
+`toFixed(2)` formats a number to 2 decimal places, and it returns a string.
+~code
+let roll = Math.floor(Math.random() * 6) + 1;
+console.log(roll >= 1 && roll <= 6);
+
+let price = 19.5;
+console.log(price.toFixed(2));
+console.log(typeof price.toFixed(2));
+@P
+What does this print?
+~code
+console.log(Math.floor(-2.5), Math.ceil(-2.5));
+~opts
+* -3 -2
+- -2 -3
+- -2 -2
+~why
+`floor` always goes down, and `ceil` always goes up, even for negative numbers.
+@B
+Pick a random whole number from 1 to 10.
+~code
+let n = Math.___(Math.random() * ___) + 1;
+console.log(n >= 1 && n <= 10);
+~opts
+* floor
+* 10
+- round
+- 9
+~why
+`random() * 10` gives 0 up to 9.99. Flooring gives 0 to 9, and adding 1 gives 1 to 10.
+~out
+true
+@C
+Write `hypotenuse(a, b)` that returns the long side of a right triangle, `sqrt(a*a + b*b)`, as a string with 2 decimal places.
+~start
+function hypotenuse(a, b) {
+
+}
+
+~sol
+function hypotenuse(a, b) {
+  return Math.sqrt(a * a + b * b).toFixed(2);
+}
+~hint
+Math.sqrt(...).toFixed(2)
+~after
+console.log(hypotenuse(3, 4));
+console.log(hypotenuse(1, 1));
+~out
+5.00
+1.41
+=U labs1 | Chapter 1 Labs | Practice problems in the style of book sections 1.15 to 1.21.
+=F lab115 | Lab: Output triangle
+@C
+Write `triangle(ch, height)` that prints a right triangle using `ch`, with `height` rows.
+
+`triangle("*", 3)` prints:
+
+```
+*
+**
+***
+```
+~start
+function triangle(ch, height) {
+
+}
+
+~sol
+function triangle(ch, height) {
+  for (let row = 1; row <= height; row++) {
+    console.log(ch.repeat(row));
+  }
+}
+~hint
+Loop from 1 to height. "*".repeat(3) gives "***".
+~after
+triangle("*", 3);
+triangle("%", 2);
+~out
+*
+**
+***
+%
+%%
+=F lab116 | Lab: Password strength
+@C
+Write `strength(password)` that returns a score from 0 to 4. Give 1 point for each rule met:
+
+Has 8 or more characters. Has an uppercase letter. Has a digit. Has a symbol (anything that isn't a letter or digit).
+
+Then return `Weak` for 0 to 1, `Medium` for 2 to 3, and `Strong` for 4.
+~start
+function strength(password) {
+
+}
+
+~sol
+function strength(password) {
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+  if (score <= 1) return "Weak";
+  if (score <= 3) return "Medium";
+  return "Strong";
+}
+~hint
+Loop over the characters and check each one, or use tests like /[A-Z]/.test(password).
+~after
+console.log(strength("abc"));
+console.log(strength("abcdefgh1"));
+console.log(strength("Abcdefg1!"));
+~out
+Weak
+Medium
+Strong
+=F lab117 | Lab: Sort even numbers
+@C
+Write `sortEvens(nums)` that returns a new array of only the even numbers, sorted from low to high.
+
+Remember that `sort()` needs a compare function for numbers: `sort((a, b) => a - b)`.
+~start
+function sortEvens(nums) {
+
+}
+
+~sol
+function sortEvens(nums) {
+  return nums.filter((n) => n % 2 === 0).sort((a, b) => a - b);
+}
+~hint
+filter first, then sort with (a, b) => a - b.
+~after
+console.log(sortEvens([10, 3, 8, 1, 100, 2]).join(" "));
+console.log(sortEvens([1, 3]).length);
+~out
+2 8 10 100
+0
+=F lab118 | Lab: Game object
+@C
+Make an object `game` with a `score` of `0` and a `lives` of `3`, plus two methods:
+
+`hit()` removes one life, but never goes below 0.
+
+`addPoints(n)` adds `n` to the score.
+
+`status()` returns text like `Score 5, lives 2`.
+~start
+let game = {
+  // Your properties and methods here
+};
+
+~sol
+let game = {
+  score: 0,
+  lives: 3,
+  hit() {
+    if (this.lives > 0) {
+      this.lives--;
+    }
+  },
+  addPoints(n) {
+    this.score += n;
+  },
+  status() {
+    return `Score ${this.score}, lives ${this.lives}`;
+  },
+};
+~hint
+Inside a method, use this.score and this.lives.
+~after
+game.addPoints(5);
+game.hit();
+console.log(game.status());
+game.hit(); game.hit(); game.hit();
+console.log(game.status());
+~out
+Score 5, lives 2
+Score 5, lives 0
+=F lab119 | Lab: Word frequencies
+@C
+Write `wordFrequencies(words)` that takes an array of words and returns a Map from each lowercase word to its count.
+~start
+function wordFrequencies(words) {
+
+}
+
+~sol
+function wordFrequencies(words) {
+  let counts = new Map();
+  for (let word of words) {
+    let key = word.toLowerCase();
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  return counts;
+}
+~hint
+Lowercase each word first, so Go and go count together.
+~after
+let f = wordFrequencies(["Go", "stop", "go", "GO"]);
+console.log(f.get("go"), f.get("stop"), f.size);
+~out
+3 1 2
+=F lab120 | Lab: Print sum
+@C
+Write `printSum(a, b)` that adds the two values and prints `a + b = sum`.
+
+The values may arrive as strings, so convert them first. If either one isn't a number, throw a new Error with the message `Numbers only`.
+~start
+function printSum(a, b) {
+
+}
+
+~sol
+function printSum(a, b) {
+  let x = Number(a);
+  let y = Number(b);
+  if (Number.isNaN(x) || Number.isNaN(y)) {
+    throw new Error("Numbers only");
+  }
+  console.log(`${x} + ${y} = ${x + y}`);
+}
+~hint
+Number("abc") gives NaN. Check with Number.isNaN().
+~after
+printSum(2, 3);
+printSum("10", "5");
+try {
+  printSum("a", 1);
+} catch (error) {
+  console.log(error.message);
+}
+~out
+2 + 3 = 5
+10 + 5 = 15
+Numbers only
+=F lab121 | Lab: Triangle perimeter and area
+@C
+Write `triangleInfo(a, b, c)` that returns an object with `perimeter` and `area`, using the three side lengths.
+
+Heron's formula: with `s` as half the perimeter, the area is `sqrt(s * (s - a) * (s - b) * (s - c))`. Round the area to 2 decimal places with `Number(area.toFixed(2))`.
+~start
+function triangleInfo(a, b, c) {
+
+}
+
+~sol
+function triangleInfo(a, b, c) {
+  let perimeter = a + b + c;
+  let s = perimeter / 2;
+  let area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+  return { perimeter: perimeter, area: Number(area.toFixed(2)) };
+}
+~hint
+Make s first. Then return { perimeter: ..., area: ... }.
+~after
+let t = triangleInfo(3, 4, 5);
+console.log(t.perimeter, t.area);
+let u = triangleInfo(2, 2, 2);
+console.log(u.perimeter, u.area);
+~out
+12 6
+6 1.73

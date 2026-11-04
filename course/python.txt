@@ -1,0 +1,1671 @@
+=U pyout | Output and Values
+=L pyhello | Print and types
+@T
+Python runs from the top down, one line at a time. `print()` shows a value in the console.
+
+No semicolons or curly braces here. Each instruction gets its own line.
+~code
+print("Hello!")
+print(2 + 3)
+@T
+The four basic **types**:
+
+`str` is text: `"hi"`
+
+`int` is a whole number: `7`
+
+`float` is a decimal number: `2.5`
+
+`bool` is `True` or `False`, with capitals
+
+`type()` tells you what you've got.
+~code
+print(type("hi"))
+print(type(7))
+print(type(2.5))
+print(type(True))
+@T
+`print()` takes several values and puts a space between them. `sep` changes the separator, and `end` changes what comes at the end of the line (normally a new line).
+~code
+print("a", "b", "c")
+print("a", "b", "c", sep="-")
+print("no new line", end=" ")
+print("same line")
+@P
+What does this print?
+~code
+print(1, 2, sep=":", end="!")
+~opts
+* 1:2!
+- 1 2!
+- 1:2
+~why
+`sep` goes between the values, and `end` goes after the last one.
+@P
+What does this print?
+~code
+print("5" + "5")
+print(5 + 5)
+~opts
+* 55
+10
+- 10
+10
+- 55
+55
+~why
+`+` joins strings and adds numbers.
+@C
+Print `Test` and `Stand` on one line with an underscore between them, using a single `print` with `sep`.
+
+Expected: `Test_Stand`
+~start
+# Your code here
+
+~sol
+print("Test", "Stand", sep="_")
+~hint
+print("Test", "Stand", sep="...")
+~out
+Test_Stand
+~must
+sep\s*= :: Use the sep argument.
+=L pycomment | Numbers in strings
+@T
+`#` starts a comment. Python ignores it.
+
+A backslash starts an **escape sequence**: `\n` is a new line, `\t` is a tab, and `\"` is a quote inside a string.
+~code
+# This is a note for humans
+print("Line 1\nLine 2")
+print("Name:\tAda")
+print("She said \"go\"")
+@T
+Convert between types with `int()`, `float()`, and `str()`.
+
+`int()` chops off the decimal instead of rounding. `round()` is the one that rounds.
+~code
+print(int("42") + 1)
+print(float("2.5") * 2)
+print("Total: " + str(10))
+print(int(3.9))
+print(round(3.9))
+@Q
+Why does `"Age: " + 30` crash?
+~opts
+* You can't join a `str` and an `int` with `+`
+- `30` needs quotes around the word Age
+- `+` doesn't work on strings
+~why
+Convert it first with `str(30)`, or use an f-string.
+@P
+What does this print?
+~code
+print(int(7.99))
+~opts
+* 7
+- 8
+- 7.99
+~why
+`int()` drops the decimal part, and it does not round.
+@C
+`count` is a string. Convert it, add `1`, and print the result.
+~start
+count = "41"
+# Your code here
+
+~sol
+count = "41"
+print(int(count) + 1)
+~hint
+int(count) makes it a number.
+~out
+42
+=F pyfire1 | Hot fire: Label maker
+@C
+Print exactly this, using one `print` call with `\n` and `\t`:
+
+```
+Part:	Valve
+Qty:	12
+```
+
+There is a tab between the label and the value.
+~start
+# One print call
+
+~sol
+print("Part:\tValve\nQty:\t12")
+~hint
+Inside one string, \t makes a tab and \n starts a new line.
+~out
+Part:	Valve
+Qty:	12
+~must
+\\t :: Use \t for the tabs.
+=U pyvars | Variables and Input
+=L pyassign | Variables
+@T
+A variable is a name attached to a value. There is no `let`: just use `=`.
+
+Python style is **snake_case**: lowercase words joined by underscores. Names are case-sensitive.
+~code
+tank_pressure = 450
+is_ready = True
+tank_pressure = tank_pressure + 10
+print(tank_pressure, is_ready)
+@T
+You can assign several variables on one line. That also gives a neat way to swap two values.
+
+Short updates exist too: `+=`, `-=`, `*=`, `/=`. There is no `++` in Python.
+~code
+x, y = 1, 2
+x, y = y, x
+print(x, y)
+
+total = 10
+total += 5
+total *= 2
+print(total)
+@P
+What does this print?
+~code
+a = 5
+b = a
+a = 9
+print(a, b)
+~opts
+* 9 5
+- 9 9
+- 5 5
+~why
+`b` got the value 5 at that moment. Changing `a` later doesn't change `b`.
+@Q
+Which name is valid in Python?
+~opts
+* `max_speed`
+- `2nd_speed`
+- `max-speed`
+~why
+Names can't start with a digit or contain `-`, which would mean subtraction.
+@C
+Make `a` set to `3` and `b` set to `4`. Swap them in one line, then print `a` and `b` on one line.
+~start
+# Your code here
+
+~sol
+a = 3
+b = 4
+a, b = b, a
+print(a, b)
+~hint
+a, b = b, a
+~out
+4 3
+=L pyinput | Reading input
+@T
+`input()` reads one line typed by the user. It **always returns a string**, even if they type a number.
+
+Course lab problems use this constantly, so convert with `int()` or `float()` before doing math.
+
+In this app, a lesson's practice input is supplied for you. The app feeds your program the lines shown in the challenge.
+~code
+name = input("Name? ")
+print("Hi", name)
+~stdin
+Ada
+@T
+Multiple `input()` calls read successive lines. The first call gets line 1, the second gets line 2, and so on.
+~code
+a = int(input())
+b = int(input())
+print(a + b)
+~stdin
+20
+22
+@Q
+A user types `5` at `x = input()`. What is `x`?
+~opts
+* The string `"5"`
+- The integer `5`
+- The float `5.0`
+~why
+`input()` always gives back a string.
+@B
+Read a whole number, then double it.
+~code
+n = ___(input())
+print(n * 2)
+~opts
+* int
+- str
+- input
+~why
+Without `int`, `n * 2` would repeat the text.
+~out stdin=8
+16
+@C
+Read a price as a `float` and a quantity as an `int`, each from its own line. Print the total.
+
+For inputs `2.5` and `4`, the output is `10.0`.
+~start
+# Read two lines of input
+
+~sol
+price = float(input())
+qty = int(input())
+print(price * qty)
+~hint
+price = float(input())
+~out stdin=2.5|4
+10.0
+~out stdin=1.5|2
+3.0
+=F pyfire2 | Hot fire: Unit converter
+@C
+Read a number of feet from input as a float. Print how many meters that is, using `feet * 0.3048`, then how many inches, on separate lines:
+
+For input `10.0`:
+
+```
+3.048
+120.0
+```
+~start
+# Your code here
+
+~sol
+feet = float(input())
+print(feet * 0.3048)
+print(feet * 12)
+~hint
+Convert the input first, then do both calculations.
+~out stdin=10.0
+3.048
+120.0
+~out stdin=100
+30.48
+1200.0
+=U pymath | Math and Expressions
+=L pyops | Operators
+@T
+On top of `+ - *`, Python has three operators to know cold:
+
+`/` is true division and always gives a float.
+
+`//` is floor division and drops the remainder.
+
+`%` gives the remainder.
+
+`**` is an exponent.
+~code
+print(7 / 2)
+print(7 // 2)
+print(7 % 2)
+print(2 ** 5)
+print(10 / 2)
+@T
+Order of operations, highest first: `()`, then `**`, then `* / // %`, then `+ -`.
+
+`%` and `//` often work together to split amounts, like minutes into hours and minutes.
+~code
+minutes = 135
+print(minutes // 60, "hours")
+print(minutes % 60, "minutes")
+print(2 + 3 * 4 ** 2)
+@P
+What does this print?
+~code
+print(17 // 5, 17 % 5)
+~opts
+* 3 2
+- 3.4 2
+- 3 3
+~why
+5 goes into 17 three times, with 2 left over.
+@P
+What does this print?
+~code
+print(10 / 5)
+~opts
+* 2.0
+- 2
+- 2.5
+~why
+`/` always gives a float, even when it divides evenly.
+@P
+What does this print?
+~code
+print(2 + 2 ** 3)
+~opts
+* 10
+- 64
+- 16
+~why
+`**` runs first: 2 to the 3rd is 8, plus 2 is 10.
+@C
+Read a total number of seconds as an int. Print the minutes, then the seconds left over.
+
+For input `125`, the output is `2 5`.
+~start
+# Your code here
+
+~sol
+total = int(input())
+print(total // 60, total % 60)
+~hint
+Use // for the minutes and % for what's left.
+~out stdin=125
+2 5
+~out stdin=59
+0 59
+=L pymod | The math module
+@T
+A **module** is a file of extra tools. `import` brings one in.
+
+`math` covers square roots, rounding up and down, and constants like pi. Use `math.name` to reach what's inside.
+~code
+import math
+
+print(math.sqrt(49))
+print(math.ceil(2.1))
+print(math.floor(2.9))
+print(math.pi)
+@T
+The built-ins `abs()`, `min()`, `max()`, `round()`, and `pow()` need no import.
+
+`from math import sqrt` lets you drop the `math.` prefix. `random` gives random numbers.
+~code
+from math import sqrt
+import random
+
+print(abs(-4), max(1, 9, 3), min(1, 9, 3))
+print(round(3.14159, 2))
+print(sqrt(81))
+
+roll = random.randint(1, 6)
+print(1 <= roll <= 6)
+@P
+What does this print?
+~code
+import math
+print(math.ceil(4.01))
+~opts
+* 5
+- 4
+- 4.01
+~why
+`ceil` rounds up, and `floor` rounds down.
+@Q
+You want a random whole number from 1 to 10, including 10. Which call works?
+~opts
+* `random.randint(1, 10)`
+- `random.randint(10)`
+- `math.random(1, 10)`
+~why
+`randint(a, b)` includes both ends.
+@C
+Read a circle's radius as a float. Print its area using `math.pi * r ** 2`, rounded to 2 places with `round`.
+
+For input `2`, the output is `12.57`.
+~start
+import math
+# Your code here
+
+~sol
+import math
+r = float(input())
+print(round(math.pi * r ** 2, 2))
+~hint
+round(value, 2) keeps 2 decimal places.
+~out stdin=2
+12.57
+~out stdin=1
+3.14
+=F pyfire3 | Hot fire: Change maker
+@C
+Read a whole number of cents. Print how many quarters, dimes, nickels, and pennies make that amount, using the fewest coins, on one line.
+
+For input `68`, the output is `2 1 1 3`.
+~start
+# Your code here
+
+~sol
+cents = int(input())
+quarters = cents // 25
+cents %= 25
+dimes = cents // 10
+cents %= 10
+nickels = cents // 5
+cents %= 5
+print(quarters, dimes, nickels, cents)
+~hint
+After counting quarters with //, keep only the remainder with %, then repeat for dimes.
+~out stdin=68
+2 1 1 3
+~out stdin=41
+1 1 1 1
+~out stdin=4
+0 0 0 4
+=U pystr | Strings
+=L pyslice | Indexing and slicing
+@T
+Strings are numbered from 0. Negative numbers count from the end, so `-1` is the last character.
+
+A **slice** `s[start:stop]` takes from `start` up to, but not including, `stop`.
+~code
+s = "propellant"
+
+print(s[0], s[-1])
+print(s[0:4])
+print(s[4:])
+print(s[:4])
+print(s[::2])
+print(s[::-1])
+@P
+What does this print?
+~code
+s = "python"
+print(s[1:4])
+~opts
+* yth
+- pyt
+- ytho
+~why
+It starts at index 1 and stops before index 4.
+@T
+Strings are **immutable**: you can't change a character in place. `s[0] = "x"` is an error.
+
+Methods hand back a new string, so save the result.
+~code
+s = "hot fire"
+s.upper()
+print(s)
+
+s = s.upper()
+print(s)
+print(len(s))
+@P
+What does this print?
+~code
+word = "abcdef"
+print(word[-2:])
+~opts
+* ef
+- f
+- ab
+~why
+Start two from the end and go to the finish.
+@C
+Read a line of text. Print its first three characters, then its last character, on one line with a space between.
+
+For `Firefly`, the output is `Fir y`.
+~start
+text = input()
+# Your code here
+
+~sol
+text = input()
+print(text[:3], text[-1])
+~hint
+text[:3] and text[-1]
+~out stdin=Firefly
+Fir y
+~out stdin=Python
+Pyt n
+=L pymethods | String methods
+@T
+The ones that show up most:
+
+`upper`, `lower`, `title`, `strip`, `replace`, `find`, `count`, `startswith`, `endswith`, and the test `in`.
+~code
+s = "  valve open  "
+t = s.strip()
+
+print(t.upper())
+print(t.title())
+print(t.replace("open", "shut"))
+print(t.find("open"))
+print(t.count("v"))
+print(t.startswith("valve"))
+print("open" in t)
+@T
+`split()` breaks a string into a list. With no argument, it splits on spaces. `join()` does the reverse, and is called on the separator.
+~code
+line = "12,14,9"
+parts = line.split(",")
+print(parts)
+print("-".join(parts))
+print("one two  three".split())
+@P
+What does this print?
+~code
+print("a-b-c".split("-")[1])
+~opts
+* b
+- a
+- -
+~why
+`split` gives `['a', 'b', 'c']`, and index 1 is `'b'`.
+@B
+Make `2026/11/03` from the list.
+~code
+parts = ["2026", "11", "03"]
+print("___".___(parts))
+~opts
+* /
+* join
+- split
+- ,
+~why
+`join` belongs to the separator string.
+~out
+2026/11/03
+@C
+Read a line with extra spaces around it. Remove them, make it all lowercase, and replace every space with `_`.
+
+For `  Test Stand 3 `, the output is `test_stand_3`.
+~start
+line = input()
+# Your code here
+
+~sol
+line = input()
+print(line.strip().lower().replace(" ", "_"))
+~hint
+You can chain methods: line.strip().lower()...
+~out stdin=  Test Stand 3
+test_stand_3
+~out stdin=GO
+go
+=L pyfstr | f-strings and formatting
+@T
+An **f-string** has an `f` before the quote and expressions inside `{ }`.
+
+After a `:`, you can add a format spec. `.2f` means two decimal places. This shows up often on Python tests.
+~code
+name = "Ada"
+psi = 451.2678
+
+print(f"{name} read {psi:.2f} psi")
+print(f"{psi:.1f}")
+print(f"{2 + 2}")
+@T
+Width and alignment line up columns. `<` is left, `>` is right, `^` is center. A number gives the width.
+
+A `0` pads with zeros, and `,` adds thousands separators.
+~code
+print(f"[{'go':<6}]")
+print(f"[{'go':>6}]")
+print(f"[{'go':^6}]")
+print(f"[{7:03d}]")
+print(f"{1234567:,}")
+@P
+What does this print?
+~code
+x = 3.14159
+print(f"{x:.3f}")
+~opts
+* 3.142
+- 3.141
+- 3.14
+~why
+`.3f` rounds to three decimal places.
+@B
+Print the cost with exactly two decimal places.
+~code
+cost = 19.5
+print(f"${cost___}")
+~opts
+* :.2f
+- .2f
+- :2
+~why
+The colon starts the format spec, and `.2f` asks for 2 decimal places.
+~out
+$19.50
+@C
+Read a name, then a price as a float. Print them like this:
+
+`Widget costs $4.50`
+~start
+name = input()
+price = float(input())
+# Your code here
+
+~sol
+name = input()
+price = float(input())
+print(f"{name} costs ${price:.2f}")
+~hint
+f"{name} costs ${price:.2f}"
+~out stdin=Widget|4.5
+Widget costs $4.50
+~out stdin=Bolt|0.75
+Bolt costs $0.75
+=F pyfire4 | Hot fire: Email builder
+@C
+Read a full name on one line, like `Ada Lovelace`. Print an ID made of the first initial and last name, all lowercase, then `@test.com`.
+
+Then print the name's total letter count, not counting the space, using an f-string:
+
+```
+alovelace@test.com
+Letters: 11
+```
+~start
+# Your code here
+
+~sol
+full = input()
+parts = full.split()
+first = parts[0]
+last = parts[1]
+print(f"{first[0].lower()}{last.lower()}@test.com")
+print(f"Letters: {len(first) + len(last)}")
+~hint
+split() gives you the two names. first[0] is the initial.
+~out stdin=Ada Lovelace
+alovelace@test.com
+Letters: 11
+~out stdin=Grace Hopper
+ghopper@test.com
+Letters: 11
+=U pyif | Branching
+=L pybranch | if, elif, else
+@T
+A condition ends with a colon, and the block under it is **indented**. Python uses indentation in place of braces, so it isn't optional.
+
+Comparisons: `==`, `!=`, `<`, `>`, `<=`, `>=`. Python keeps `elif` as one word.
+~code
+temp = 85
+
+if temp > 100:
+    print("Too hot")
+elif temp > 70:
+    print("Warm")
+else:
+    print("Cool")
+print("Done")
+@T
+`and`, `or`, and `not` combine conditions, and they're plain English words.
+
+Python allows chained comparisons like `0 < x < 10`. Empty things and zero count as false.
+~code
+psi = 55
+print(30 <= psi <= 60)
+print(psi > 30 and psi < 40)
+print(not psi > 100)
+
+name = ""
+if not name:
+    print("No name")
+@P
+What does this print?
+~code
+x = 7
+if x > 5:
+    print("A")
+if x > 6:
+    print("B")
+else:
+    print("C")
+~opts
+* A
+B
+- A
+- A
+C
+~why
+These are two separate `if` statements, so both get checked. `elif` would have stopped after A.
+@P
+What does this print?
+~code
+x = 7
+if x > 5:
+    print("A")
+elif x > 6:
+    print("B")
+else:
+    print("C")
+~opts
+* A
+- A
+B
+- B
+~why
+With `elif`, only the first true branch runs.
+@O
+Put these in order. Mind the indentation.
+~lines
+n = 4
+if n % 2 == 0:
+    print("even")
+else:
+    print("odd")
+~why
+The `if` line ends in a colon, and each block is indented under its header.
+~out
+even
+@C
+Read an integer. Print `positive`, `negative`, or `zero`.
+~start
+n = int(input())
+# Your code here
+
+~sol
+n = int(input())
+if n > 0:
+    print("positive")
+elif n < 0:
+    print("negative")
+else:
+    print("zero")
+~hint
+Use if, elif, and else.
+~out stdin=5
+positive
+~out stdin=-2
+negative
+~out stdin=0
+zero
+=F pyfire5 | Hot fire: Leap year
+@C
+Read a year. Print `Leap` or `Not leap`.
+
+A year is a leap year if it's divisible by 4, except that century years must be divisible by 400.
+
+So 2024 and 2000 are leap years, and 1900 is not.
+~start
+year = int(input())
+# Your code here
+
+~sol
+year = int(input())
+if (year % 4 == 0 and year % 100 != 0) or year % 400 == 0:
+    print("Leap")
+else:
+    print("Not leap")
+~hint
+(year % 4 == 0 and year % 100 != 0) or year % 400 == 0
+~out stdin=2024
+Leap
+~out stdin=2000
+Leap
+~out stdin=1900
+Not leap
+~out stdin=2026
+Not leap
+=U pyloop | Loops
+=L pyfor | for and range
+@T
+`for` goes through each item of anything iterable: a string, a list, or a range.
+
+`range(n)` gives 0 up to, but not including, n. `range(a, b)` starts at a. `range(a, b, step)` counts by step.
+~code
+for i in range(3):
+    print(i)
+
+for i in range(2, 8, 2):
+    print(i, end=" ")
+print()
+
+for i in range(3, 0, -1):
+    print(i, end=" ")
+print()
+
+for ch in "go":
+    print(ch)
+@P
+What does this print?
+~code
+print(list(range(1, 10, 3)))
+~opts
+* [1, 4, 7]
+- [1, 4, 7, 10]
+- [3, 6, 9]
+~why
+It starts at 1 and adds 3, and it stops before 10.
+@T
+Use the **accumulator pattern** to total things up. `enumerate` gives you the position and the item together.
+~code
+total = 0
+for n in range(1, 5):
+    total += n
+print(total)
+
+for i, part in enumerate(["bolt", "nut"]):
+    print(i, part)
+@C
+Read an integer `n`. Print the sum of the numbers from 1 to `n`, using a loop.
+~start
+n = int(input())
+# Your code here
+
+~sol
+n = int(input())
+total = 0
+for i in range(1, n + 1):
+    total += i
+print(total)
+~hint
+range(1, n + 1) includes n.
+~out stdin=10
+55
+~out stdin=3
+6
+~must
+\bfor\b|\bwhile\b :: Use a loop.
+=L pywhile | while, break, continue
+@T
+`while` repeats while its condition is true. `break` exits the loop, and `continue` jumps to the next round.
+
+A common pattern reads input until a **sentinel** value appears.
+~code
+fuel = 100
+while fuel > 40:
+    fuel -= 25
+    print(fuel)
+
+for n in range(1, 6):
+    if n == 2:
+        continue
+    if n == 4:
+        break
+    print(n)
+@T
+A loop can have an `else`. It runs only if the loop finished without `break`.
+
+Loops can also nest. The inner loop runs fully on each round of the outer loop.
+~code
+for i in range(1, 3):
+    for j in range(1, 4):
+        print(i * j, end=" ")
+    print()
+@P
+What does this print?
+~code
+n = 0
+while n < 3:
+    n += 1
+print(n)
+~opts
+* 3
+- 2
+- 4
+~why
+When `n` hits 3, the condition fails and the loop stops.
+@P
+How many stars print?
+~code
+for i in range(2):
+    for j in range(3):
+        print("*", end="")
+~opts
+* 6
+- 5
+- 3
+~why
+2 rounds of the outer loop, times 3 rounds of the inner one.
+@C
+Read integers, one per line, until you read `-1`. Print how many numbers came before it, then their sum.
+
+For `4`, `6`, `-1`, the output is `2 10`.
+~start
+# Your code here
+
+~sol
+count = 0
+total = 0
+n = int(input())
+while n != -1:
+    count += 1
+    total += n
+    n = int(input())
+print(count, total)
+~hint
+Read once before the loop, and again at the bottom of the loop.
+~out stdin=4|6|-1
+2 10
+~out stdin=-1
+0 0
+~out stdin=1|2|3|-1
+3 6
+=F pyfire6 | Hot fire: Triangle
+@C
+Read a height `h`. Print a right triangle of `*` with `h` rows, then the total stars on the last line.
+
+For `3`:
+
+```
+*
+**
+***
+Stars: 6
+```
+~start
+h = int(input())
+# Your code here
+
+~sol
+h = int(input())
+stars = 0
+for row in range(1, h + 1):
+    print("*" * row)
+    stars += row
+print(f"Stars: {stars}")
+~hint
+"*" * 3 gives "***".
+~out stdin=3
+*
+**
+***
+Stars: 6
+~out stdin=1
+*
+Stars: 1
+=U pylist | Lists and Tuples
+=L pylists | Lists
+@T
+A list holds items in order, and it can change. Indexing and slicing work like strings.
+
+`append` adds to the end. `insert` adds at a position. `remove` deletes by value. `pop` deletes by position (last by default).
+~code
+parts = ["valve", "seal"]
+parts.append("hose")
+parts.insert(0, "pump")
+print(parts)
+
+parts.remove("seal")
+last = parts.pop()
+print(last, parts, len(parts))
+@T
+Useful helpers: `sum`, `max`, `min`, `sorted`, `.sort()`, `.reverse()`, `in`.
+
+`sorted()` gives back a new list. `.sort()` changes the list in place and returns `None`.
+~code
+nums = [3, 1, 2]
+
+print(sum(nums), max(nums), min(nums))
+print(sorted(nums), nums)
+
+nums.sort(reverse=True)
+print(nums, 2 in nums)
+@T
+Assigning a list doesn't copy it. Both names point to the same list. Use `.copy()` or `[:]` for a real copy.
+
+That bug shows up on tests.
+~code
+a = [1, 2]
+b = a
+b.append(3)
+print(a)
+
+c = a.copy()
+c.append(4)
+print(a, c)
+@P
+What does this print?
+~code
+x = [1, 2, 3]
+y = x
+y[0] = 9
+print(x[0])
+~opts
+* 9
+- 1
+- An error
+~why
+`x` and `y` are the same list.
+@P
+What does this print?
+~code
+print([1, 2] + [3], [0] * 3)
+~opts
+* [1, 2, 3] [0, 0, 0]
+- [4, 2] [0]
+- [1, 2, [3]] [0, 3]
+~why
+`+` joins lists and `*` repeats them.
+@C
+Read a line of numbers separated by spaces. Print the largest, the smallest, and the average with 2 decimal places.
+
+For `1 2 4`, the output is `4 1 2.33`.
+~start
+line = input()
+# Your code here
+
+~sol
+line = input()
+nums = [int(x) for x in line.split()]
+print(f"{max(nums)} {min(nums)} {sum(nums) / len(nums):.2f}")
+~hint
+Split the line, then convert each piece with int().
+~out stdin=1 2 4
+4 1 2.33
+~out stdin=10 20
+20 10 15.00
+=L pycomp | Comprehensions and tuples
+@T
+A **list comprehension** builds a list in one line: what to keep, a loop, and an optional filter.
+~code
+squares = [n ** 2 for n in range(1, 5)]
+print(squares)
+
+evens = [n for n in range(10) if n % 2 == 0]
+print(evens)
+
+words = [w.upper() for w in ["a", "b"]]
+print(words)
+@T
+A **tuple** is like a list, but it can't change. It uses parentheses. A one-item tuple needs a trailing comma.
+
+**Unpacking** puts its items into separate variables. `zip` pairs up two lists.
+~code
+point = (3, 4)
+x, y = point
+print(x, y)
+print(type((1,)), type((1)))
+
+for name, psi in zip(["A", "B"], [40, 55]):
+    print(name, psi)
+@P
+What does this print?
+~code
+print([x * 2 for x in [1, 2, 3] if x != 2])
+~opts
+* [2, 6]
+- [2, 4, 6]
+- [1, 3]
+~why
+2 is filtered out, then 1 and 3 are doubled.
+@Q
+What happens with `t = (1, 2)` followed by `t[0] = 5`?
+~opts
+* `TypeError`, because tuples can't change
+- `t` becomes `(5, 2)`
+- `t` becomes a list
+~why
+Tuples are immutable.
+@C
+Read a line of numbers separated by spaces. Use a comprehension to keep only values above `50`, then print the list.
+
+For `40 60 90`, the output is `[60, 90]`.
+~start
+line = input()
+# Your code here
+
+~sol
+line = input()
+high = [int(x) for x in line.split() if int(x) > 50]
+print(high)
+~hint
+[int(x) for x in line.split() if int(x) > 50]
+~out stdin=40 60 90
+[60, 90]
+~out stdin=1 2
+[]
+~must
+\[.+\bfor\b.+\] :: Use a list comprehension.
+=F pyfire7 | Hot fire: Outliers
+@C
+Read numbers separated by spaces. Compute their average. Print the average with 1 decimal place, then print each value that is more than `10` away from the average, in order, each on its own line.
+
+For `50 52 80 18`:
+
+```
+Average: 50.0
+80
+18
+```
+~start
+# Your code here
+
+~sol
+nums = [int(x) for x in input().split()]
+avg = sum(nums) / len(nums)
+print(f"Average: {avg:.1f}")
+for n in nums:
+    if abs(n - avg) > 10:
+        print(n)
+~hint
+abs(n - avg) gives the distance from the average.
+~out stdin=50 52 80 18
+Average: 50.0
+80
+18
+~out stdin=5 5
+Average: 5.0
+=U pydict | Dictionaries and Sets
+=L pydicts | Dictionaries
+@T
+A **dict** maps keys to values. Lookups are fast, and each key is unique.
+
+`d[key]` crashes if the key is missing. `d.get(key, default)` doesn't.
+~code
+stock = {"valve": 3, "seal": 12}
+
+print(stock["valve"])
+stock["hose"] = 5
+stock["valve"] += 1
+print(stock.get("pump", 0))
+del stock["seal"]
+print(stock, len(stock), "hose" in stock)
+@T
+Three views: `.keys()`, `.values()`, `.items()`. Use `.items()` to loop over pairs.
+
+A loop directly over a dict gives you its keys.
+~code
+stock = {"valve": 3, "seal": 12}
+
+for key in stock:
+    print(key)
+
+for name, qty in stock.items():
+    print(f"{name}: {qty}")
+
+print(sum(stock.values()))
+@T
+The **counting pattern** is a classic: use `get` to start at 0.
+~code
+counts = {}
+for letter in "abca":
+    counts[letter] = counts.get(letter, 0) + 1
+print(counts)
+@P
+What does this print?
+~code
+d = {"a": 1}
+d["a"] = 2
+d["b"] = 3
+print(len(d), d["a"])
+~opts
+* 2 2
+- 3 1
+- 3 2
+~why
+Setting `"a"` again replaces its value, and it doesn't add a new key.
+@Q
+What does `{"a": 1}["z"]` do?
+~opts
+* Raises `KeyError`
+- Returns `None`
+- Returns `0`
+~why
+Square brackets crash on missing keys. `.get("z")` returns `None`.
+@C
+Read a line of words. Print each unique word and its count, in first-seen order, one per line, like `go: 2`.
+~start
+words = input().split()
+# Your code here
+
+~sol
+words = input().split()
+counts = {}
+for w in words:
+    counts[w] = counts.get(w, 0) + 1
+for w, n in counts.items():
+    print(f"{w}: {n}")
+~hint
+Use the counting pattern, then loop over .items().
+~out stdin=go no go
+go: 2
+no: 1
+~out stdin=a a a
+a: 3
+=L pysets | Sets
+@T
+A **set** holds unique items with no order. It's the fast way to remove duplicates or test membership.
+
+Set math: `|` union, `&` intersection, `-` difference. An empty set is `set()`, because `{}` makes an empty dict.
+~code
+s = {1, 2, 2, 3}
+print(len(s))
+
+s.add(9)
+s.discard(1)
+print(2 in s)
+
+a = {1, 2, 3}
+b = {2, 3, 4}
+print(sorted(a & b), sorted(a | b), sorted(a - b))
+@P
+What does this print?
+~code
+print(len(set("banana")))
+~opts
+* 3
+- 6
+- 2
+~why
+The unique letters are b, a, and n.
+@Q
+What type is `x = {}`?
+~opts
+* `dict`
+- `set`
+- `list`
+~why
+Empty braces make a dict. Use `set()` for an empty set.
+@C
+Read two lines of words. Print the words found in both lines, sorted, separated by spaces.
+
+For `a b c` and `b c d`, the output is `b c`.
+~start
+# Your code here
+
+~sol
+first = set(input().split())
+second = set(input().split())
+print(" ".join(sorted(first & second)))
+~hint
+Turn each line into a set, then use &.
+~out stdin=a b c|b c d
+b c
+~out stdin=x y|y z
+y
+=F pyfire8 | Hot fire: Grade book
+@C
+Read lines like `Ada 90` until you read `done`. Store the scores in a dict.
+
+Then print each student and score sorted by name, followed by the class average with 1 decimal place:
+
+```
+Ada 90
+Bob 70
+Average: 80.0
+```
+~start
+# Your code here
+
+~sol
+scores = {}
+line = input()
+while line != "done":
+    name, score = line.split()
+    scores[name] = int(score)
+    line = input()
+for name in sorted(scores):
+    print(name, scores[name])
+print(f"Average: {sum(scores.values()) / len(scores):.1f}")
+~hint
+name, score = line.split() unpacks each line.
+~out stdin=Bob 70|Ada 90|done
+Ada 90
+Bob 70
+Average: 80.0
+~out stdin=Zed 100|done
+Zed 100
+Average: 100.0
+=U pyfunc | Functions
+=L pydef | def and return
+@T
+`def` defines a function. `return` hands back a value. Without one, a function returns `None`.
+
+Return more than one value by separating with commas. That makes a tuple.
+~code
+def area(w, h):
+    return w * h
+
+def min_max(values):
+    return min(values), max(values)
+
+print(area(3, 4))
+low, high = min_max([4, 9, 2])
+print(low, high)
+@T
+Parameters can have defaults, and arguments can be passed by name. Defaults go last.
+
+`*args` gathers extra positional values into a tuple. `**kwargs` gathers extra named values into a dict.
+~code
+def report(name, psi=0, unit="psi"):
+    return f"{name}: {psi} {unit}"
+
+print(report("Tank"))
+print(report("Tank", unit="bar", psi=4))
+
+def total(*args):
+    return sum(args)
+
+print(total(1, 2, 3))
+@P
+What does this print?
+~code
+def f(x):
+    x + 1
+print(f(1))
+~opts
+* None
+- 2
+- 1
+~why
+There's no `return`, so the function gives back `None`.
+@P
+What does this print?
+~code
+def add(a, b=10):
+    return a + b
+print(add(1), add(1, 2))
+~opts
+* 11 3
+- 3 3
+- 11 12
+~why
+The default is used only when no value is passed.
+@C
+Write `celsius(f)` that returns `(f - 32) * 5 / 9`, rounded to 1 decimal place.
+~start
+def celsius(f):
+    pass
+
+~sol
+def celsius(f):
+    return round((f - 32) * 5 / 9, 1)
+~hint
+Replace pass with a return line.
+~after
+print(celsius(212))
+print(celsius(98.6))
+~out
+100.0
+37.0
+=L pyscope | Scope and testing
+@T
+Variables made inside a function are **local**. They disappear when it ends. A function can read global variables, but assigning to one creates a new local unless you use `global`.
+~code
+limit = 100
+
+def check(x):
+    result = x < limit
+    return result
+
+print(check(50))
+
+count = 0
+def bump():
+    global count
+    count += 1
+
+bump()
+print(count)
+@T
+Lists passed into a function can be changed by it. Numbers and strings can't.
+
+A **docstring** describes a function. `if __name__ == "__main__":` runs code only when the file is executed directly.
+~code
+def add_item(items, item):
+    """Add item to the list."""
+    items.append(item)
+
+log = []
+add_item(log, "start")
+print(log)
+
+if __name__ == "__main__":
+    print("Running directly")
+@P
+What does this print?
+~code
+x = 1
+def f():
+    x = 2
+f()
+print(x)
+~opts
+* 1
+- 2
+- An error
+~why
+The `x` inside `f` is a separate local variable.
+@T
+A **class** bundles data and functions. `__init__` runs when you make one, and `self` is the object itself. `__str__` controls how it prints.
+~code
+class Sensor:
+    def __init__(self, name, value=0):
+        self.name = name
+        self.value = value
+
+    def read(self, value):
+        self.value = value
+
+    def __str__(self):
+        return f"{self.name}={self.value}"
+
+s = Sensor("PT-101")
+s.read(450)
+print(s)
+@C
+Write a class `Tank` with a `level` attribute starting at `0`, an `add(amount)` method that increases the level, and an `is_full()` method that returns `True` when the level is at least `100`.
+~start
+class Tank:
+    def __init__(self):
+        pass
+
+~sol
+class Tank:
+    def __init__(self):
+        self.level = 0
+
+    def add(self, amount):
+        self.level += amount
+
+    def is_full(self):
+        return self.level >= 100
+~hint
+Set self.level in __init__. Methods take self as their first parameter.
+~after
+t = Tank()
+t.add(60)
+print(t.level, t.is_full())
+t.add(50)
+print(t.level, t.is_full())
+~out
+60 False
+110 True
+=F pyfire9 | Hot fire: Primes
+@C
+Write `is_prime(n)` that returns `True` or `False`. Then write `primes_up_to(n)` that returns a list of the primes from 2 to `n`, using `is_prime`.
+
+A prime has no divisors other than 1 and itself. Numbers below 2 aren't prime.
+~start
+def is_prime(n):
+    pass
+
+def primes_up_to(n):
+    pass
+
+~sol
+def is_prime(n):
+    if n < 2:
+        return False
+    for d in range(2, n):
+        if n % d == 0:
+            return False
+    return True
+
+def primes_up_to(n):
+    return [x for x in range(2, n + 1) if is_prime(x)]
+~hint
+Loop from 2 up to n. If anything divides n evenly, return False.
+~after
+print(is_prime(1), is_prime(2), is_prime(9), is_prime(13))
+print(primes_up_to(20))
+~out
+False True False True
+[2, 3, 5, 7, 11, 13, 17, 19]
+=U pyerr | Errors and Files
+=L pytry | Exceptions
+@T
+`try` / `except` handles errors. Catch the specific kind. `else` runs when nothing went wrong, and `finally` always runs.
+
+The usual suspects: `ValueError`, `TypeError`, `KeyError`, `IndexError`, `ZeroDivisionError`, `NameError`.
+~code
+for text in ["5", "x"]:
+    try:
+        n = int(text)
+    except ValueError:
+        print("Not a number:", text)
+    else:
+        print("Got", n)
+    finally:
+        print("Checked")
+@T
+`raise` signals a problem yourself. `except ValueError as e` gets the error object.
+~code
+def set_valve(percent):
+    if percent < 0 or percent > 100:
+        raise ValueError("percent must be 0-100")
+    return percent
+
+try:
+    set_valve(150)
+except ValueError as e:
+    print("Error:", e)
+@P
+What does this print?
+~code
+try:
+    print("A")
+    x = int("no")
+    print("B")
+except ValueError:
+    print("C")
+finally:
+    print("D")
+~opts
+* A
+C
+D
+- A
+B
+D
+- A
+D
+~why
+`int("no")` fails, so B is skipped. C handles it, and D always runs.
+@Q
+`[1, 2][5]` raises which error?
+~opts
+* `IndexError`
+- `KeyError`
+- `ValueError`
+~why
+Lists use `IndexError`. Dicts use `KeyError`.
+@C
+Read a line. Try to convert it to an integer and print its double. If that fails, print `Invalid input`.
+~start
+text = input()
+# Your code here
+
+~sol
+text = input()
+try:
+    print(int(text) * 2)
+except ValueError:
+    print("Invalid input")
+~hint
+Put the conversion in try, and catch ValueError.
+~out stdin=21
+42
+~out stdin=abc
+Invalid input
+~must
+\btry\b :: Use try and except.
+=L pyfiles | Files and CSV
+@T
+`open()` gives you a file object. Use `with` so the file always closes. Modes: `"r"` reads, `"w"` overwrites, `"a"` appends.
+
+`.read()` gets everything. `.readlines()` gets a list of lines. A `for` loop over the file goes line by line.
+
+This app runs Python in your browser with no real file system, so the examples below are for reading, and the code here won't run. Try them in VS Code.
+@Q
+Which mode **adds** to the end of a file and keeps what's there?
+~opts
+* `"a"`
+- `"w"`
+- `"r"`
+~why
+`"w"` erases the file first. `"a"` appends.
+@Q
+Why use `with open(...) as f:`?
+~opts
+* The file closes automatically, even if an error happens
+- It reads the file faster
+- It's the only way to open a file
+~why
+`with` handles the cleanup for you.
+@O
+Put these in order to print each line of a file. (Read only; this one isn't run.)
+~lines
+with open("log.txt", "r") as f:
+    for line in f:
+        print(line.strip())
+~why
+Open first, then loop inside the `with` block. `strip()` removes the newline at the end.
+@Q
+`csv.reader(f)` gives you each row as what?
+~opts
+* A list of strings
+- A dict of numbers
+- One long string
+~why
+Each row is a list of strings, so convert numbers yourself. `csv.DictReader` gives dicts keyed by header.
+@C
+Practice the parsing part. Read comma-separated lines like `valve,4` until `done`. Print the total of the second column.
+~start
+# Your code here
+
+~sol
+total = 0
+line = input()
+while line != "done":
+    parts = line.split(",")
+    total += int(parts[1])
+    line = input()
+print(total)
+~hint
+line.split(",") gives a list. The second column is at index 1.
+~out stdin=valve,4|seal,6|done
+10
+~out stdin=done
+0
+=F pyfire10 | Hot fire: Exam drill
+@C
+A final practice problem in lab style. Read a whole line of comma-separated test readings, like `10,bad,20`.
+
+Convert each value, and skip any that aren't numbers. Print a count of valid values, the count of skipped values, and the average of valid values with 2 decimals:
+
+```
+Valid: 2
+Skipped: 1
+Average: 15.00
+```
+
+If there are no valid values, print `Average: none` as the last line.
+~start
+# Your code here
+
+~sol
+values = []
+skipped = 0
+for piece in input().split(","):
+    try:
+        values.append(float(piece))
+    except ValueError:
+        skipped += 1
+print(f"Valid: {len(values)}")
+print(f"Skipped: {skipped}")
+if values:
+    print(f"Average: {sum(values) / len(values):.2f}")
+else:
+    print("Average: none")
+~hint
+Use try/except around float(piece) in a loop. Check if the list has anything before dividing.
+~out stdin=10,bad,20
+Valid: 2
+Skipped: 1
+Average: 15.00
+~out stdin=x,y
+Valid: 0
+Skipped: 2
+Average: none

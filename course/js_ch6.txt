@@ -1,0 +1,222 @@
+=U re1 | React Basics and JSX | Book sections 6.1 and 6.2.
+=L re11 | What React is
+@T
+**React** is a library from Meta for building interfaces out of **components**. You describe what the page should look like for the current data, and React updates only what changed.
+
+Start a project with a tool such as Vite: `npm create vite@latest`. These React lessons explain the ideas and how to read the code, since JSX needs a build step.
+@T
+**JSX** looks like HTML inside JavaScript. Differences: use `className` instead of `class`, close every tag, and return one parent. `{ }` puts any JavaScript value in.
+
+```
+function Badge({ name }) {
+  return <p className="badge">Hello, {name}</p>;
+}
+```
+@Q
+Why does JSX use `className`?
+~opts
+* `class` is a reserved word in JavaScript
+- CSS requires it
+- It's shorter
+~why
+JSX turns into JavaScript function calls.
+@Q
+What do curly braces do in JSX?
+~opts
+* Insert a JavaScript expression
+- Start a comment
+- Make a CSS rule
+~why
+`{2 + 2}` shows 4.
+@Q
+Which one is invalid JSX?
+~opts
+* `<img src="a.png">` with no closing slash
+- `<img src="a.png" />`
+- `<p>{name}</p>`
+~why
+All tags must close, even `img` and `br`.
+=U re2 | Components, Events and State | Book sections 6.3 to 6.5.
+=L re21 | Components and props
+@T
+A component is a function that returns JSX, and its name starts with a capital letter. **Props** are its inputs, passed like attributes. Props are read-only.
+
+```
+function Part({ name, qty }) {
+  return <li>{name}: {qty}</li>;
+}
+
+<Part name="Valve" qty={3} />
+```
+
+Events use camelCase and take a function: `onClick={save}`, without parentheses.
+@Q
+Which line passes the number 3 as a prop?
+~opts
+* `<Part qty={3} />`
+- `<Part qty="3" />`
+- `<Part {qty} = 3 />`
+~why
+Quotes would make it a string.
+@Q
+What's wrong with `<button onClick={save()}>`?
+~opts
+* It calls `save` during rendering
+- `onClick` needs lowercase
+- Buttons can't have events
+~why
+Pass the function: `onClick={save}`.
+=L re22 | State
+@T
+**State** is data a component remembers, and changing it re-renders the component. `useState` gives the value and a setter function.
+
+```
+function Counter() {
+  const [count, setCount] = useState(0);
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+```
+
+Never change state directly. Always use the setter, and for arrays make a new one: `setItems([...items, x])`.
+@Q
+What does `useState(0)` return?
+~opts
+* The current value and a function to update it
+- Only the number 0
+- A promise
+~why
+That's why we unpack it into two names.
+@Q
+Why doesn't `count = count + 1` update the page?
+~opts
+* React only re-renders when the setter is called
+- `count` is a string
+- Numbers can't change
+~why
+Direct changes are invisible to React.
+@Q
+How do you add an item to a state array?
+~opts
+* `setItems([...items, newItem])`
+- `items.push(newItem)`
+- `items = newItem`
+~why
+React needs a new array to notice a change.
+=U re3 | Conditions, Lists and Forms | Book sections 6.6 to 6.9.
+=L re31 | Showing the right things
+@T
+**Conditional rendering** uses plain JavaScript: `{isOn ? <On /> : <Off />}` or `{count > 0 && <Alert />}`.
+
+**Lists** use `.map`, and each item needs a stable `key` so React can track it.
+
+**Controlled forms** keep the input's value in state.
+
+```
+<ul>{parts.map(p => <li key={p.id}>{p.name}</li>)}</ul>
+
+<input value={text} onChange={e => setText(e.target.value)} />
+```
+
+The Todo List example in the book puts all of this together.
+@Q
+Why does each list item need a `key`?
+~opts
+* So React can tell which items changed
+- For CSS styling
+- For search engines
+~why
+Use a stable id, not the array index, when items can move.
+@Q
+In a controlled input, where does the value live?
+~opts
+* In React state
+- In the HTML file
+- In localStorage automatically
+~why
+`value` reads the state, and `onChange` updates it.
+@B
+Render a list.
+~code
+{parts.___(p => <li ___={p.id}>{p.name}</li>)}
+~opts
+* map
+* key
+- forEach
+- id
+~why
+`forEach` returns nothing, so use `map`.
+=U re4 | Router, Styling and Fetching | Book sections 6.10 to 6.13.
+=L re41 | Router and styling
+@T
+**React Router** maps URLs to components with `<Routes>`, `<Route>`, and `<Link>`.
+
+Styling options: regular CSS, inline `style={{ color: "red" }}` objects, and **React Bootstrap**, which offers ready-made components like `<Button>` and `<Card>`.
+@Q
+Why does `style` use double braces, `style={{ color: "red" }}`?
+~opts
+* The outer pair is JSX, and the inner pair is an object
+- It's a typo
+- It makes the style private
+~why
+The value must be a JavaScript object.
+=L re42 | Fetching data
+@T
+Use `useEffect` for things outside rendering, like loading data. The second argument lists what it depends on, and `[]` means run once.
+
+```
+useEffect(() => {
+  fetch("/api/quotes")
+    .then(r => r.json())
+    .then(setQuotes);
+}, []);
+```
+
+With no dependency list, an effect that sets state can loop forever.
+@Q
+What does the empty `[]` mean in `useEffect`?
+~opts
+* Run once, after the first render
+- Never run
+- Run on every render
+~why
+List a value in it to re-run when that value changes.
+=U re5 | Full App and React Labs | Book sections 6.14 to 6.24.
+=L re51 | Front end and back end
+@T
+The Message Board example splits an app in two. The **back end** stores data and offers routes like `GET /api/messages` and `POST /api/messages`. The **front end** is React, and it calls those routes.
+
+The book's labs (Song component, Profile and Address, Tic-tac-toe, Registration form, Word guess, Movie database, Loan Calculator, Quotes fetcher) each practice one idea: props, nesting, state, forms, derived values, lists, calculations, and fetching.
+@Q
+For a Loan Calculator, should `monthlyPayment` be stored in state?
+~opts
+* No, calculate it from the amount, rate, and term during render
+- Yes, always store everything
+- It belongs in CSS
+~why
+Values you can compute shouldn't be duplicated in state.
+@Q
+In Tic-tac-toe, where should the board live if `Board` and `Status` both need it?
+~opts
+* In their shared parent, passed down as props
+- Copied in both
+- In a CSS file
+~why
+This is **lifting state up**.
+@Q
+After a `POST` adds a message, how does the list update?
+~opts
+* Add it to state, or fetch the list again
+- It updates on its own
+- Refresh the browser by hand
+~why
+React only knows about what's in state.
+@O
+Put a controlled Registration form's flow in order.
+~lines
+User types in an input
+onChange updates state
+React re-renders the input
+User submits the form
+onSubmit calls preventDefault and validates
+~why
+Typing flows through state before anything is submitted.

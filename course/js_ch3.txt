@@ -1,0 +1,946 @@
+=U regex | Regular Expressions | Book section 3.1. Patterns for matching text.
+=L regex1 | Matching patterns
+@T
+A **regular expression** is a pattern for text, written between slashes. `.test()` asks whether a string matches.
+
+`\d` is a digit, `\w` is a letter, digit or underscore, `\s` is a space, and `.` is any character.
+
+`+` means one or more, `*` means zero or more, and `?` means optional. `^` is the start, and `$` is the end.
+~code
+console.log(/\d+/.test("Tank 7"));
+console.log(/^\d+$/.test("Tank 7"));
+console.log(/^\d+$/.test("707"));
+console.log(/colou?r/.test("color"));
+@T
+Square brackets are a choice of characters: `[a-z]`. Flags go after the last slash: `i` ignores case, and `g` finds all matches.
+
+`match` finds matches. `replace` swaps them. Parentheses **capture** a piece for later.
+~code
+console.log("a1 b22".match(/\d+/g));
+console.log("Hello".replace(/l/g, "L"));
+
+let m = "2026-11-03".match(/(\d+)-(\d+)-(\d+)/);
+console.log(m[1], m[2]);
+@P
+What does this print?
+~code
+console.log(/^[A-Z]\d$/.test("B7"), /^[A-Z]\d$/.test("B77"));
+~opts
+* true false
+- true true
+- false false
+~why
+The pattern is exactly one capital letter, then exactly one digit.
+@Q
+Which regex matches a 5-digit ZIP code and nothing more?
+~opts
+* `/^\d{5}$/`
+- `/\d{5}/`
+- `/^d5$/`
+~why
+`{5}` means exactly five. Without `^` and `$`, longer strings would also match.
+@C
+Write `isPhone(text)` that returns true only for the form `555-123-4567`.
+~start
+function isPhone(text) {
+
+}
+
+~sol
+function isPhone(text) {
+  return /^\d{3}-\d{3}-\d{4}$/.test(text);
+}
+~hint
+/^\d{3}-.../ with ^ and $ on the ends.
+~after
+console.log(isPhone("555-123-4567"), isPhone("5551234567"), isPhone("555-123-45678"));
+~out
+true false false
+=U classes | Classes | Book sections 3.2 and 3.3. Blueprints for objects.
+=L class1 | Writing a class
+@T
+A **class** is a blueprint for making objects. `constructor` runs when you use `new`. `this` is the object being built. Methods go inside without the word `function`.
+~code
+class Sensor {
+  constructor(name, limit) {
+    this.name = name;
+    this.limit = limit;
+  }
+
+  isHigh(value) {
+    return value > this.limit;
+  }
+}
+
+let pt = new Sensor("PT-101", 500);
+console.log(pt.name);
+console.log(pt.isHigh(600));
+@T
+`extends` makes a class that inherits from another. `super()` calls the parent's constructor. A child can **override** a method.
+~code
+class Tool {
+  constructor(name) {
+    this.name = name;
+  }
+  describe() {
+    return `Tool: ${this.name}`;
+  }
+}
+
+class Wrench extends Tool {
+  constructor(size) {
+    super("wrench");
+    this.size = size;
+  }
+  describe() {
+    return `${super.describe()}, ${this.size} mm`;
+  }
+}
+
+console.log(new Wrench(10).describe());
+@T
+Modern JavaScript (ES13) added **private fields** with `#`, which can't be touched from outside, and `static` members that belong to the class itself. `get` and `set` make methods look like properties.
+~code
+class Account {
+  #balance = 0;
+  static count = 0;
+
+  constructor() {
+    Account.count++;
+  }
+  deposit(n) {
+    this.#balance += n;
+  }
+  get balance() {
+    return this.#balance;
+  }
+}
+
+let a = new Account();
+a.deposit(50);
+console.log(a.balance, Account.count);
+@Q
+In a child class's constructor, what must come before you use `this`?
+~opts
+* `super()`
+- `new`
+- `return`
+~why
+The parent has to build the object first.
+@P
+What does this print?
+~code
+class A { hi() { return "A"; } }
+class B extends A { hi() { return "B" + super.hi(); } }
+console.log(new B().hi());
+~opts
+* BA
+- AB
+- B
+~why
+`B` runs its own `hi`, which calls the parent's version.
+@C
+Write a class `Rectangle` with `width` and `height`, an `area()` method, and a class `Square` that extends it and takes one `side`.
+~start
+class Rectangle {
+
+}
+
+class Square {
+
+}
+
+~sol
+class Rectangle {
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+  }
+  area() {
+    return this.width * this.height;
+  }
+}
+
+class Square extends Rectangle {
+  constructor(side) {
+    super(side, side);
+  }
+}
+~hint
+Square extends Rectangle, and calls super(side, side).
+~after
+console.log(new Rectangle(2, 3).area());
+console.log(new Square(4).area());
+~out
+6
+16
+=U closures | Inner Functions and Closures | Book sections 3.4 and 3.5. Functions that remember.
+=L clos1 | Functions that remember
+@T
+A function can live inside another function. The inner one can see the outer function's variables.
+
+A **closure** is an inner function that keeps those variables even after the outer function has finished. It's like a backpack the function carries around.
+~code
+function makeCounter() {
+  let count = 0;
+  return function () {
+    count++;
+    return count;
+  };
+}
+
+let next = makeCounter();
+console.log(next());
+console.log(next());
+
+let other = makeCounter();
+console.log(other());
+@P
+What does this print?
+~code
+function adder(x) {
+  return (y) => x + y;
+}
+let add5 = adder(5);
+console.log(add5(2));
+~opts
+* 7
+- 5
+- undefined
+~why
+The inner function remembers that `x` is 5.
+@P
+What does this print?
+~code
+let fns = [];
+for (let i = 0; i < 3; i++) {
+  fns.push(() => i);
+}
+console.log(fns[0](), fns[2]());
+~opts
+* 0 2
+- 3 3
+- 2 2
+~why
+`let` makes a fresh `i` for each round, and each closure keeps its own. With `var`, they'd all share one and print 3 3.
+@Q
+What's a good reason to use a closure?
+~opts
+* Keeping data private to a few functions
+- Making loops faster
+- Loading files
+~why
+Nothing outside `makeCounter` can touch `count` directly.
+@C
+Write `makeBank(start)` that returns an object with `deposit(n)` and `balance()`. Keep the amount private in a closure.
+~start
+function makeBank(start) {
+
+}
+
+~sol
+function makeBank(start) {
+  let amount = start;
+  return {
+    deposit(n) {
+      amount += n;
+    },
+    balance() {
+      return amount;
+    },
+  };
+}
+~hint
+Make a let inside makeBank, then return an object whose methods use it.
+~after
+let b = makeBank(10);
+b.deposit(5);
+console.log(b.balance(), b.amount);
+~out
+15 undefined
+=U modules | Modules and Strict Mode | Book sections 3.6 and 3.7. Organizing code safely.
+=L mod1 | Modules
+@T
+A **module** is a file with its own scope. It shares things with `export`, and other files bring them in with `import`.
+
+```
+// math.js
+export function add(a, b) { return a + b; }
+export default function square(n) { return n * n; }
+
+// app.js
+import square, { add } from "./math.js";
+```
+
+In HTML, load it with `<script type="module" src="app.js"></script>`. Modules run deferred and are strict automatically. The app runs one file at a time, so this lesson isn't run here.
+@Q
+How do you import the **named** export `add`?
+~opts
+* `import { add } from "./math.js";`
+- `import add from "./math.js";`
+- `require add;`
+~why
+Braces are for named exports. No braces means the default export.
+@Q
+How many default exports can a module have?
+~opts
+* One
+- Any number
+- None
+~why
+Named exports have no limit, but there's only one default.
+=L strict1 | Strict mode
+@T
+Putting `"use strict";` first turns silent mistakes into errors. Assigning to an undeclared variable now throws, for example.
+
+Class bodies and modules are always strict.
+~code
+"use strict";
+
+try {
+  mistake = 5;
+} catch (error) {
+  console.log(error.name, error.message);
+}
+@Q
+Where does `"use strict";` go?
+~opts
+* At the very top of a script or function
+- At the end of the file
+- Inside a comment
+~why
+It only works as the first statement.
+@P
+What does this print?
+~code
+"use strict";
+function f() { return this; }
+console.log(f());
+~opts
+* undefined
+- window
+- null
+~why
+In strict mode, a plain function call gets no `this`.
+=U storage | Web Storage | Book section 3.8. Remembering between visits.
+=L stor1 | localStorage
+@T
+`localStorage` saves strings in the browser, and they stay after the tab closes. `sessionStorage` lasts until the tab closes.
+
+Only strings go in, so use `JSON.stringify` and `JSON.parse` for objects.
+
+In this app, a lesson's storage resets on each run.
+~code
+localStorage.setItem("name", "Ana");
+console.log(localStorage.getItem("name"));
+
+let prefs = { theme: "dark" };
+localStorage.setItem("prefs", JSON.stringify(prefs));
+let back = JSON.parse(localStorage.getItem("prefs"));
+console.log(back.theme);
+
+console.log(localStorage.getItem("missing"));
+@Q
+Why shouldn't you store a password in `localStorage`?
+~opts
+* Any script on the page can read it
+- It only holds numbers
+- It deletes itself
+~why
+It isn't encrypted or private from page scripts.
+@P
+What does this print?
+~code
+localStorage.setItem("n", 5);
+console.log(typeof localStorage.getItem("n"));
+~opts
+* string
+- number
+- undefined
+~why
+Everything is stored as a string.
+@C
+Write `visit()` that reads `visits` from `localStorage` (starting at 0), adds 1, saves it, and returns the new count as a number.
+~start
+function visit() {
+
+}
+
+~sol
+function visit() {
+  let n = Number(localStorage.getItem("visits")) || 0;
+  n++;
+  localStorage.setItem("visits", n);
+  return n;
+}
+~hint
+Number(null) is 0, and strings need converting before adding.
+~after
+console.log(visit(), visit(), visit());
+~out
+1 2 3
+=U canvas | Canvas Drawing | Book sections 3.9 and 3.10. Drawing with code.
+=L canvas1 | Shapes and paths
+@T
+`<canvas>` is a blank drawing surface. `getContext("2d")` gives you the drawing tools. The top-left corner is (0, 0), and y grows **downward**.
+
+`fillRect` draws a filled rectangle. Paths use `beginPath`, `moveTo`, `lineTo`, and `arc`, then `stroke` or `fill`.
+~html
+<canvas id="c" width="240" height="120"></canvas>
+~code
+let ctx = document.getElementById("c").getContext("2d");
+
+ctx.fillStyle = "steelblue";
+ctx.fillRect(10, 10, 80, 50);
+
+ctx.beginPath();
+ctx.moveTo(110, 20);
+ctx.lineTo(200, 90);
+ctx.strokeStyle = "firebrick";
+ctx.stroke();
+
+ctx.beginPath();
+ctx.arc(60, 90, 20, 0, 2 * Math.PI);
+ctx.fillStyle = "goldenrod";
+ctx.fill();
+@T
+**Transformations** move the drawing grid. `translate` shifts it, `rotate` turns it (in radians), and `scale` resizes it. `save` and `restore` undo them.
+
+For **animation**, clear the canvas, redraw, and use `requestAnimationFrame` to repeat.
+~html
+<canvas id="c" width="240" height="120"></canvas>
+~code
+let ctx = document.getElementById("c").getContext("2d");
+let x = 0;
+
+function frame() {
+  ctx.clearRect(0, 0, 240, 120);
+  ctx.save();
+  ctx.translate(x, 60);
+  ctx.rotate(x / 30);
+  ctx.fillStyle = "firebrick";
+  ctx.fillRect(-15, -15, 30, 30);
+  ctx.restore();
+  x = (x + 2) % 240;
+  requestAnimationFrame(frame);
+}
+
+frame();
+@Q
+What does a full circle equal in `arc`?
+~opts
+* `2 * Math.PI`
+- `360`
+- `Math.PI`
+~why
+Canvas angles are in radians.
+@Q
+On a canvas, what does increasing y do?
+~opts
+* Moves down
+- Moves up
+- Moves right
+~why
+The origin is the top-left corner, unlike a math graph.
+@C
+On canvas `#c`, set `fillStyle` to `"red"` and draw a filled rectangle at (0, 0) that is 50 wide and 20 tall.
+~html
+<canvas id="c" width="100" height="100"></canvas>
+~start
+// Your code here
+
+~sol
+let ctx = document.getElementById("c").getContext("2d");
+ctx.fillStyle = "red";
+ctx.fillRect(0, 0, 50, 20);
+~hint
+getContext("2d"), then fillStyle, then fillRect(x, y, w, h).
+~after
+let call = __calls("fillRect")[0];
+console.log(call.slice(1).join(","), document.getElementById("c").getContext("2d").fillStyle);
+~out
+0,0,50,20 red
+=U sockets | WebSockets | Book section 3.11. Two-way live connections.
+=L ws1 | Staying connected
+@T
+Normal requests ask once and get one answer. A **WebSocket** stays open, so the server can send messages at any time. Chat and live dashboards use this.
+
+The app's practice WebSocket echoes back whatever you send.
+~code
+let ws = new WebSocket("wss://echo.example.com");
+
+ws.addEventListener("open", () => {
+  ws.send("hello");
+});
+
+ws.addEventListener("message", (event) => {
+  console.log(event.data);
+  ws.close();
+});
+@Q
+Why can't you call `send` straight after `new WebSocket(...)`?
+~opts
+* The connection isn't open yet
+- `send` needs a callback
+- WebSockets are read-only
+~why
+Wait for the `open` event first.
+@Q
+Which job suits a WebSocket best?
+~opts
+* Live telemetry updating many times per second
+- Loading a page's logo once
+- Reading a local variable
+~why
+Constant two-way or server-pushed data is the use case.
+=U promises | Promises and async | Book sections 3.12 and 3.13. Working with waiting.
+=L prom1 | Promises
+@T
+A **promise** stands for a value that isn't ready yet. It's like a claim ticket at a repair shop. It ends up **fulfilled** with a value or **rejected** with an error.
+
+`.then` runs on success, and `.catch` runs on failure. `.finally` always runs.
+~code
+function getPart(ok) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (ok) resolve("valve");
+      else reject(new Error("Out of stock"));
+    }, 20);
+  });
+}
+
+getPart(true)
+  .then((part) => console.log("Got", part))
+  .catch((e) => console.log(e.message));
+
+getPart(false)
+  .then((part) => console.log("Got", part))
+  .catch((e) => console.log(e.message));
+@T
+Each `.then` hands its return value to the next, forming a chain. `Promise.all` waits for several promises at once.
+~code
+Promise.resolve(2)
+  .then((n) => n * 3)
+  .then((n) => console.log(n));
+
+Promise.all([Promise.resolve(1), Promise.resolve(2)])
+  .then((values) => console.log(values));
+@P
+What does this print?
+~code
+Promise.resolve("A").then((x) => console.log(x));
+console.log("B");
+~opts
+* B
+A
+- A
+B
+- A
+~why
+`.then` always waits until the current code has finished.
+@Q
+Inside `new Promise((resolve, reject) => ...)`, what does calling `reject` do?
+~opts
+* Marks the promise as failed, so `.catch` runs
+- Restarts the promise
+- Ends the whole program
+~why
+`resolve` is the success path.
+@C
+Write `delay(ms, value)` that returns a promise that resolves with `value` after `ms` milliseconds.
+~start
+function delay(ms, value) {
+
+}
+
+~sol
+function delay(ms, value) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(value), ms);
+  });
+}
+~hint
+Return new Promise. Call resolve(value) inside a setTimeout.
+~after
+delay(10, "done").then(console.log);
+console.log("waiting");
+~out
+waiting
+done
+=L async1 | async and await
+@T
+`async` and `await` make promise code read top to bottom. `await` pauses the function until the promise settles. It only works inside an `async` function.
+
+Use `try` and `catch` for failures. An `async` function always returns a promise.
+~code
+function wait2(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function run() {
+  console.log("Start");
+  await wait2(20);
+  console.log("Finished");
+  return 42;
+}
+
+run().then((n) => console.log(n));
+console.log("Not blocked");
+@Q
+What does an `async` function return?
+~opts
+* Always a promise
+- Always undefined
+- Only strings
+~why
+Returning 42 gives a promise that resolves to 42.
+@Q
+What's wrong here? `function go() { await work(); }`
+~opts
+* `await` needs an `async` function
+- `work` needs quotes
+- Nothing
+~why
+It should be `async function go()`.
+@C
+Write an `async` function `total()` that awaits `getA()` and `getB()`, then returns their sum.
+~start
+function getA() { return Promise.resolve(2); }
+function getB() { return Promise.resolve(3); }
+
+// Your function here
+
+~sol
+function getA() { return Promise.resolve(2); }
+function getB() { return Promise.resolve(3); }
+
+async function total() {
+  let a = await getA();
+  let b = await getB();
+  return a + b;
+}
+~hint
+async function total() { let a = await getA(); ... }
+~after
+total().then(console.log);
+~out
+5
+~must
+\bawait\b :: Use await.
+=U fetchu | Fetch API | Book sections 3.14 to 3.16. Modern requests and examples.
+=L fetch1 | fetch
+@T
+`fetch` is the modern replacement for XMLHttpRequest. It returns a promise. There are two waits: one for the response, and one to read its body.
+
+A 404 doesn't reject the promise, so check `response.ok` yourself.
+~code
+async function weather(city) {
+  let response = await fetch(`https://api.example.com/weather?city=${city}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  let data = await response.json();
+  return data;
+}
+
+weather("Seattle").then((d) => console.log(d.tempF));
+weather("Nowhere").catch((e) => console.log(e.message));
+@T
+Send data with a second argument that has the `method`, `headers`, and `body`.
+~code
+async function send() {
+  let response = await fetch("https://api.example.com/echo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: "Ana" }),
+  });
+  console.log((await response.json()).received);
+}
+
+send();
+@Q
+Does `fetch` reject on a 404 response?
+~opts
+* No, you check `response.ok`
+- Yes, always
+- Only for images
+~why
+It rejects only on network failures.
+@O
+Put these in order.
+~lines
+async function load() {
+  let res = await fetch("https://api.example.com/quote");
+  let data = await res.json();
+  console.log(data.author);
+}
+load();
+~why
+First wait for the response, then for its parsed body.
+~out
+Proverb
+@C
+Write `async function firstUser()` that fetches `https://api.example.com/users` and returns the first user's `name`.
+~start
+// Your function here
+
+~sol
+async function firstUser() {
+  let res = await fetch("https://api.example.com/users");
+  let users = await res.json();
+  return users[0].name;
+}
+~hint
+Two awaits, then users[0].name.
+~after
+firstUser().then(console.log);
+~out
+Ana
+=L ex3 | Examples: canvas game and fetch weather
+@T
+The Lights Out game moves to canvas by replacing buttons with drawn squares. A click gives pixel coordinates, and dividing by the cell size finds the grid position: `Math.floor(x / size)`.
+
+The Weather Comparison moves to `fetch` by replacing the XHR request. `Promise.all` loads two cities at once.
+~code
+async function compare(a, b) {
+  let [x, y] = await Promise.all([
+    fetch(`https://api.example.com/weather?city=${a}`).then((r) => r.json()),
+    fetch(`https://api.example.com/weather?city=${b}`).then((r) => r.json()),
+  ]);
+  let warmer = x.tempF > y.tempF ? x.city : y.city;
+  console.log(`${warmer} is warmer`);
+}
+
+compare("Austin", "Seattle");
+@Q
+A 60-pixel cell grid gets a click at x = 130. Which column is it?
+~opts
+* 2
+- 1
+- 3
+~why
+`Math.floor(130 / 60)` is 2, counting from 0.
+=U labs3 | Chapter 3 Labs | Practice problems in the style of book sections 3.17 to 3.23.
+=F lab317 | Lab: User registration form
+@C
+On submit of `#reg`, stop the reload and check two things: `#user` is 3 or more letters and digits only, and `#pass` has 8 or more characters.
+
+Put `Invalid username`, `Invalid password`, or `Registered` in `#msg`, checking in that order. Save the username in `localStorage` under `user` when it succeeds.
+~html
+<form id="reg"><input id="user"><input id="pass"><button type="submit">Join</button></form><p id="msg"></p>
+~start
+// Your code here
+
+~sol
+document.getElementById("reg").addEventListener("submit", (event) => {
+  event.preventDefault();
+  let user = document.getElementById("user").value;
+  let pass = document.getElementById("pass").value;
+  let msg = document.getElementById("msg");
+  if (!/^[A-Za-z0-9]{3,}$/.test(user)) {
+    msg.textContent = "Invalid username";
+  } else if (pass.length < 8) {
+    msg.textContent = "Invalid password";
+  } else {
+    localStorage.setItem("user", user);
+    msg.textContent = "Registered";
+  }
+});
+~hint
+{3,} means three or more. Use an if / else if chain.
+~after
+const m = () => document.getElementById("msg").textContent;
+__type("#user", "a!"); __click("button"); console.log(m());
+__type("#user", "ada1"); __type("#pass", "short"); __click("button"); console.log(m());
+__type("#pass", "longenough"); __click("button"); console.log(m(), localStorage.getItem("user"));
+~out
+Invalid username
+Invalid password
+Registered ada1
+=F lab318 | Lab: Heroes and villains
+@C
+Write a class `Character` with `name` and `power`, and a method `intro()` returning `Name has power N`.
+
+`Hero` extends it, adding `save()` that returns `Name saves the day`. `Villain` extends it, overriding `intro()` to add ` (evil)`.
+~start
+// Your classes here
+
+~sol
+class Character {
+  constructor(name, power) {
+    this.name = name;
+    this.power = power;
+  }
+  intro() {
+    return `${this.name} has power ${this.power}`;
+  }
+}
+
+class Hero extends Character {
+  save() {
+    return `${this.name} saves the day`;
+  }
+}
+
+class Villain extends Character {
+  intro() {
+    return `${super.intro()} (evil)`;
+  }
+}
+~hint
+Children get the parent's constructor automatically when they don't write their own.
+~after
+console.log(new Hero("Ada", 9).intro());
+console.log(new Hero("Ada", 9).save());
+console.log(new Villain("Rex", 7).intro());
+~out
+Ada has power 9
+Ada saves the day
+Rex has power 7 (evil)
+=F lab319 | Lab: Grocery list
+@C
+Write `addItem(name)`, `removeItem(name)`, and `getItems()`. Keep the list in `localStorage` under `groceries` as JSON text. Ignore duplicates.
+~start
+// Your functions here
+
+~sol
+function getItems() {
+  return JSON.parse(localStorage.getItem("groceries")) || [];
+}
+
+function save(items) {
+  localStorage.setItem("groceries", JSON.stringify(items));
+}
+
+function addItem(name) {
+  let items = getItems();
+  if (!items.includes(name)) {
+    items.push(name);
+    save(items);
+  }
+}
+
+function removeItem(name) {
+  save(getItems().filter((x) => x !== name));
+}
+~hint
+JSON.parse(null) gives null, so use || [] for a first run.
+~after
+addItem("milk"); addItem("eggs"); addItem("milk");
+console.log(getItems().join(","));
+removeItem("milk");
+console.log(localStorage.getItem("groceries"));
+~out
+milk,eggs
+["eggs"]
+=F lab320 | Lab: Snowman canvas
+@C
+On `#c`, draw a snowman: three filled circles with `arc`, each from `0` to `2 * Math.PI`.
+
+Centers at x = 100: y = 150 with radius 40, y = 90 with radius 30, and y = 45 with radius 20.
+~html
+<canvas id="c" width="200" height="200" style="background:#def"></canvas>
+~start
+// Your code here
+
+~sol
+let ctx = document.getElementById("c").getContext("2d");
+ctx.fillStyle = "white";
+for (let [y, r] of [[150, 40], [90, 30], [45, 20]]) {
+  ctx.beginPath();
+  ctx.arc(100, y, r, 0, 2 * Math.PI);
+  ctx.fill();
+}
+~hint
+Each circle needs its own beginPath, arc and fill.
+~after
+console.log(__calls("arc").map((a) => a[1] + "," + a[2] + "," + a[3]).join(" "));
+console.log(__calls("fill").length);
+~out
+100,150,40 100,90,30 100,45,20
+3
+=F lab321 | Lab: Frog transformations
+@C
+Write `drawFrog(ctx, x, y, angle)`. It should `save`, `translate` to (x, y), `rotate` by `angle`, draw a `fillRect` at (-10, -10) that is 20 by 20, then `restore`.
+
+Call it for (50, 50, 0) and (150, 50, Math.PI / 2).
+~html
+<canvas id="c" width="200" height="100"></canvas>
+~start
+function drawFrog(ctx, x, y, angle) {
+
+}
+
+let ctx = document.getElementById("c").getContext("2d");
+
+~sol
+function drawFrog(ctx, x, y, angle) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.fillRect(-10, -10, 20, 20);
+  ctx.restore();
+}
+
+let ctx = document.getElementById("c").getContext("2d");
+drawFrog(ctx, 50, 50, 0);
+drawFrog(ctx, 150, 50, Math.PI / 2);
+~hint
+save first and restore last, so one frog's transform doesn't affect the next.
+~after
+console.log(__calls("save").length, __calls("restore").length, __calls("translate").map((a) => a[1]).join(","), __calls("fillRect").length);
+~out
+2 2 50,150 2
+=F lab322 | Lab: Circle with a Promise
+@C
+Write `circleArea(r)` that returns a promise. It resolves with the area rounded to 2 decimals as a string (use `toFixed(2)`). If `r` is not positive, reject with a new Error `Radius must be positive`.
+~start
+function circleArea(r) {
+
+}
+
+~sol
+function circleArea(r) {
+  return new Promise((resolve, reject) => {
+    if (r <= 0) {
+      reject(new Error("Radius must be positive"));
+    } else {
+      resolve((Math.PI * r * r).toFixed(2));
+    }
+  });
+}
+~hint
+Inside new Promise, call reject for bad input and resolve otherwise.
+~after
+await circleArea(1).then(console.log);
+await circleArea(-1).catch((e) => console.log(e.message));
+~out
+3.14
+Radius must be positive
+=F lab323 | Lab: Quote API with fetch
+@C
+When `#get` is clicked, fetch `https://api.example.com/quote` with async and await, and show the quote in `#q`. On a failed response, show `Try again`.
+~html
+<button id="get">Quote</button><p id="q"></p>
+~start
+// Your code here
+
+~sol
+document.getElementById("get").addEventListener("click", async () => {
+  let q = document.getElementById("q");
+  let res = await fetch("https://api.example.com/quote");
+  if (res.ok) {
+    let data = await res.json();
+    q.textContent = data.quote;
+  } else {
+    q.textContent = "Try again";
+  }
+});
+~hint
+Handlers can be async: addEventListener("click", async () => { ... })
+~after
+__click("#get");
+await wait(60);
+console.log(document.getElementById("q").textContent);
+~out
+Measure twice, cut once.

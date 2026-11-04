@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}Account{% endblock %}{% block width %}620px{% endblock %}{% block body %}
+<h1>{{ user.username }}</h1><p><a href="/">Back to lessons</a></p>
+{% with m = get_flashed_messages() %}{% for x in m %}<p class="err" role="alert">{{ x }}</p>{% endfor %}{% endwith %}
+{% if user.is_admin %}<section><h2>Invite someone</h2><p class="muted">Each link makes one account and expires in 7 days.</p>
+{% if new_link %}<p class="ok">Send this link:<br><strong>{{ new_link }}</strong></p>{% endif %}
+<form method="post" action="/account/invites"><label>Who is it for?<input name="label" maxlength="60"></label><button class="ghost">Make invite link</button></form>
+{% for i in invites %}<div class="row"><span>{{ i.label }} <span class="muted">expires {{ i.expires_at|day }}</span></span><form method="post" action="/account/invites/{{ i.rowid }}/revoke"><button class="ghost small">Cancel</button></form></div>{% endfor %}</section>
+<section><h2>People</h2>{% for u in users %}<div class="row"><span>{{ u.username }} <span class="muted">{% if u.is_admin %}owner{% elif u.disabled %}turned off{% else %}joined {{ u.created_at|day }}{% endif %}</span></span>
+{% if u.id != user.id %}<form method="post" action="/account/users/{{ u.id }}/toggle"><button class="ghost small">{{ 'Turn on' if u.disabled else 'Turn off' }}</button></form>{% endif %}</div>{% endfor %}</section>{% endif %}
+<section><h2>Change password</h2><form method="post" action="/account/password"><label>Current password<input name="current" type="password" autocomplete="current-password" required></label>
+<label>New password<input name="new" type="password" autocomplete="new-password" required minlength="10"></label><button class="ghost">Change password</button></form></section>
+<form method="post" action="/logout"><button class="ghost">Sign out</button></form>{% endblock %}

@@ -1,0 +1,362 @@
+=U ng1 | Angular Overview and Setup | Book sections 5.1 to 5.3. What Angular is.
+=L ng11 | What Angular is
+@T
+**Angular** is a full **framework** from Google for building web apps. A library, like jQuery, is a tool you call. A framework is a structure your code plugs into.
+
+Angular apps are written in **TypeScript**, which is JavaScript with types added. An app is made of **components**, and the framework keeps the page in sync with your data.
+
+These Angular lessons explain the ideas and how to read the code. Angular needs a build step, so its code doesn't run inside this app.
+@T
+**Setup:** install Node.js, then the Angular command line tool, or **CLI**.
+
+```
+npm install -g @angular/cli
+ng new my-app
+cd my-app
+ng serve
+```
+
+`ng serve` runs a local server, usually at `localhost:4200`, and reloads when you save. `ng generate component name` creates a new component.
+@Q
+What language are Angular apps normally written in?
+~opts
+* TypeScript
+- Python
+- Plain HTML only
+~why
+TypeScript compiles down to JavaScript for the browser.
+@Q
+What does `ng serve` do?
+~opts
+* Builds the app and runs a local development server
+- Publishes the app to the internet
+- Deletes the build
+~why
+`ng build` makes the files you'd deploy.
+@O
+Put the setup steps in order.
+~lines
+npm install -g @angular/cli
+ng new my-app
+cd my-app
+ng serve
+~why
+Install the tool, create a project, move into it, then run it.
+=U ng2 | Hello World and App Structure | Book sections 5.4 to 5.7.
+=L ng21 | Your first component
+@T
+A **component** has a TypeScript class for logic and a template for HTML. The `@Component` line is a **decorator**, which tells Angular what the class is.
+
+`selector` is the tag that shows the component. `{{ title }}` puts the class's value on the page.
+
+```
+@Component({
+  selector: "app-root",
+  template: `<h1>Hello, {{ title }}!</h1>`,
+})
+export class AppComponent {
+  title = "World";
+}
+```
+@T
+A **modular app** splits the page into a tree of components: a header, a list, list items. Each one has a small job, and you nest them by using their selectors.
+
+Files usually come in a set: `name.component.ts`, `.html`, `.css`, and `.spec.ts` for tests.
+
+**Debugging:** use the browser's dev tools console, `console.log`, breakpoints, and the Angular DevTools extension. Errors usually name the template line.
+@Q
+What does `{{ title }}` do in a template?
+~opts
+* Displays the value of `title` from the class
+- Makes a comment
+- Calls the server
+~why
+This is **interpolation**.
+@B
+Finish the component so `<app-part>` shows the part name.
+~code
+@Component({
+  ___: "app-part",
+  template: `<p>{{ ___ }}</p>`,
+})
+export class PartComponent {
+  name = "Valve";
+}
+~opts
+* selector
+* name
+- title
+- tag
+~why
+`selector` sets the tag, and interpolation reads the class's property.
+@Q
+Why split an app into many small components?
+~opts
+* They're easier to reuse, test, and understand
+- Browsers require it
+- It removes the need for HTML
+~why
+A small component has one clear job.
+=U ng3 | Components and Data Binding | Book sections 5.8 to 5.10.
+=L ng31 | Data binding
+@T
+**Data binding** connects a class and its template. There are four forms:
+
+`{{ value }}`: **interpolation**, class to page.
+
+`[disabled]="isOff"`: **property binding**, class to element.
+
+`(click)="save()"`: **event binding**, page to class.
+
+`[(ngModel)]="name"`: **two-way binding**, both directions.
+
+Square brackets mean data goes in, and parentheses mean events come out.
+@T
+Parent and child components talk through `@Input()` and `@Output()`. Data flows down through inputs, and events flow up through outputs.
+
+```
+export class CounterComponent {
+  @Input() start = 0;
+  @Output() changed = new EventEmitter<number>();
+
+  add() {
+    this.start++;
+    this.changed.emit(this.start);
+  }
+}
+```
+@Q
+Which syntax runs `save()` on a click?
+~opts
+* `(click)="save()"`
+- `[click]="save()"`
+- `{{ click }}`
+~why
+Parentheses are for events.
+@Q
+Which one is two-way binding?
+~opts
+* `[(ngModel)]="name"`
+- `(ngModel)`
+- `{{ ngModel }}`
+~why
+It's nicknamed "banana in a box" because of the shape of `[( )]`.
+@Q
+A child needs to tell its parent a button was pressed. What does it use?
+~opts
+* `@Output()` with an `EventEmitter`
+- `@Input()`
+- A global variable
+~why
+Inputs go down, and outputs go up.
+@Q
+In the calculator exercise, a button shows a result from a `total` property after `add()` runs. Why does the page update without any DOM code?
+~opts
+* Angular's change detection re-renders bindings when data changes
+- The browser reloads
+- `total` is saved to the server
+~why
+You change data, and the framework updates the page.
+=U ng4 | Directives, Services and Dependency Injection | Book sections 5.11 and 5.12.
+=L ng41 | Directives
+@T
+**Directives** add behavior to templates.
+
+Structural ones change the page's structure: `*ngIf` shows or hides, and `*ngFor` repeats. Newer Angular also offers `@if` and `@for`.
+
+Attribute ones change how an element looks: `[ngClass]` and `[ngStyle]`.
+
+```
+<li *ngFor="let part of parts">{{ part }}</li>
+<p *ngIf="parts.length === 0">No parts</p>
+```
+@T
+A **service** is a class that holds shared logic, such as data loading. **Dependency injection** means Angular creates the service and hands it to whatever asks in its constructor.
+
+```
+@Injectable({ providedIn: "root" })
+export class PartsService {
+  getParts() { return ["valve", "seal"]; }
+}
+
+export class ListComponent {
+  constructor(private parts: PartsService) {}
+}
+```
+@Q
+Which directive repeats an element for each item?
+~opts
+* `*ngFor`
+- `*ngIf`
+- `[ngClass]`
+~why
+The star marks a structural directive.
+@Q
+What's the benefit of dependency injection?
+~opts
+* Components don't build their own dependencies, so they're easier to test and share
+- It makes CSS faster
+- It removes TypeScript
+~why
+A test can hand in a fake service.
+@B
+Show only when logged in.
+~code
+<button ___="loggedIn">Log out</button>
+~opts
+* *ngIf
+- *ngFor
+- (click)
+~why
+`*ngIf` adds or removes the element.
+=U ng5 | Modules, Lazy Loading and Forms | Book sections 5.13 to 5.18.
+=L ng51 | Modules and lazy loading
+@T
+An **NgModule** groups related components and services, using `declarations`, `imports`, `providers`, and `bootstrap`. Newer Angular often uses **standalone components**, which skip modules.
+
+**Lazy loading** downloads a feature only when someone goes there. This shrinks the first download.
+
+```
+{ path: "admin", loadChildren: () => import("./admin/admin.module").then(m => m.AdminModule) }
+```
+@Q
+What's the benefit of lazy loading?
+~opts
+* A faster first load, since features download when needed
+- It removes the need for routes
+- It makes code private
+~why
+Users don't pay for screens they never open.
+=L ng52 | Forms
+@T
+Angular has two form styles.
+
+**Template-driven forms** are defined in the HTML with `ngModel`. They're quick for simple forms and need `FormsModule`.
+
+**Reactive forms** are defined in the class with `FormGroup` and `FormControl`. They're better for complex validation and need `ReactiveFormsModule`.
+
+```
+form = new FormGroup({
+  amount: new FormControl(0, [Validators.required, Validators.min(1)]),
+});
+```
+@Q
+Where are reactive forms defined?
+~opts
+* In the component class
+- Only in HTML
+- In the CSS
+~why
+The HTML connects to it with `[formGroup]` and `formControlName`.
+@Q
+Which validator rejects a blank field?
+~opts
+* `Validators.required`
+- `Validators.blank`
+- `Validators.empty`
+~why
+`min`, `max`, `email`, and `pattern` also exist.
+@Q
+For an ATM withdrawal form with rules that depend on the balance, which fits better?
+~opts
+* A reactive form
+- A template-driven form with no validation
+- No form at all
+~why
+Logic-heavy rules are easier to write and test in the class.
+=U ng6 | Pipes and Practice Apps | Book sections 5.19 to 5.22.
+=L ng61 | Pipes
+@T
+A **pipe** formats a value in a template, using the `|` symbol. It changes what's shown, and the data stays the same.
+
+```
+{{ price | currency }}
+{{ today | date:"shortDate" }}
+{{ name | uppercase }}
+{{ films | json }}
+```
+
+You can write your own with `@Pipe`. The exercises in the book (Favorite Films, Product Hunt, Currency Converter) combine `*ngFor`, pipes, forms, and services.
+@Q
+What does `{{ name | uppercase }}` do to the `name` property?
+~opts
+* Nothing, it only changes how it's displayed
+- Changes it permanently
+- Deletes it
+~why
+Pipes transform output only.
+@Q
+You want a list of films to show with a typed filter. What do you combine?
+~opts
+* A bound input, a filter on the data, and `*ngFor`
+- Only CSS
+- `alert` and `prompt`
+~why
+Data changes, and the template follows.
+=U ng7 | Routing, RxJS and HTTP | Book sections 5.23 to 5.27.
+=L ng71 | Routing
+@T
+A **single-page app** swaps views without a full reload. Angular's **router** maps a URL to a component. `<router-outlet>` is where it appears, and `routerLink` makes links.
+
+```
+const routes: Routes = [
+  { path: "", component: HomeComponent },
+  { path: "parts/:id", component: PartComponent },
+];
+```
+
+```
+<a routerLink="/parts/5">Part 5</a>
+<router-outlet></router-outlet>
+```
+@Q
+What does `:id` mean in a route path?
+~opts
+* A value taken from the URL
+- A CSS id
+- A comment
+~why
+The component reads it through `ActivatedRoute`.
+=L ng72 | RxJS, Observables and HTTP
+@T
+An **Observable** is a stream of values over time. A promise gives one value, but an observable can give many. Nothing happens until you **subscribe**.
+
+**RxJS** is the library that provides them. Operators such as `map` and `filter` go inside `pipe()`. The Timer App exercise uses `interval(1000)`.
+
+```
+interval(1000).pipe(
+  map(n => n * 2)
+).subscribe(v => console.log(v));
+```
+@T
+Angular's `HttpClient` returns observables, so HTTP GET looks like this. Remember to unsubscribe from long-running streams when a component closes. In templates, the `async` pipe does that for you.
+
+```
+this.http.get<Part[]>("/api/parts").subscribe(parts => {
+  this.parts = parts;
+});
+```
+@Q
+What's the main difference between a promise and an observable?
+~opts
+* An observable can deliver many values over time
+- A promise can't fail
+- Observables are only for CSS
+~why
+They're also lazy, doing nothing until subscribed.
+@Q
+What must you do for an observable's work to begin?
+~opts
+* Call `subscribe`
+- Call `new`
+- Reload the page
+~why
+This catches a lot of people: an HTTP call with no subscribe is never sent.
+@Q
+Why unsubscribe from `interval` when a component is destroyed?
+~opts
+* It would keep running and leak memory
+- It's required by HTML
+- It speeds up CSS
+~why
+`takeUntilDestroyed` and the `async` pipe handle this.

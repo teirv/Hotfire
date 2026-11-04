@@ -1,0 +1,10 @@
+services:
+  hotfire:
+    image: ${HOTFIRE_IMAGE:?Set HOTFIRE_IMAGE in .env}
+    container_name: hotfire
+    restart: unless-stopped
+    ports:
+      - "8095:8000"
+    env_file: .env
+    volumes:
+      - /DATA/AppData/hotfire:/data

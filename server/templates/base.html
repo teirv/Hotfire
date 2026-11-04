@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Hotfire{% endblock %}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#E8ECEF;--panel:#F8FAFB;--sunk:#DDE3E8;--ink:#15202A;--muted:#55636F;--line:#C6D0D8;--accent:#C8410B;--accent-ink:#fff;--bad:#B3231A;--bad-bg:#F8DFDC;--good-bg:#DCEFE4;--display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0E151B;--panel:#17212A;--sunk:#0A1015;--ink:#E5ECF1;--muted:#98A8B5;--line:#2C3A46;--accent:#FF7D3B;--accent-ink:#1B0B02;--bad:#FF7C70;--bad-bg:#3A1714;--good-bg:#12301F;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);padding:24px max(16px,env(safe-area-inset-left))}
+main{max-width:{% block width %}400px{% endblock %};margin:6vh auto;display:flex;flex-direction:column;gap:18px}
+.brand{font:700 32px/1 var(--display);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;color:inherit}
+h1{font:700 30px/1.1 var(--display);margin:0}h2{font:700 23px/1.1 var(--display);margin:0}
+form{display:flex;flex-direction:column;gap:10px}label{font-weight:500;font-size:14.5px;display:flex;flex-direction:column;gap:4px}
+input{font:inherit;padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--ink)}
+button{font:700 18px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:13px;border:0;border-radius:5px;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+button.ghost{background:none;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}button.small{padding:7px 10px;font-size:14px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.err{background:var(--bad-bg);padding:10px 12px;border-radius:4px}.ok{background:var(--good-bg);padding:10px 12px;border-radius:4px;overflow-wrap:anywhere}
+.muted{color:var(--muted);font-size:14.5px;margin:0}p{margin:0}a{color:var(--accent)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:6px;border-top:1px solid var(--line)}
+.row form{flex:none}
+</style></head><body><main><a class="brand" href="/">Hotfire</a>{% block body %}{% endblock %}</main></body></html>

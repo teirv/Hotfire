@@ -1,5 +1,5 @@
 """Hotfire server: invite-only accounts and saved progress for the Hotfire learning app."""
-import hashlib, json, os, secrets, sqlite3, time, urllib.error, urllib.request
+import datetime, hashlib, json, os, secrets, sqlite3, time, urllib.error, urllib.request
 from functools import wraps
 from urllib.parse import urlparse
 
@@ -341,6 +341,43 @@ def put_progress():
                  (current_user()["id"], doc, int(time.time())))
     db().commit()
     return jsonify(ok=True)
+
+
+def board_stats(doc):
+    """Work out a person's leaderboard numbers from their saved progress."""
+    days = {}
+    for key, value in (doc.get("days") or {}).items():
+        try:
+            days[datetime.date.fromisoformat(key)] = int(value)
+        except (TypeError, ValueError):
+            continue
+    today = datetime.date.today()
+    week = sum(xp for day, xp in days.items() if 0 <= (today - day).days < 7 or day > today)
+    streak = 0
+    if days:
+        day = max(days)
+        # Allow a day of slack, because the server's clock may differ from the learner's time zone.
+        if (today - day).days <= 1:
+            while day in days:
+                streak += 1
+                day -= datetime.timedelta(days=1)
+    lessons = sum(1 for key in (doc.get("done") or {}) if not str(key).startswith("fix:"))
+    xp = doc.get("xp", 0)
+    return {"xp": xp if isinstance(xp, int) else 0, "week": week, "streak": streak, "lessons": lessons}
+
+
+@app.get("/api/leaderboard")
+@login_required
+def leaderboard():
+    me_id = current_user()["id"]
+    rows = []
+    for row in db().execute("SELECT u.id,u.username,p.doc FROM users u LEFT JOIN progress p ON p.user_id=u.id WHERE u.disabled=0"):
+        try:
+            doc = json.loads(row["doc"]) if row["doc"] else {}
+        except ValueError:
+            doc = {}
+        rows.append({"username": row["username"], "you": row["id"] == me_id, **board_stats(doc)})
+    return jsonify(rows=rows)
 
 
 @app.post("/api/explain")

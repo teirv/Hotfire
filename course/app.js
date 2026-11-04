@@ -241,7 +241,7 @@ const nextLesson=()=>allLessons(S.lang).find(l=>!S.done[l.id]);
 function setTrack(){document.documentElement.style.setProperty("--track",`var(${LANGS[S.lang].color})`)}
 function topBar(){const n=Object.keys(S.missed).filter(k=>missLookup(k)&&missLookup(k).lang===S.lang).length;
   return `<header class="top"><div class="brand">${ICON.flame}Hotfire</div><nav class="nav" aria-label="Sections">
-  ${[["home","Course"],["review","Review"],["scratch","Scratchpad"]].filter(x=>x[0]!=="scratch"||!["japanese","spanish"].includes(S.lang)).map(([v,t])=>`<button data-nav="${v}" ${view===v?'aria-current="page"':""}>${t}${v==="review"&&n?`<span class="count">${n}</span>`:""}</button>`).join("")}${window.__hotfireHost?`<a class="navlink" href="/account">Account</a>`:""}</nav></header>`}
+  ${[["home","Course"],["review","Review"],["scratch","Scratchpad"],...(window.__hotfireHost?[["board","Leaderboard"]]:[])].filter(x=>x[0]!=="scratch"||!["japanese","spanish"].includes(S.lang)).map(([v,t])=>`<button data-nav="${v}" ${view===v?'aria-current="page"':""}>${t}${v==="review"&&n?`<span class="count">${n}</span>`:""}</button>`).join("")}${window.__hotfireHost?`<a class="navlink" href="/account">Account</a>`:""}</nav></header>`}
 function sideHTML(){const t=S.days[today()]||0,nx=nextLesson();
   return `<aside class="side"><div class="switch" role="group" aria-label="Language">${Object.keys(LANGS).map(k=>`<button data-lang="${k}" aria-pressed="${S.lang===k}"><b>${esc(LANGS[k].name)}</b><span>${pct(k)}% done</span></button>`).join("")}</div>
   <div class="stats"><div class="stat"><strong>${streak()}</strong><span class="label">Day streak</span></div><div class="stat"><strong>${S.xp}</strong><span class="label">Total XP</span></div><div class="stat"><strong>${Math.min(t,GOAL)}/${GOAL}</strong><span class="label">Today</span></div></div>
@@ -273,6 +273,14 @@ function reviewHTML(){const items=Object.keys(S.missed).map(missLookup).filter(x
   <label class="label" for="restorebox">Restore from a backup</label><textarea id="restorebox" rows="2" spellcheck="false" placeholder="Paste a backup code"></textarea><div class="row"><button class="btn ghost" data-restore="1">Restore</button></div><p id="backupmsg" class="muted" role="status"></p></section>
   ${items.length?`<section><span class="label">Waiting to be fixed</span><ul class="misslist" style="margin-top:8px">${items.slice(0,12).map(x=>`<li>${esc(x.s.prompt.split("\n")[0].replace(/[`*]/g,"").slice(0,70))}<span>${esc(x.lesson.title)}</span></li>`).join("")}</ul></section>`:""}</main>`}
 
+/* ---------- leaderboard (server version only) ---------- */
+let boardRows=null,boardSort="week",boardErr=false;
+function boardBody(){if(boardErr)return `<p class="muted">The leaderboard couldn't load. Check your connection and open it again.</p>`;if(!boardRows)return `<p class="muted">Loading the leaderboard.</p>`;
+  const rows=[...boardRows].sort((a,b)=>(b[boardSort]-a[boardSort])||(b.xp-a.xp)||a.username.localeCompare(b.username));
+  return `<div class="boardwrap"><table class="board"><thead><tr><th scope="col">Rank</th><th scope="col">Name</th><th scope="col">This week</th><th scope="col">All time</th><th scope="col">Streak</th><th scope="col">Lessons</th></tr></thead><tbody>${rows.map((r,i)=>`<tr class="${r.you?"me":""}"><td class="rank">${i+1}</td><td>${esc(r.username)}${r.you?` <span class="you">You</span>`:""}</td><td>${r.week}</td><td>${r.xp}</td><td>${r.streak}</td><td>${r.lessons}</td></tr>`).join("")}</tbody></table></div>${rows.length<2?`<p class="muted">You're the only one here so far. Invite someone from Account to start a race.</p>`:""}`}
+function boardHTML(){return `<main class="page"><div><h1>Leaderboard</h1></div><p>Everyone with an account, ranked across all tracks. Weekly XP covers the last 7 days.</p><div class="switch boardsw" role="group" aria-label="Rank by">${[["week","This week"],["xp","All time"]].map(([k,t])=>`<button data-bsort="${k}" aria-pressed="${boardSort===k}"><b>${t}</b></button>`).join("")}</div><div id="boardbody">${boardBody()}</div></main>`}
+async function loadBoard(){boardErr=false;try{if(dirty){clearTimeout(timer);await flush()}const r=await fetch("/api/leaderboard",{cache:"no-store"});if(r.status===401){location.href="/login";return}if(!r.ok)throw 0;boardRows=(await r.json()).rows}catch(e){boardErr=true}const b=$("#boardbody");if(b)b.innerHTML=boardBody()}
+
 /* ---------- scratchpad ---------- */
 function scratchHTML(){const py=S.lang==="python";return `<main class="page"><div><h1>Scratchpad</h1></div><p>Your own space to try ideas in ${esc(LANGS[S.lang].name)}. There's no autocomplete and nothing suggests code while you type, so all of the typing is yours.</p>
   ${editorHTML("pad",{file:LANGS[S.lang].file,reset:true,html:S.lang==="html"})}${py?`<div class="inputs"><label class="label" for="padin">Input lines for input()</label><textarea id="padin" rows="2" spellcheck="false">Teir</textarea></div>`:""}</main>`}
@@ -282,6 +290,7 @@ function render(){setTrack();const a=$("#app");
   if(L){return}
   if(view==="home"){a.innerHTML=topBar()+homeHTML()}
   if(view==="review"){a.innerHTML=topBar()+reviewHTML()}
+  if(view==="board"){a.innerHTML=topBar()+boardHTML()}
   if(view==="scratch"){a.innerHTML=topBar()+scratchHTML();
     const key=S.lang,st=LANGS[key].scratch;
     ed=mountEditor("pad",{code:S.scratch[key]??st,start:st,lang:key,onChange:v=>{S.scratch[key]=v;if(save.t)clearTimeout(save.t);save.t=setTimeout(save,800)},getStdin:()=>{const i=$("#padin");return i?i.value.split("\n"):[]}})}
@@ -437,7 +446,8 @@ function quit(){if(L.i===0&&!L.asked){cancelCoach();L=null;view="home";render();
 
 /* ---------- events ---------- */
 document.addEventListener("click",e=>{const j=e.target.closest&&e.target.closest(".ja");if(j){unlockVoice();sayJa(j.dataset.say)}const t=e.target.closest("button");if(!t)return;const d=t.dataset;
-  if(d.nav){view=d.nav;L=null;render();window.scrollTo(0,0)}
+  if(d.nav){view=d.nav;L=null;render();window.scrollTo(0,0);if(view==="board")loadBoard()}
+  else if(d.bsort){boardSort=d.bsort;render()}
   else if(d.lang){S.lang=d.lang;openCh=null;if(view==="scratch"&&["japanese","spanish"].includes(d.lang))view="home";save();render()}
   else if(d.ch!==undefined){openCh=(openCh??(nextLesson()?nextLesson().unit.ch:null))===d.ch?"":d.ch;render()}
   else if(d.copyb){const b=backupCode(),box=$("#backupbox");box.value=b;box.hidden=false;const fin=m=>{$("#backupmsg").textContent=m};try{navigator.clipboard.writeText(b).then(()=>fin("Backup code copied. Paste it somewhere safe, like a note."),()=>{box.select();fin("Copy the selected code above and paste it somewhere safe.")})}catch(e){box.select();fin("Copy the selected code above and paste it somewhere safe.")}}

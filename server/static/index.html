@@ -283,6 +283,16 @@ ruby rt{font-size:.58em;color:var(--muted);text-decoration:none}
 .seg i.look{background:var(--muted)}
 .peeknote{margin:0;font-size:14px;color:var(--muted)}
 .peekwhy{font-size:15px;color:var(--muted)}
+/* tappable progress bar */
+.seg{align-items:center}
+.segb{flex:1;display:block;padding-block:8px;min-width:0}
+.segb i{display:block;height:7px;background:var(--sunk);border-radius:1px}
+.segb i.on{background:var(--track)}
+.segb i.now{background:var(--accent)}
+.segb i.look{background:var(--muted)}
+button.segb:hover:not(:disabled) i{filter:brightness(1.25)}
+button.segb:hover:not(:disabled) i:not(.on):not(.now):not(.look){background:var(--line)}
+button.segb:disabled{cursor:default}
 </style>
 <div id="app"></div>
 <script>
@@ -667,7 +677,7 @@ function startDrill(){const ls=allLessons(S.lang),done=ls.filter(l=>S.done[l.id]
   const q=shuffle(pool.filter(x=>"QPBOW".includes(x.s.k))).slice(0,9),c=shuffle(pool.filter(x=>x.s.k==="C")).slice(0,1);
   L={mode:"drill",title:"Mixed drill",lang:S.lang,queue:[...q,...c],i:0,right:0,asked:0,miss:new Set(),fails:0};showCard()}
 function shell(inner,foot){const q=L.queue;
-  return `<div class="lesson"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button>${(L.peek??L.i)>0?`<button class="x" data-prevcard="1" aria-label="Previous card">${ICON.left}</button>`:""}<div class="seg" role="progressbar" aria-valuemin="0" aria-valuemax="${q.length}" aria-valuenow="${L.i}">${q.map((_,i)=>`<i class="${i===L.peek?"look":i<L.i?"on":i===L.i?"now":""}"></i>`).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
+  return `<div class="lesson"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button>${(L.peek??L.i)>0?`<button class="x" data-prevcard="1" aria-label="Previous card">${ICON.left}</button>`:""}<div class="seg" role="group" aria-label="Lesson cards">${q.map((_,i)=>{const c=i===L.peek?"look":i<L.i?"on":i===L.i?"now":"";return i<=L.i?`<button class="segb" data-seg="${i}" aria-label="Go to card ${i+1}"><i class="${c}"></i></button>`:`<span class="segb"><i></i></span>`}).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
   <div class="lbody">${inner}</div><div class="lfoot" id="foot">${foot}</div></div>`}
 function showCard(){const c=L.queue[L.i];if(!c)return finish();
   const s=c.s,lang=L.lang,crumb=`<div class="crumb">${esc(L.title)}</div>`;L.sel=null;L.fills=[];L.locked=false;L.fails=0;ed=null;
@@ -705,7 +715,8 @@ function renderBlank(crumb){const s=L.queue[L.i].s,parts=s.code.split("___");
 function renderOrder(crumb){const s=L.queue[L.i].s,used=new Set(L.fills.map(x=>x.i));
   $("#app").innerHTML=shell(`${crumb||`<div class="crumb">${esc(L.title)}</div>`}<div class="prose">${md(s.prompt)}</div><div class="orderzone">${L.fills.length?L.fills.map((f,i)=>`<button data-back="${i}">${hl(f.t,L.lang)}</button>`).join(""):`<span class="empty">Tap lines below to build the program.</span>`}</div><div class="tokens">${L.toks.map(t=>`<button class="tok" data-line="${t.i}" ${used.has(t.i)?"disabled":""}>${tx(t.t.trim())}</button>`).join("")}</div>`,
    `<button class="btn" id="primary" data-check="1" ${L.fills.length===s.lines.length?"":"disabled"}>Check</button>`)}
-function hidePrev(){const b=$("[data-prevcard]");if(b)b.hidden=true}
+function hidePrev(){const b=$("[data-prevcard]");if(b)b.hidden=true;document.querySelectorAll("button.segb").forEach(x=>x.disabled=true)}
+function keepDraft(){const c=L.queue[L.i];if(L.peek==null&&c&&c.s.k==="C"&&ed&&ed.value!==c.s.start&&ed.value.length<8000){S.drafts[c.key]=ed.value;save()}}
 function verdict(ok,html,btn){$("#foot").innerHTML=`<div class="verdict ${ok?"ok":"bad"}" role="status"><span class="stamp">${ok?"GO":"NO-GO"}</span><div class="msg">${html}</div></div>${btn}`;const b=$("#primary");if(b)b.focus({preventScroll:true})}
 function scored(ok,c){const s=c.s;L.asked++;
   if(ok){if(!c.retry){L.right++}if(L.mode==="review"){delete S.missed[c.key];S.done["fix:"+c.key]={at:Date.now()};addXP(2);save()}}
@@ -767,7 +778,8 @@ document.addEventListener("click",e=>{const j=e.target.closest&&e.target.closest
   else if(d.quit)quit();
   else if(d.stay)document.querySelector(".sheet").remove();
   else if(d.leave){cancelCoach();document.querySelector(".sheet").remove();L=null;view="home";render();window.scrollTo(0,0)}
-  else if(d.prevcard){cancelCoach();const c=L.queue[L.i];if(L.peek==null&&c&&c.s.k==="C"&&ed&&ed.value!==c.s.start&&ed.value.length<8000){S.drafts[c.key]=ed.value;save()}L.peek=(L.peek??L.i)-1;showPeek()}
+  else if(d.prevcard){keepDraft();cancelCoach();L.peek=(L.peek??L.i)-1;showPeek()}
+  else if(d.seg!==undefined){const n=+d.seg;if(n===(L.peek??L.i))return;keepDraft();cancelCoach();if(n===L.i){L.peek=null;showCard()}else{L.peek=n;showPeek()}}
   else if(d.peeknext){cancelCoach();L.peek++;if(L.peek>=L.i){L.peek=null;showCard()}else showPeek()}
   else if(d.next){cancelCoach();L.i++;L.showed=false;if(L.mode==="lesson"&&L.i<L.lesson.s.length){S.at[L.lesson.id]=L.i;save()}showCard()}
   else if(d.opt!==undefined&&!L.locked){L.sel=+d.opt;document.querySelectorAll(".opt").forEach((b,i)=>b.setAttribute("aria-pressed",i===L.sel));$("#primary").disabled=false}

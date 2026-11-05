@@ -275,3 +275,7 @@ ruby rt{font-size:.58em;color:var(--muted);text-decoration:none}
 .board .rank{font:700 22px/1 var(--display);color:var(--track)}
 .board tr.me td{background:var(--sunk)}
 .you{font:600 11px/1 var(--display);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-left:4px}
+/* looking back */
+.seg i.look{background:var(--muted)}
+.peeknote{margin:0;font-size:14px;color:var(--muted)}
+.peekwhy{font-size:15px;color:var(--muted)}

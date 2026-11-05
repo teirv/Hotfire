@@ -279,6 +279,10 @@ ruby rt{font-size:.58em;color:var(--muted);text-decoration:none}
 .board .rank{font:700 22px/1 var(--display);color:var(--track)}
 .board tr.me td{background:var(--sunk)}
 .you{font:600 11px/1 var(--display);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-left:4px}
+/* looking back */
+.seg i.look{background:var(--muted)}
+.peeknote{margin:0;font-size:14px;color:var(--muted)}
+.peekwhy{font-size:15px;color:var(--muted)}
 </style>
 <div id="app"></div>
 <script>
@@ -300,6 +304,7 @@ const ICON={check:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" st
  flame:'<svg viewBox="0 0 20 24" fill="currentColor" aria-hidden="true"><path d="M10 0c1 5 8 8 8 15a8 8 0 0 1-16 0c0-3 1.500-5 3-6.500 0 2 1 3.500 2.500 3.500C9 12 8 5 10 0z"/></svg>',
  sound:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 6v4h3l4 3V3L5 6z" fill="currentColor" stroke-width="1"/><path d="M11.500 5.500a3.500 3.500 0 0 1 0 5"/></svg>',
  mute:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 6v4h3l4 3V3L5 6z" fill="currentColor" stroke-width="1"/><path d="M11 6l4 4M15 6l-4 4"/></svg>',
+ left:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>',
  x:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg>'};
 
 /* ---------- saved progress ---------- */
@@ -662,7 +667,7 @@ function startDrill(){const ls=allLessons(S.lang),done=ls.filter(l=>S.done[l.id]
   const q=shuffle(pool.filter(x=>"QPBOW".includes(x.s.k))).slice(0,9),c=shuffle(pool.filter(x=>x.s.k==="C")).slice(0,1);
   L={mode:"drill",title:"Mixed drill",lang:S.lang,queue:[...q,...c],i:0,right:0,asked:0,miss:new Set(),fails:0};showCard()}
 function shell(inner,foot){const q=L.queue;
-  return `<div class="lesson"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button><div class="seg" role="progressbar" aria-valuemin="0" aria-valuemax="${q.length}" aria-valuenow="${L.i}">${q.map((_,i)=>`<i class="${i<L.i?"on":i===L.i?"now":""}"></i>`).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
+  return `<div class="lesson"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button>${(L.peek??L.i)>0?`<button class="x" data-prevcard="1" aria-label="Previous card">${ICON.left}</button>`:""}<div class="seg" role="progressbar" aria-valuemin="0" aria-valuemax="${q.length}" aria-valuenow="${L.i}">${q.map((_,i)=>`<i class="${i===L.peek?"look":i<L.i?"on":i===L.i?"now":""}"></i>`).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
   <div class="lbody">${inner}</div><div class="lfoot" id="foot">${foot}</div></div>`}
 function showCard(){const c=L.queue[L.i];if(!c)return finish();
   const s=c.s,lang=L.lang,crumb=`<div class="crumb">${esc(L.title)}</div>`;L.sel=null;L.fills=[];L.locked=false;L.fails=0;ed=null;
@@ -679,6 +684,18 @@ function showCard(){const c=L.queue[L.i];if(!c)return finish();
     a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+(stdin.length?`<div class="stdin">Run uses this input: ${esc(stdin.join(" / "))}</div>`:"")+`<div id="hintslot"></div>`,codeFoot());
     const dk=c.key;let dt;ed=mountEditor("ed",{code:S.drafts[dk]??s.start,start:s.start,lang,html:s.html,getStdin:()=>stdin,onChange:v=>{clearTimeout(dt);dt=setTimeout(()=>{if(L&&L.queue[L.i]&&L.queue[L.i].key===dk&&v!==s.start&&v.length<8000){S.drafts[dk]=v;save()}},900)}})}
   window.scrollTo(0,0)}
+/* Looking back is read-only: it never scores, and never touches XP, saved place or missed cards */
+function showPeek(){const c=L.queue[L.peek],s=c.s,lang=L.lang,last=L.peek+1>=L.i;ed=null;
+  const top=`<div class="crumb">${esc(L.title)}</div><p class="peeknote">Looking back. Your progress is safe.</p>`,why=s.why?`<div class="peekwhy">${inline(s.why)}</div>`:"";let body="";
+  if(s.k==="T")body=`<div class="prose">${md(s.text)}</div>`+(s.code?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"}):"");
+  if(s.k==="Q"||s.k==="P")body=`<div class="prose">${md(s.prompt)}</div>`+(s.code?`<pre class="static" tabindex="0">${hl(s.code,lang)}</pre>`:"")+`<div class="opts">${s.opts.map(o=>`<div class="opt ${o.ok?"right":""}"><span class="v">${s.k==="P"?`<pre>${esc(o.t)}</pre>`:inline(o.t)}</span></div>`).join("")}</div>`+why;
+  if(s.k==="B"){const parts=s.code.split("___");body=`<div class="prose">${md(s.prompt)}</div><pre class="static">${parts.map((p,i)=>hl(p,lang)+(i<parts.length-1?`<span class="blank">${tx(s.ans[i])}</span>`:"")).join("")}</pre>`+why}
+  if(s.k==="O")body=`<div class="prose">${md(s.prompt)}</div><pre class="static">${s.lines.map(l=>hl(l,lang)).join("\n")}</pre>`+why;
+  if(s.k==="W")body=`<div class="prose">${md(s.prompt)}</div>`+(s.big?`<div class="bigja">${tx(s.big)}</div>`:"")+`<div class="opt right"><span class="v">${esc(s.accept[0])}</span></div>`+why;
+  if(s.k==="C")body=`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+`<span class="label">Example solution</span><pre class="static" tabindex="0">${hl(s.sol,lang)}</pre>`;
+  $("#app").innerHTML=shell(top+body,`<button class="btn" id="primary" data-peeknext="1">${last?"Back to where I was":"Next card"}</button>`);
+  if(s.k==="T"&&s.code)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]});
+  window.scrollTo(0,0)}
 function codeFoot(){return `<div class="row"><button class="btn ghost" data-hint="1">Hint</button><button class="btn" id="primary" data-grade="1">Check</button></div>`}
 function renderBlank(crumb){const s=L.queue[L.i].s,parts=s.code.split("___");
   const body=parts.map((p,i)=>hl(p,L.lang)+(i<parts.length-1?`<button class="blank" data-unfill="${i}" aria-label="Blank ${i+1}">${L.fills[i]?tx(L.fills[i].t):" "}</button>`:"")).join("");
@@ -688,6 +705,7 @@ function renderBlank(crumb){const s=L.queue[L.i].s,parts=s.code.split("___");
 function renderOrder(crumb){const s=L.queue[L.i].s,used=new Set(L.fills.map(x=>x.i));
   $("#app").innerHTML=shell(`${crumb||`<div class="crumb">${esc(L.title)}</div>`}<div class="prose">${md(s.prompt)}</div><div class="orderzone">${L.fills.length?L.fills.map((f,i)=>`<button data-back="${i}">${hl(f.t,L.lang)}</button>`).join(""):`<span class="empty">Tap lines below to build the program.</span>`}</div><div class="tokens">${L.toks.map(t=>`<button class="tok" data-line="${t.i}" ${used.has(t.i)?"disabled":""}>${tx(t.t.trim())}</button>`).join("")}</div>`,
    `<button class="btn" id="primary" data-check="1" ${L.fills.length===s.lines.length?"":"disabled"}>Check</button>`)}
+function hidePrev(){const b=$("[data-prevcard]");if(b)b.hidden=true}
 function verdict(ok,html,btn){$("#foot").innerHTML=`<div class="verdict ${ok?"ok":"bad"}" role="status"><span class="stamp">${ok?"GO":"NO-GO"}</span><div class="msg">${html}</div></div>${btn}`;const b=$("#primary");if(b)b.focus({preventScroll:true})}
 function scored(ok,c){const s=c.s;L.asked++;
   if(ok){if(!c.retry){L.right++}if(L.mode==="review"){delete S.missed[c.key];S.done["fix:"+c.key]={at:Date.now()};addXP(2);save()}}
@@ -700,7 +718,7 @@ function check(){const c=L.queue[L.i],s=c.s;let ok=false,reveal="";
   if(s.k==="W"){const n=x=>x.toLowerCase().replace(/[\s.,!?'\u2019\u00bf\u00a1-]/g,"");const inp=$("#wans");ok=s.accept.some(a=>n(a)===n(inp.value));
     if(!ok&&isEs()){const f=x=>n(x).replace(/\u00f1/g,"\u0001").normalize("NFD").replace(/[\u0300-\u036f]/g,"");if(s.accept.some(a=>f(a)===f(inp.value))){ok=true;accentNote=`<p>Good. Watch the spelling: <code>${esc(s.accept[0])}</code></p>`}}
     inp.disabled=true;if(!ok)reveal=`<p>Answer: <code>${esc(s.accept[0])}</code></p>`}
-  L.locked=true;scored(ok,c);
+  L.locked=true;hidePrev();scored(ok,c);
   if(ok&&isEs()){const q=s.k==="B"?s.code.split("___").reduce((a,b,i)=>a+(s.ans[i-1]||"")+b):s.k==="O"?s.lines.join(" "):s.k==="W"?s.accept[0]:(s.opts&&s.opts.find(o=>o.ok).t.includes("`")?s.opts.find(o=>o.ok).t.replace(/`/g,""):"");if(q)sayJa(q)}
   if(ok){if(isJa()){const q=reading(s.k==="B"?s.code.split("___").reduce((a,b,i)=>a+(s.ans[i-1]||"")+b):s.k==="O"?s.lines.join(""):s.k==="W"?(s.big||""):(s.opts?s.opts.find(o=>o.ok).t:""));if(new RegExp("["+JC+"]").test(q))sayJa(q.replace(/[^\u3040-\u30ff\u3400-\u9fff\u3005\s\u3001\u3002\uff01\uff1f]/g,""))}verdict(true,`${accentNote}<p>${inline(s.why||"")}</p>`,`<button class="btn go" id="primary" data-next="1">Continue</button>`);return}
   const q=x=>isEs()?"`"+String(x).replace(/`/g,"")+"`":x;const shown=s.k==="B"?deRuby(s.code):s.k==="O"||s.k==="W"?(s.big||""):s.code;let theirs,right,stat;
@@ -713,7 +731,7 @@ function check(){const c=L.queue[L.i],s=c.s;let ok=false,reveal="";
   coach(stat,{prompt:deRuby(s.prompt),shown,right,theirs,note:deRuby(s.why||"")})}
 async function gradeCode(){const c=L.queue[L.i],s=c.s,b=$("#primary");b.disabled=true;b.textContent="Testing";
   const r=await grade(s,L.lang,ed.value);
-  if(r.ok){delete S.drafts[c.key];save();L.asked++;if(!L.showed&&!c.retry)L.right++;if(L.mode==="review"){delete S.missed[c.key];S.done["fix:"+c.key]={at:Date.now()};addXP(2);save()}
+  if(r.ok){L.locked=true;hidePrev();delete S.drafts[c.key];save();L.asked++;if(!L.showed&&!c.retry)L.right++;if(L.mode==="review"){delete S.missed[c.key];S.done["fix:"+c.key]={at:Date.now()};addXP(2);save()}
     L.showed=false;verdict(true,`<p>Every test passed.</p>`,`<button class="btn go" id="primary" data-next="1">Continue</button>`);return}
   L.fails++;
   const plain=m=>String(m).replace(/\*\*/g,"");
@@ -749,6 +767,8 @@ document.addEventListener("click",e=>{const j=e.target.closest&&e.target.closest
   else if(d.quit)quit();
   else if(d.stay)document.querySelector(".sheet").remove();
   else if(d.leave){cancelCoach();document.querySelector(".sheet").remove();L=null;view="home";render();window.scrollTo(0,0)}
+  else if(d.prevcard){cancelCoach();const c=L.queue[L.i];if(L.peek==null&&c&&c.s.k==="C"&&ed&&ed.value!==c.s.start&&ed.value.length<8000){S.drafts[c.key]=ed.value;save()}L.peek=(L.peek??L.i)-1;showPeek()}
+  else if(d.peeknext){cancelCoach();L.peek++;if(L.peek>=L.i){L.peek=null;showCard()}else showPeek()}
   else if(d.next){cancelCoach();L.i++;L.showed=false;if(L.mode==="lesson"&&L.i<L.lesson.s.length){S.at[L.lesson.id]=L.i;save()}showCard()}
   else if(d.opt!==undefined&&!L.locked){L.sel=+d.opt;document.querySelectorAll(".opt").forEach((b,i)=>b.setAttribute("aria-pressed",i===L.sel));$("#primary").disabled=false}
   else if(d.tok!==undefined&&!L.locked){const s=L.queue[L.i].s,tk=L.toks.find(x=>x.i==d.tok);let i=0;while(L.fills[i])i++;if(i<s.ans.length){L.fills[i]=tk;renderBlank()}}
@@ -772,6 +792,6 @@ document.addEventListener("keydown",e=>{if(!L||/TEXTAREA|INPUT/.test(document.ac
 
 setTrack();render();connect();
 if(canSpeak&&speechSynthesis.addEventListener){let n=voiceList().length;speechSynthesis.addEventListener("voiceschanged",()=>{const m=voiceList().length;if(m!==n){n=m;if(view==="home"&&!L)render()}})}
-window.__hf={COURSES,run,grade,norm,state:()=>S};
+window.__hf={COURSES,run,grade,norm,state:()=>S,open:startLesson,leave:()=>{cancelCoach();L=null;view="home";render()}};
 </script>
 </body></html>

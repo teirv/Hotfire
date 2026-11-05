@@ -279,3 +279,13 @@ ruby rt{font-size:.58em;color:var(--muted);text-decoration:none}
 .seg i.look{background:var(--muted)}
 .peeknote{margin:0;font-size:14px;color:var(--muted)}
 .peekwhy{font-size:15px;color:var(--muted)}
+/* tappable progress bar */
+.seg{align-items:center}
+.segb{flex:1;display:block;padding-block:8px;min-width:0}
+.segb i{display:block;height:7px;background:var(--sunk);border-radius:1px}
+.segb i.on{background:var(--track)}
+.segb i.now{background:var(--accent)}
+.segb i.look{background:var(--muted)}
+button.segb:hover:not(:disabled) i{filter:brightness(1.25)}
+button.segb:hover:not(:disabled) i:not(.on):not(.now):not(.look){background:var(--line)}
+button.segb:disabled{cursor:default}

@@ -445,14 +445,44 @@ function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Ma
 function startDrill(){const ls=allLessons(S.lang),done=ls.filter(l=>S.done[l.id]),pool=(done.length>=3?done:ls).flatMap(l=>l.s.map((s,i)=>({s,key:l.id+":"+i})));
   const q=shuffle(pool.filter(x=>"QPBOW".includes(x.s.k))).slice(0,9),c=shuffle(pool.filter(x=>x.s.k==="C")).slice(0,1);
   L={mode:"drill",title:"Mixed drill",lang:S.lang,queue:[...q,...c],i:0,right:0,asked:0,miss:new Set(),fails:0};showCard()}
+function conceptPanel(card){
+  if(!card.concepts)return "";
+  const lessons=new Map(allLessons(L.lang).map(l=>[l.id,l.title]));
+  return `<aside class="concepts" aria-label="Review concepts"><h2 class="label">Review concepts</h2><div class="concept-links">${card.concepts.map(id=>
+    `<button data-concept="${esc(id)}" aria-haspopup="dialog">${esc(lessons.get(id))}</button>`).join("")}</div></aside>`;
+}
+function openConcept(id){
+  const lang=L.lang,lesson=allLessons(lang).find(l=>l.id===id);
+  if(!lesson)return;
+  const examples=lesson.s.filter(s=>s.k==="T");
+  const dialog=document.createElement("dialog");
+  dialog.className="concept-dialog";
+  dialog.setAttribute("aria-labelledby","concept-title");
+  dialog.innerHTML=`<div class="concept-head"><div><div class="crumb">${esc(lesson.unit.title)}</div><h2 id="concept-title">${esc(lesson.title)}</h2></div>
+    <form method="dialog"><button class="btn ghost" autofocus>Back to card</button></form></div>
+    <div class="concept-examples">${examples.map((s,i)=>teachingBody(s,lang,"concept-example-"+i)).join("")}</div>`;
+  dialog.addEventListener("close",()=>dialog.remove(),{once:true});
+  $(".lesson").append(dialog);
+  examples.forEach((s,i)=>mountTeachingExample(s,lang,"concept-example-"+i));
+  dialog.showModal();
+}
+function teachingBody(s,lang,id){
+  return `<div class="prose">${md(s.text)}</div>`+(s.code?
+    (s.html?htmlPane(s.html):"")+editorHTML(id,{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+
+    (s.stdin?`<div class="stdin">Input for this example: ${esc(s.stdin.join(" / "))}</div>`:""):"");
+}
+function mountTeachingExample(s,lang,id){
+  if(s.code)return mountEditor(id,{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]});
+}
 function shell(inner,foot){const q=L.queue;
-  return `<div class="lesson"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button>${(L.peek??L.i)>0?`<button class="x" data-prevcard="1" aria-label="Previous card">${ICON.left}</button>`:""}<div class="seg" role="group" aria-label="Lesson cards">${q.map((_,i)=>{const c=i===L.peek?"look":i<L.i?"on":i===L.i?"now":"";return i<=L.i?`<button class="segb" data-seg="${i}" aria-label="Go to card ${i+1}"><i class="${c}"></i></button>`:`<span class="segb"><i></i></span>`}).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
-  <div class="lbody">${inner}</div><div class="lfoot" id="foot">${foot}</div></div>`}
+  const panel=conceptPanel(q[L.peek??L.i].s);
+  return `<div class="lesson${panel?" with-concepts":""}"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button>${(L.peek??L.i)>0?`<button class="x" data-prevcard="1" aria-label="Previous card">${ICON.left}</button>`:""}<div class="seg" role="group" aria-label="Lesson cards">${q.map((_,i)=>{const c=i===L.peek?"look":i<L.i?"on":i===L.i?"now":"";return i<=L.i?`<button class="segb" data-seg="${i}" aria-label="Go to card ${i+1}"><i class="${c}"></i></button>`:`<span class="segb"><i></i></span>`}).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
+  ${panel}<div class="lbody">${inner}</div><div class="lfoot" id="foot">${foot}</div></div>`}
 function showCard(){const c=L.queue[L.i];if(!c)return finish();
   const s=c.s,lang=L.lang,crumb=`<div class="crumb">${esc(L.title)}</div>`;L.sel=null;L.fills=[];L.locked=false;L.fails=0;ed=null;
   const a=$("#app");
-  if(s.k==="T"){const has=!!s.code;a.innerHTML=shell(crumb+`<div class="prose">${md(s.text)}</div>`+(has?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+(s.stdin?`<div class="stdin">Input for this example: ${esc(s.stdin.join(" / "))}</div>`:""):""),`<button class="btn" id="primary" data-next="1">Continue</button>`);
-    if(has)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]})}
+  if(s.k==="T"){a.innerHTML=shell(crumb+teachingBody(s,lang,"ed"),`<button class="btn" id="primary" data-next="1">Continue</button>`);
+    ed=mountTeachingExample(s,lang,"ed")}
   else if(s.k==="Q"||s.k==="P"){const opts=L.optOrder=shuffle(s.opts);
     a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.code?`<pre class="static" tabindex="0">${hl(s.code,lang)}</pre>`:"")+`<div class="opts" role="group" aria-label="Answers">${opts.map((o,i)=>`<button class="opt" data-opt="${i}" aria-pressed="false"><span class="k">${"ABCD"[i]}</span><span class="v">${s.k==="P"?`<pre>${esc(o.t)}</pre>`:inline(o.t)}</span></button>`).join("")}</div>`,`<button class="btn" id="primary" data-check="1" disabled>Check</button>`)}
   else if(s.k==="W"){a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.big?`<div class="bigja">${tx(s.big)}</div>`:"")+`<input id="wans" class="wans" aria-label="Your answer" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type your answer">`+(lang==="spanish"?`<div class="tokens akeys" aria-label="Spanish letters">${["á","é","í","ó","ú","ñ","ü","¿","¡"].map(k=>`<button class="tok" data-acc="${k}">${k}</button>`).join("")}</div>`:""),`<button class="btn" id="primary" data-check="1" disabled>Check</button>`);
@@ -466,14 +496,14 @@ function showCard(){const c=L.queue[L.i];if(!c)return finish();
 /* Looking back is read-only: it never scores, and never touches XP, saved place or missed cards */
 function showPeek(){const c=L.queue[L.peek],s=c.s,lang=L.lang,last=L.peek+1>=L.i;ed=null;
   const top=`<div class="crumb">${esc(L.title)}</div><p class="peeknote">Looking back. Your progress is safe.</p>`,why=s.why?`<div class="peekwhy">${inline(s.why)}</div>`:"";let body="";
-  if(s.k==="T")body=`<div class="prose">${md(s.text)}</div>`+(s.code?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"}):"");
+  if(s.k==="T")body=teachingBody(s,lang,"ed");
   if(s.k==="Q"||s.k==="P")body=`<div class="prose">${md(s.prompt)}</div>`+(s.code?`<pre class="static" tabindex="0">${hl(s.code,lang)}</pre>`:"")+`<div class="opts">${s.opts.map(o=>`<div class="opt ${o.ok?"right":""}"><span class="v">${s.k==="P"?`<pre>${esc(o.t)}</pre>`:inline(o.t)}</span></div>`).join("")}</div>`+why;
   if(s.k==="B"){const parts=s.code.split("___");body=`<div class="prose">${md(s.prompt)}</div><pre class="static">${parts.map((p,i)=>hl(p,lang)+(i<parts.length-1?`<span class="blank">${tx(s.ans[i])}</span>`:"")).join("")}</pre>`+why}
   if(s.k==="O")body=`<div class="prose">${md(s.prompt)}</div><pre class="static">${s.lines.map(l=>hl(l,lang)).join("\n")}</pre>`+why;
   if(s.k==="W")body=`<div class="prose">${md(s.prompt)}</div>`+(s.big?`<div class="bigja">${tx(s.big)}</div>`:"")+`<div class="opt right"><span class="v">${esc(s.accept[0])}</span></div>`+why;
   if(s.k==="C")body=`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+`<span class="label">Example solution</span><pre class="static" tabindex="0">${hl(s.sol,lang)}</pre>`;
   $("#app").innerHTML=shell(top+body,`<button class="btn" id="primary" data-peeknext="1">${last?"Back to where I was":"Next card"}</button>`);
-  if(s.k==="T"&&s.code)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]});
+  if(s.k==="T")ed=mountTeachingExample(s,lang,"ed");
   window.scrollTo(0,0)}
 function codeFoot(){return `<div class="row"><button class="btn ghost" data-hint="1">Hint</button><button class="btn" id="primary" data-grade="1">Check</button></div>`}
 function renderBlank(crumb){const s=L.queue[L.i].s,parts=s.code.split("___");
@@ -541,6 +571,7 @@ document.addEventListener("click",e=>{const j=e.target.closest&&e.target.closest
   else if(d.fileb){downloadsCap&&downloadsCap.save({filename:"hotfire-backup.txt",data:backupCode()}).then(()=>{$("#backupmsg").textContent="Backup file saved."},()=>{$("#backupmsg").textContent="The backup file wasn't saved. You can copy the code instead."})}
   else if(d.restore){const ok=restoreCode($("#restorebox").value);if(ok){render();$("#backupmsg").textContent="Backup restored and combined with your current progress."}else $("#backupmsg").textContent="That code didn't work. Paste the whole code, starting with HOTFIRE1."}
   else if(d.start)startLesson(d.start);
+  else if(d.concept)openConcept(d.concept);
   else if(d.drill)startDrill();
   else if(d.review)startReview();
   else if(d.home){view="home";render()}
@@ -567,7 +598,7 @@ document.addEventListener("click",e=>{const j=e.target.closest&&e.target.closest
   else if(d.show){cancelCoach();const c=L.queue[L.i];ed.value=c.s.sol;L.showed=true;if(!S.missed[c.key]){S.missed[c.key]=Date.now();save()}$("#foot").innerHTML=codeFoot()}
 });
 document.addEventListener("change",e=>{if(e.target.id==="prefVoice"){S.voice=e.target.checked;if(S.voice)unlockVoice();else stopVoice();save()}if(e.target.id==="prefCoach"){S.coach=e.target.checked;save()}if(e.target.id==="prefVoiceName"){S.voiceName=e.target.value;save();unlockVoice();speak(PREVIEW)}});
-document.addEventListener("keydown",e=>{if(!L||/TEXTAREA|INPUT/.test(document.activeElement.tagName)||document.querySelector(".sheet"))return;
+document.addEventListener("keydown",e=>{if(!L||/TEXTAREA|INPUT/.test(document.activeElement.tagName)||document.querySelector(".sheet, .concept-dialog[open]"))return;
   if(/^[1-4]$/.test(e.key)){const b=document.querySelectorAll(".opt")[+e.key-1];if(b&&!b.disabled)b.click()}
   if(e.key==="Enter"&&document.activeElement.tagName!=="BUTTON"){const p=$("#primary");if(p&&!p.disabled)p.click()}});
 

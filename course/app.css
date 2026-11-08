@@ -113,6 +113,22 @@ pre{margin:0;font-family:var(--mono)}
 .seg i.on{background:var(--track)}
 .seg i.now{background:var(--accent)}
 .lbody{flex:1;display:flex;flex-direction:column;gap:14px;padding-block:10px 22px;min-width:0}
+.concepts{padding-block:10px 4px;min-width:0}
+.concepts h2{margin:0 0 8px;color:var(--track)}
+.concept-links{display:flex;flex-wrap:wrap;gap:6px}
+.concept-links button{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:7px 10px;min-height:36px;text-align:left;font-size:14px;line-height:1.35}
+.concept-links button:hover{border-color:var(--track);color:var(--track)}
+@media (min-width:900px){
+  .lesson.with-concepts{max-width:944px;display:grid;grid-template-columns:minmax(0,720px) minmax(0,200px);grid-template-rows:auto 1fr auto;column-gap:24px}
+  .with-concepts .ltop,.with-concepts .lbody,.with-concepts .lfoot{grid-column:1}
+  .with-concepts .concepts{grid-area:2 / 2;align-self:start;position:sticky;top:calc(56px + env(safe-area-inset-top,0px));max-height:calc(100dvh - 72px);overflow:auto;padding:10px 3px 4px}
+  .with-concepts .concept-links{flex-direction:column}
+}
+.concept-dialog{width:min(720px,calc(100% - 32px));max-height:calc(100dvh - 32px);padding:0;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+.concept-dialog::backdrop{background:rgba(5,10,14,.65)}
+.concept-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:1;padding:16px 20px;background:var(--panel);border-bottom:1px solid var(--line)}
+.concept-head h2{margin:4px 0 0;font:700 26px/1.1 var(--display)}
+.concept-examples{display:flex;flex-direction:column;gap:14px;padding:20px}
 .crumb{font:600 14px/1.2 var(--display);letter-spacing:.09em;text-transform:uppercase;color:var(--track)}
 .prose{font-size:17px;line-height:1.55;max-width:65ch}
 .prose p{margin:0 0 .75em}

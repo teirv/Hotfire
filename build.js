@@ -71,6 +71,23 @@ const ja=[];[['Part 1: Reading Japanese',null],['Part 2: Beginner','course/ja_ch
 const web=[];[['HTML: Beginner and Intermediate','course/web_ch1.txt'],['CSS: Beginner and Intermediate','course/web_ch2.txt']].forEach(([t,f])=>{parse(fs.readFileSync(f,'utf8'),'html').forEach(u=>{u.ch=t;web.push(u)})});
 const es=[];[['Part 1: Beginner','course/es_ch1.txt'],['Part 2: Everyday Spanish','course/es_ch2.txt'],['Part 3: Intermediate and Beyond','course/es_ch3.txt']].forEach(([t,f])=>{parse(fs.readFileSync(f,'utf8'),'spanish').forEach(u=>{u.ch=t;es.push(u)})});
 const COURSES={javascript:{units:js},python:{units:py},html:{units:web},japanese:{units:ja},spanish:{units:es}};
+// Concept links are listed in card order, including teaching cards in a Hot fire.
+const concepts=JSON.parse(fs.readFileSync('course/concepts.json','utf8'));
+for(const {units} of Object.values(COURSES)){
+  const earlier=new Map();
+  for(const lesson of units.flatMap(u=>u.lessons)){
+    if(!lesson.fire){earlier.set(lesson.id,lesson);continue}
+    const cards=concepts[lesson.id];
+    if(!cards||cards.length!==lesson.s.length)throw new Error('Expected one concept list per card in course/concepts.json for '+lesson.id);
+    cards.forEach((ids,i)=>{
+      if(!ids.length||new Set(ids).size!==ids.length||ids.some(id=>!earlier.get(id)?.s.some(s=>s.k==='T')))
+        throw new Error('Invalid concept links for '+lesson.id+', card '+(i+1));
+      lesson.s[i].concepts=ids;
+    });
+    delete concepts[lesson.id];
+  }
+}
+if(Object.keys(concepts).length)throw new Error('Unknown Hot fires in concepts.json: '+Object.keys(concepts).join(', '));
 // clean out-case buffers
 const walk=o=>{if(Array.isArray(o))o.forEach(walk);else if(o&&typeof o==='object'){if(o._b){o.out=o._b.join('\n').replace(/\n+$/,'');delete o._b}Object.values(o).forEach(walk)}};walk(COURSES);
 const json=JSON.stringify(COURSES).replace(/</g,'\\u003c');

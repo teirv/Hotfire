@@ -1,0 +1,789 @@
+=U rsstruct | Structs and Methods | Grouping data.
+=L rs5a | Structs
+@T
+A **struct** groups named fields. Methods go in an `impl` block.
+
+A method's first parameter is `&self` to read the struct, or `&mut self` to change it. A function in `impl` without `self`, like `new`, is called with `Type::new(...)`.
+~code
+struct Tank {
+    name: String,
+    capacity: u32,
+    level: u32,
+}
+
+impl Tank {
+    fn new(name: &str, capacity: u32) -> Tank {
+        Tank { name: name.to_string(), capacity, level: 0 }
+    }
+
+    fn fill(&mut self, liters: u32) {
+        self.level = (self.level + liters).min(self.capacity);
+    }
+
+    fn describe(&self) -> String {
+        format!("{}: {}/{} L", self.name, self.level, self.capacity)
+    }
+}
+
+fn main() {
+    let mut t = Tank::new("T-1", 500);
+    t.fill(120);
+    t.fill(900);
+    println!("{}", t.describe());
+}
+@T
+Add `#[derive(Debug)]` above a struct to print it with `{:?}`. That's handy while you're working.
+~code
+#[derive(Debug)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let p = Point { x: 1, y: 2 };
+    println!("{:?}", p);
+    println!("{}", p.x + p.y);
+}
+@Q
+A method needs to change a field. What's its first parameter?
+~opts
+* `&mut self`
+- `&self`
+- `self: Tank`
+~why
+`&self` can only read.
+@B
+Call the constructor function.
+~code
+let t = Tank___new("T-2", 100);
+~opts
+* ::
+- .
+- ->
+~why
+Functions without `self` are called on the type with `::`.
+=F rsfire5a | Hot fire: Rectangle
+@C
+Write a struct `Rect` with `width` and `height` (both `f64`), and an `impl` with:
+
+`fn area(&self) -> f64`
+
+`fn is_square(&self) -> bool`
+
+`fn scale(&mut self, factor: f64)` that multiplies both sides
+~start
+struct Rect {
+
+}
+
+impl Rect {
+
+}
+~sol
+struct Rect {
+    width: f64,
+    height: f64,
+}
+
+impl Rect {
+    fn area(&self) -> f64 {
+        self.width * self.height
+    }
+
+    fn is_square(&self) -> bool {
+        self.width == self.height
+    }
+
+    fn scale(&mut self, factor: f64) {
+        self.width *= factor;
+        self.height *= factor;
+    }
+}
+~hint
+scale changes the fields, so it needs &mut self.
+~after
+fn main() {
+    let mut r = Rect { width: 2.0, height: 3.0 };
+    println!("{}", r.area());
+    println!("{}", r.is_square());
+    r.scale(2.0);
+    println!("{}", r.area());
+    let s = Rect { width: 4.0, height: 4.0 };
+    println!("{}", s.is_square());
+}
+~out
+6
+false
+24
+true
+=F rsfire5b | Hot fire: Bank account
+@C
+Write a struct `Account` with an `owner: String` and `balance: i64` (in cents), plus:
+
+`fn new(owner: &str) -> Account` starting at 0
+
+`fn deposit(&mut self, cents: i64)`
+
+`fn withdraw(&mut self, cents: i64) -> bool` that only takes money if there's enough
+~start
+struct Account {
+
+}
+
+impl Account {
+
+}
+~sol
+struct Account {
+    owner: String,
+    balance: i64,
+}
+
+impl Account {
+    fn new(owner: &str) -> Account {
+        Account { owner: owner.to_string(), balance: 0 }
+    }
+
+    fn deposit(&mut self, cents: i64) {
+        self.balance += cents;
+    }
+
+    fn withdraw(&mut self, cents: i64) -> bool {
+        if cents > self.balance {
+            return false;
+        }
+        self.balance -= cents;
+        true
+    }
+}
+~hint
+withdraw returns false early when cents > self.balance.
+~after
+fn main() {
+    let mut a = Account::new("Ada");
+    a.deposit(5000);
+    println!("{}", a.withdraw(8000));
+    println!("{}", a.balance);
+    println!("{}", a.withdraw(2000));
+    println!("{} {}", a.owner, a.balance);
+}
+~out
+false
+5000
+true
+Ada 3000
+=U rsenum | Enums, Option and match | Values that can be one of several things.
+=L rs6a | Enums
+@T
+An **enum** is a type that's exactly one of several **variants**. Variants can carry data. `match` handles each one.
+~code
+enum Command {
+    Open,
+    Close,
+    Set(u32),
+}
+
+fn run(c: Command) -> String {
+    match c {
+        Command::Open => "Opening".to_string(),
+        Command::Close => "Closing".to_string(),
+        Command::Set(p) => format!("Setting to {p}%"),
+    }
+}
+
+fn main() {
+    println!("{}", run(Command::Open));
+    println!("{}", run(Command::Set(40)));
+}
+@T
+Rust has no `null`. Instead, a value that might be missing is an `Option`: either `Some(value)` or `None`. You have to handle both, which prevents a whole class of crashes.
+
+`if let` is a short `match` for when you only care about one case.
+~code
+fn find(parts: &[&str], name: &str) -> Option<usize> {
+    for (i, p) in parts.iter().enumerate() {
+        if *p == name {
+            return Some(i);
+        }
+    }
+    None
+}
+
+fn main() {
+    let parts = ["valve", "seal", "hose"];
+    match find(&parts, "seal") {
+        Some(i) => println!("Found at {i}"),
+        None => println!("Missing"),
+    }
+    if let Some(i) = find(&parts, "pump") {
+        println!("Found at {i}");
+    } else {
+        println!("No pump");
+    }
+    println!("{}", find(&parts, "hose").unwrap_or(99));
+}
+@Q
+Why doesn't Rust have `null`?
+~opts
+* `Option` makes missing values explicit, so you can't forget to check
+- Rust programs never have missing data
+- `null` is too slow
+~why
+Forgetting to check for null causes many bugs in other languages.
+@P
+What does this print?
+~code
+fn main() {
+    let x: Option<i32> = None;
+    println!("{}", x.unwrap_or(7));
+}
+~opts
+* 7
+- None
+- A crash
+~why
+`unwrap_or` gives a fallback when there's no value.
+@B
+Handle the empty case.
+~code
+match maybe {
+    ___(n) => println!("{n}"),
+    ___ => println!("nothing"),
+}
+~opts
+* Some
+* None
+- Ok
+- Null
+~why
+`Option` has exactly these two variants.
+=F rsfire6a | Hot fire: Traffic light
+@C
+Write an enum `Light` with `Red`, `Yellow` and `Green`, and:
+
+`fn next(l: Light) -> Light` (Red to Green, Green to Yellow, Yellow to Red)
+
+`fn name(l: &Light) -> &'static str` returning `red`, `yellow` or `green`
+~start
+enum Light {
+
+}
+
+fn next(l: Light) -> Light {
+
+}
+
+fn name(l: &Light) -> &'static str {
+
+}
+~sol
+enum Light {
+    Red,
+    Yellow,
+    Green,
+}
+
+fn next(l: Light) -> Light {
+    match l {
+        Light::Red => Light::Green,
+        Light::Green => Light::Yellow,
+        Light::Yellow => Light::Red,
+    }
+}
+
+fn name(l: &Light) -> &'static str {
+    match l {
+        Light::Red => "red",
+        Light::Yellow => "yellow",
+        Light::Green => "green",
+    }
+}
+~hint
+Both functions are one match each.
+~after
+fn main() {
+    let mut l = Light::Red;
+    for _ in 0..4 {
+        println!("{}", name(&l));
+        l = next(l);
+    }
+}
+~out
+red
+green
+yellow
+red
+=F rsfire6b | Hot fire: Find the max
+@C
+Write `fn largest(values: &[i32]) -> Option<i32>` that returns the biggest number, or `None` for an empty slice.
+
+Don't use `.max()`. Use a loop.
+~start
+fn largest(values: &[i32]) -> Option<i32> {
+    None
+}
+~sol
+fn largest(values: &[i32]) -> Option<i32> {
+    let mut best: Option<i32> = None;
+    for &v in values {
+        match best {
+            Some(b) if b >= v => {}
+            _ => best = Some(v),
+        }
+    }
+    best
+}
+~hint
+Start with best = None, and replace it when you find a bigger value.
+~after
+fn main() {
+    println!("{:?}", largest(&[3, 9, 2]));
+    println!("{:?}", largest(&[-5, -1]));
+    println!("{:?}", largest(&[]));
+}
+~out
+Some(9)
+Some(-1)
+None
+~must
+\bfor\b|\bwhile\b|\bloop\b :: Use a loop.
+=U rscoll | Vectors, Iterators and HashMaps | Collections of data.
+=L rs7a | Vec and iterators
+@T
+A `Vec<T>` is a growable list. `vec![...]` makes one. `push` adds, `len` counts, and `[i]` reads (crashing if `i` is too big). `.get(i)` returns an `Option` instead.
+~code
+fn main() {
+    let mut parts = vec!["valve", "seal"];
+    parts.push("hose");
+    println!("{} {}", parts.len(), parts[0]);
+    println!("{:?}", parts.get(9));
+    for p in &parts {
+        println!("{p}");
+    }
+}
+@T
+**Iterators** chain steps: `iter()` starts, `filter` keeps some, `map` changes each, and `collect` builds a new collection. `sum`, `count`, `max` and `any` summarize.
+
+`|x| x * 2` is a **closure**: a tiny function.
+~code
+fn main() {
+    let readings = vec![5, 12, 8, 30];
+    let high: Vec<i32> = readings.iter().filter(|&&x| x > 10).cloned().collect();
+    let doubled: Vec<i32> = readings.iter().map(|x| x * 2).collect();
+    let total: i32 = readings.iter().sum();
+    println!("{:?} {:?} {}", high, doubled, total);
+    println!("{}", readings.iter().any(|&x| x > 25));
+}
+@P
+What does this print?
+~code
+fn main() {
+    let a = vec![1, 2, 3, 4];
+    let s: i32 = a.iter().filter(|&&x| x % 2 == 0).sum();
+    println!("{}", s);
+}
+~opts
+* 6
+- 10
+- 4
+~why
+It keeps 2 and 4, then adds them.
+=L rs7b | HashMap
+@T
+A `HashMap` maps keys to values. Bring it in with `use std::collections::HashMap;`.
+
+`entry(key).or_insert(0)` gets a value, or adds a starting value if the key is new. It's the standard way to count things.
+~code
+use std::collections::HashMap;
+
+fn main() {
+    let mut counts = HashMap::new();
+    for word in "go stop go".split(' ') {
+        *counts.entry(word).or_insert(0) += 1;
+    }
+    println!("{}", counts["go"]);
+    println!("{:?}", counts.get("pump"));
+}
+@Q
+A `HashMap` doesn't keep any order. How do you print its keys A to Z?
+~opts
+* Collect the keys into a `Vec` and sort it
+- They're always sorted already
+- Use `HashMap::sorted()`
+~why
+`BTreeMap` is another option: it keeps keys sorted.
+=F rsfire7a | Hot fire: Low stock
+@C
+Write `fn low_stock(parts: &[(&str, u32)]) -> Vec<String>` that returns the names of parts with a quantity **under 5**, in the same order.
+
+Example: `[("O-ring", 2), ("Fitting", 40), ("Gasket", 4)]` returns `["O-ring", "Gasket"]`.
+~start
+fn low_stock(parts: &[(&str, u32)]) -> Vec<String> {
+    Vec::new()
+}
+~sol
+fn low_stock(parts: &[(&str, u32)]) -> Vec<String> {
+    parts.iter().filter(|p| p.1 < 5).map(|p| p.0.to_string()).collect()
+}
+~hint
+Each part is a tuple: p.0 is the name and p.1 is the quantity.
+~after
+fn main() {
+    println!("{:?}", low_stock(&[("O-ring", 2), ("Fitting", 40), ("Gasket", 4)]));
+    println!("{:?}", low_stock(&[("Hose", 9)]));
+}
+~out
+["O-ring", "Gasket"]
+[]
+=F rsfire7b | Hot fire: Word count
+@C
+Write `fn count_words(text: &str) -> Vec<(String, u32)>`. Lowercase each word, count them, and return the pairs **sorted by word**.
+
+Example: `"Go stop go"` returns `[("go", 2), ("stop", 1)]`.
+~start
+use std::collections::HashMap;
+
+fn count_words(text: &str) -> Vec<(String, u32)> {
+    Vec::new()
+}
+~sol
+use std::collections::HashMap;
+
+fn count_words(text: &str) -> Vec<(String, u32)> {
+    let mut counts: HashMap<String, u32> = HashMap::new();
+    for w in text.split_whitespace() {
+        *counts.entry(w.to_lowercase()).or_insert(0) += 1;
+    }
+    let mut out: Vec<(String, u32)> = counts.into_iter().collect();
+    out.sort();
+    out
+}
+~hint
+Count with entry().or_insert(0), then collect into a Vec and sort it.
+~after
+fn main() {
+    println!("{:?}", count_words("Go stop go GO"));
+    println!("{:?}", count_words(""));
+}
+~out
+[("go", 3), ("stop", 1)]
+[]
+=F rsfire7c | Hot fire: Sensor summary
+@C
+Write `fn summarize(readings: &[f64]) -> String` that returns the count, max and average with 1 decimal place, like `3 readings, max 30, average 20.0`. Return `no readings` for an empty slice.
+~start
+fn summarize(readings: &[f64]) -> String {
+    String::new()
+}
+~sol
+fn summarize(readings: &[f64]) -> String {
+    if readings.is_empty() {
+        return "no readings".to_string();
+    }
+    let max = readings.iter().cloned().fold(f64::MIN, f64::max);
+    let avg = readings.iter().sum::<f64>() / readings.len() as f64;
+    format!("{} readings, max {}, average {:.1}", readings.len(), max, avg)
+}
+~hint
+f64 has no .max() on iterators, so use fold(f64::MIN, f64::max) or a loop.
+~after
+fn main() {
+    println!("{}", summarize(&[10.0, 20.0, 30.0]));
+    println!("{}", summarize(&[4.0, 9.5]));
+    println!("{}", summarize(&[]));
+}
+~out
+3 readings, max 30, average 20.0
+2 readings, max 9.5, average 6.8
+no readings
+=U rserr | Errors with Result | Failing safely.
+=L rs8a | Result and ?
+@T
+Functions that can fail return a `Result`: `Ok(value)` or `Err(error)`. Like `Option`, you must handle both.
+
+`"42".parse::<i32>()` returns a `Result`, because the text might not be a number.
+
+`unwrap()` takes the value or crashes, which is fine for quick tests. `expect("msg")` crashes with your message.
+~code
+fn main() {
+    for text in ["42", "abc"] {
+        match text.parse::<i32>() {
+            Ok(n) => println!("Got {}", n + 1),
+            Err(e) => println!("'{text}' failed: {e}"),
+        }
+    }
+}
+@T
+The `?` operator passes an error up to the caller. It only works in a function that itself returns a `Result`.
+~code
+fn add_strings(a: &str, b: &str) -> Result<i32, String> {
+    let x: i32 = a.parse().map_err(|_| format!("bad number: {a}"))?;
+    let y: i32 = b.parse().map_err(|_| format!("bad number: {b}"))?;
+    Ok(x + y)
+}
+
+fn main() {
+    println!("{:?}", add_strings("2", "3"));
+    println!("{:?}", add_strings("2", "x"));
+}
+@Q
+What does `?` do when the value is an `Err`?
+~opts
+* Returns that error from the current function right away
+- Crashes the program
+- Turns it into 0
+~why
+On `Ok`, it unwraps the value and carries on.
+@P
+What does this print?
+~code
+fn main() {
+    let r: Result<i32, String> = Err("no".to_string());
+    println!("{}", r.unwrap_or(-1));
+}
+~opts
+* -1
+- no
+- A crash
+~why
+`unwrap_or` gives a fallback instead of crashing.
+=F rsfire8a | Hot fire: Safe divide
+@C
+Write `fn divide(a: f64, b: f64) -> Result<f64, String>` that returns `Err("Cannot divide by zero")` when `b` is 0, and `Ok(a / b)` otherwise.
+~start
+fn divide(a: f64, b: f64) -> Result<f64, String> {
+    Ok(0.0)
+}
+~sol
+fn divide(a: f64, b: f64) -> Result<f64, String> {
+    if b == 0.0 {
+        return Err("Cannot divide by zero".to_string());
+    }
+    Ok(a / b)
+}
+~hint
+Return Err(...to_string()) for the bad case.
+~after
+fn main() {
+    println!("{:?}", divide(10.0, 4.0));
+    println!("{:?}", divide(1.0, 0.0));
+}
+~out
+Ok(2.5)
+Err("Cannot divide by zero")
+=F rsfire8b | Hot fire: Parse readings
+@C
+Write `fn total(lines: &[&str]) -> (f64, u32)` that adds up the lines that are valid numbers, and counts the ones that aren't.
+
+Example: `["10", "bad", "20"]` returns `(30.0, 1)`.
+~start
+fn total(lines: &[&str]) -> (f64, u32) {
+    (0.0, 0)
+}
+~sol
+fn total(lines: &[&str]) -> (f64, u32) {
+    let mut sum = 0.0;
+    let mut bad = 0;
+    for line in lines {
+        match line.parse::<f64>() {
+            Ok(v) => sum += v,
+            Err(_) => bad += 1,
+        }
+    }
+    (sum, bad)
+}
+~hint
+match line.parse::<f64>() with Ok and Err arms.
+~after
+fn main() {
+    println!("{:?}", total(&["10", "bad", "20"]));
+    println!("{:?}", total(&[]));
+    println!("{:?}", total(&["1.5", "x", "y"]));
+}
+~out
+(30.0, 1)
+(0.0, 0)
+(1.5, 2)
+=F rsfire8c | Hot fire: Config line
+@C
+Write `fn parse_setting(line: &str) -> Result<(String, i32), String>` for lines like `psi=450`.
+
+Return `Err("missing =")` if there's no `=`, and `Err("bad number")` if the part after `=` isn't a whole number. Use `?` for the number.
+
+Tip: `line.split_once('=')` returns an `Option` of the two halves.
+~start
+fn parse_setting(line: &str) -> Result<(String, i32), String> {
+    Err("todo".to_string())
+}
+~sol
+fn parse_setting(line: &str) -> Result<(String, i32), String> {
+    let (key, value) = line.split_once('=').ok_or("missing =".to_string())?;
+    let n: i32 = value.trim().parse().map_err(|_| "bad number".to_string())?;
+    Ok((key.trim().to_string(), n))
+}
+~hint
+.ok_or(...)? turns a None into an error. .map_err(...)? does the same for a failed parse.
+~after
+fn main() {
+    println!("{:?}", parse_setting("psi=450"));
+    println!("{:?}", parse_setting("psi 450"));
+    println!("{:?}", parse_setting("psi=lots"));
+}
+~out
+Ok(("psi", 450))
+Err("missing =")
+Err("bad number")
+~must
+\? :: Use the ? operator.
+=U rstrait | Traits and Generics | Shared behavior. Intermediate Rust.
+=L rs9a | Traits
+@T
+A **trait** is a set of methods a type promises to have, like an interface in C#. Implement it with `impl Trait for Type`.
+
+A function can accept any type that has the trait with `&impl Trait`.
+~code
+trait Device {
+    fn name(&self) -> String;
+    fn status(&self) -> String;
+    fn report(&self) -> String {
+        format!("{}: {}", self.name(), self.status())
+    }
+}
+
+struct Valve { open: bool }
+struct Gauge { psi: f64 }
+
+impl Device for Valve {
+    fn name(&self) -> String { "Valve".to_string() }
+    fn status(&self) -> String { if self.open { "open".into() } else { "closed".into() } }
+}
+
+impl Device for Gauge {
+    fn name(&self) -> String { "Gauge".to_string() }
+    fn status(&self) -> String { format!("{:.1} psi", self.psi) }
+}
+
+fn show(d: &impl Device) {
+    println!("{}", d.report());
+}
+
+fn main() {
+    show(&Valve { open: true });
+    show(&Gauge { psi: 450.0 });
+}
+@T
+**Generics** let one function work with many types. `T: PartialOrd` means "any type `T` that can be compared".
+~code
+fn biggest<T: PartialOrd + Copy>(items: &[T]) -> T {
+    let mut best = items[0];
+    for &x in items {
+        if x > best {
+            best = x;
+        }
+    }
+    best
+}
+
+fn main() {
+    println!("{}", biggest(&[3, 9, 2]));
+    println!("{}", biggest(&[1.5, 0.2]));
+    println!("{}", biggest(&['a', 'z', 'm']));
+}
+@Q
+In the `Device` trait, why don't `Valve` and `Gauge` write their own `report`?
+~opts
+* The trait gives a default version they both use
+- `report` is private
+- Rust copies it from C#
+~why
+Types can still override a default if they need to.
+@Q
+What does `T: PartialOrd` say about `T`?
+~opts
+* It can be compared with `<` and `>`
+- It must be a number
+- It's a reference
+~why
+It's a **trait bound**: a requirement on the generic type.
+=F rsfire9a | Hot fire: Shapes
+@C
+Write a trait `Shape` with `fn area(&self) -> f64` and `fn name(&self) -> String`.
+
+Implement it for `Square { side: f64 }` and `Circle { radius: f64 }`, then write `fn total_area(shapes: &[&dyn Shape]) -> f64`.
+
+`&dyn Shape` means "a reference to any type with the Shape trait", so different shapes can share one list.
+~start
+// Your trait, structs and function here
+
+~sol
+trait Shape {
+    fn area(&self) -> f64;
+    fn name(&self) -> String;
+}
+
+struct Square { side: f64 }
+struct Circle { radius: f64 }
+
+impl Shape for Square {
+    fn area(&self) -> f64 { self.side * self.side }
+    fn name(&self) -> String { "Square".to_string() }
+}
+
+impl Shape for Circle {
+    fn area(&self) -> f64 { std::f64::consts::PI * self.radius * self.radius }
+    fn name(&self) -> String { "Circle".to_string() }
+}
+
+fn total_area(shapes: &[&dyn Shape]) -> f64 {
+    shapes.iter().map(|s| s.area()).sum()
+}
+~hint
+Write the trait, then one impl Shape for each struct.
+~after
+fn main() {
+    let a = Square { side: 3.0 };
+    let b = Circle { radius: 1.0 };
+    let all: Vec<&dyn Shape> = vec![&a, &b];
+    for s in &all {
+        println!("{}: {:.2}", s.name(), s.area());
+    }
+    println!("{:.2}", total_area(&all));
+}
+~out
+Square: 9.00
+Circle: 3.14
+12.14
+=F rsfire9b | Hot fire: Generic pair
+@C
+Write `fn larger<T: PartialOrd>(a: T, b: T) -> T` that returns the bigger of two values, and `fn count_above<T: PartialOrd>(items: &[T], limit: T) -> usize` that counts items greater than `limit`.
+~start
+fn larger<T: PartialOrd>(a: T, b: T) -> T {
+    a
+}
+
+fn count_above<T: PartialOrd>(items: &[T], limit: T) -> usize {
+    0
+}
+~sol
+fn larger<T: PartialOrd>(a: T, b: T) -> T {
+    if a >= b { a } else { b }
+}
+
+fn count_above<T: PartialOrd>(items: &[T], limit: T) -> usize {
+    items.iter().filter(|x| **x > limit).count()
+}
+~hint
+items.iter().filter(...).count(). Each x is a reference, so compare **x with limit.
+~after
+fn main() {
+    println!("{}", larger(3, 9));
+    println!("{}", larger("apple", "pear"));
+    println!("{}", count_above(&[5, 12, 8, 30], 10));
+    println!("{}", count_above(&[1.5, 0.5], 1.0));
+}
+~out
+9
+pear
+2
+1

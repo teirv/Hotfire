@@ -1,0 +1,1174 @@
+=X first
+=L xfirst | Going deeper: how code runs
+@T
+The computer runs your program **one statement at a time, top to bottom**. Step through this program in your head before you press Run. What prints, and in what order?
+~code
+console.log("Start");
+console.log(4 * 25);
+console.log("4 * 25");
+console.log("Done");
+@Q
+Refer to the code above. Which line prints `4 * 25` exactly as written?
+~opts
+* `console.log("4 * 25");`
+- `console.log(4 * 25);`
+- Neither
+~why
+Quotes make it text, so nothing is calculated.
+@Q
+Which line is a correct statement?
+~opts
+* `console.log("Hi");`
+- `console.log("Hi";)`
+- `console.log(Hi");`
+~why
+Quotes open and close the text, and the parentheses wrap it.
+@P
+What does this print?
+~code
+console.log(10 - 2 * 3);
+~opts
+* 4
+- 24
+- 10 - 2 * 3
+~why
+Multiplication goes first: 2 * 3 is 6, and 10 minus 6 is 4.
+=F xfirefirst | Hot fire: Receipt
+@C
+Print a three-line receipt. Calculate the last line with math (`3 * 4 + 2`), don't type the answer.
+
+Expected output:
+
+```
+Receipt
+Bolts and nuts
+Total: 14
+```
+
+Tip: `console.log("Total: " + (3 * 4 + 2));` joins text and a number.
+~start
+// Three console.log lines
+
+~sol
+console.log("Receipt");
+console.log("Bolts and nuts");
+console.log("Total: " + (3 * 4 + 2));
+~hint
+Wrap the math in parentheses so it's calculated before joining.
+~out
+Receipt
+Bolts and nuts
+Total: 14
+~must
+3\s*\*\s*4\s*\+\s*2 :: Calculate 3 * 4 + 2 in the code.
+=X vars
+=L xvars | Going deeper: changing values
+@T
+Track each variable as the code runs. A variable only holds its **latest** value.
+~code
+let a = 5;
+let b = a;
+a = 10;
+b = b + 1;
+console.log(a);
+console.log(b);
+@Q
+Refer to the code above. Why is `b` 6 and not 11?
+~opts
+* `b` got a copy of 5 before `a` changed
+- `b` is always one more than `a`
+- `let` makes `b` read-only
+~why
+`let b = a;` copies the value at that moment. Later changes to `a` don't affect `b`.
+@P
+What does this print?
+~code
+let msg = "Hi";
+msg = msg + " there";
+msg = msg + "!";
+console.log(msg);
+~opts
+* Hi there!
+- Hi
+- !
+~why
+Each line adds to the text already stored.
+@Q
+What happens here? `const max = 10; max = 20;`
+~opts
+* An error: a const can't be reassigned
+- `max` becomes 20
+- `max` becomes 30
+~why
+Use `let` for values that change.
+=F xfirevars | Hot fire: Swap
+@C
+`left` holds `"wrench"` and `right` holds `"hammer"`. Swap them, so `left` holds `"hammer"` and `right` holds `"wrench"`. Use a third variable called `temp`.
+
+Expected output:
+
+```
+left: hammer
+right: wrench
+```
+~start
+let left = "wrench";
+let right = "hammer";
+// Swap them here
+
+console.log(`left: ${left}`);
+console.log(`right: ${right}`);
+~sol
+let left = "wrench";
+let right = "hammer";
+let temp = left;
+left = right;
+right = temp;
+console.log(`left: ${left}`);
+console.log(`right: ${right}`);
+~hint
+Save left in temp first, then copy right into left, then temp into right.
+~out
+left: hammer
+right: wrench
+~must
+\btemp\b :: Use a temp variable.
+=X math
+=L xmath | Going deeper: rounding and number checks
+@T
+Math in code isn't always exact. Decimals like 0.1 can't be stored perfectly, so `0.1 + 0.2` isn't exactly `0.3`. Use `toFixed()` when you show money or measurements.
+
+`Math.round()` rounds to a whole number. `Number.isNaN()` checks for "not a number".
+~code
+console.log(0.1 + 0.2);
+console.log((0.1 + 0.2).toFixed(2));
+console.log(Math.round(2.5), Math.round(2.4));
+console.log(Number("abc"));
+console.log(Number.isNaN(Number("abc")));
+@Q
+Refer to the code above. Why does the first line print a long decimal?
+~opts
+* Decimals aren't stored exactly in binary
+- JavaScript has a bug
+- 0.1 is a string
+~why
+Every language that uses standard decimals does this. Round when you display.
+@P
+What does this print?
+~code
+console.log((19.999).toFixed(1));
+~opts
+* 20.0
+- 19.9
+- 19.999
+~why
+`toFixed` rounds to the number of places you ask for.
+=F xfiremath | Hot fire: Average
+@C
+Three test scores are stored for you. Print the average with exactly 1 decimal place.
+
+Expected output:
+
+```
+Average: 86.3
+```
+~start
+let a = 92;
+let b = 81;
+let c = 86;
+// Print the average
+
+~sol
+let a = 92;
+let b = 81;
+let c = 86;
+console.log("Average: " + ((a + b + c) / 3).toFixed(1));
+~hint
+Add them, divide by 3, then use .toFixed(1).
+~out
+Average: 86.3
+~must
+toFixed :: Use toFixed to format the number.
+=X decide
+=L xdecide | Going deeper: the switch statement
+@T
+`switch` compares one value against several cases. It's tidier than a long `else if` chain when you're checking for exact matches.
+
+Each case ends with `break`. Without it, the code keeps running into the next case.
+~code
+let day = "Sat";
+
+switch (day) {
+  case "Sat":
+  case "Sun":
+    console.log("Weekend");
+    break;
+  case "Fri":
+    console.log("Almost");
+    break;
+  default:
+    console.log("Weekday");
+}
+@P
+What does this print?
+~code
+let light = "yellow";
+switch (light) {
+  case "green":
+    console.log("Go");
+    break;
+  case "yellow":
+    console.log("Slow");
+  case "red":
+    console.log("Stop");
+    break;
+}
+~opts
+* Slow
+Stop
+- Slow
+- Stop
+~why
+The yellow case has no `break`, so it falls into the red case.
+@Q
+When does `default` run?
+~opts
+* When no case matches
+- Always, at the end
+- Only when the value is empty
+~why
+It's like the final `else`.
+=F xfiredecide | Hot fire: Shipping cost
+@C
+Write a program that sets `shipping` from the `weight` (in pounds):
+
+Up to 1 lb: `5`
+
+Over 1 and up to 10 lb: `12`
+
+Over 10 lb: `12` plus `2` for every pound over 10
+
+Then print `Shipping: $` and the amount. The test tries several weights.
+~start
+let weight = 4;
+// Set shipping, then print it
+
+~sol
+let weight = 4;
+let shipping;
+if (weight <= 1) {
+  shipping = 5;
+} else if (weight <= 10) {
+  shipping = 12;
+} else {
+  shipping = 12 + (weight - 10) * 2;
+}
+console.log("Shipping: $" + shipping);
+~hint
+For the last case: 12 + (weight - 10) * 2
+~replace
+let weight = \d+;
+~out with=let weight = 1;
+Shipping: $5
+~out with=let weight = 4;
+Shipping: $12
+~out with=let weight = 10;
+Shipping: $12
+~out with=let weight = 15;
+Shipping: $22
+=X loops
+=L xloops | Going deeper: nested loops
+@T
+A loop can sit inside another loop. The inner loop runs **all the way through** each time the outer loop goes around once.
+~code
+for (let row = 1; row <= 3; row++) {
+  let line = "";
+  for (let col = 1; col <= 4; col++) {
+    line += "*";
+  }
+  console.log(line);
+}
+@Q
+Refer to the code above. How many stars print in total?
+~opts
+* 12
+- 7
+- 4
+~why
+3 rows times 4 stars.
+@P
+What does this print?
+~code
+for (let i = 1; i <= 2; i++) {
+  for (let j = 1; j <= 2; j++) {
+    console.log(i + "-" + j);
+  }
+}
+~opts
+* 1-1
+1-2
+2-1
+2-2
+- 1-1
+2-2
+- 1-2
+2-1
+~why
+For each `i`, `j` goes through 1 and 2.
+=F xfireloops | Hot fire: Number triangle
+@C
+Print a triangle of numbers with 4 rows, using nested loops:
+
+```
+1
+12
+123
+1234
+```
+~start
+// Your loops here
+
+~sol
+for (let row = 1; row <= 4; row++) {
+  let line = "";
+  for (let n = 1; n <= row; n++) {
+    line += n;
+  }
+  console.log(line);
+}
+~hint
+The inner loop goes from 1 up to the row number.
+~out
+1
+12
+123
+1234
+~must
+for[\s\S]*for :: Use a loop inside a loop.
+=X funcs
+=L xfuncs | Going deeper: functions calling functions
+@T
+Functions can call other functions. Small functions with one job each are easier to test and reuse.
+
+Follow this program: which function runs first, and what does each return?
+~code
+function square(n) {
+  return n * n;
+}
+
+function sumOfSquares(a, b) {
+  return square(a) + square(b);
+}
+
+console.log(sumOfSquares(3, 4));
+@Q
+Refer to the code above. What does `square(3)` return inside `sumOfSquares`?
+~opts
+* 9
+- 3
+- 25
+~why
+Then `square(4)` returns 16, and 9 + 16 is 25.
+@Q
+What is a **callback**?
+~opts
+* A function passed into another function to be called later
+- A function that calls itself
+- A function with no return
+~why
+`addEventListener` and `.map()` both take callbacks.
+@P
+What does this print?
+~code
+function apply(fn, x) {
+  return fn(x);
+}
+console.log(apply((n) => n + 10, 5));
+~opts
+* 15
+- 5
+- 10
+~why
+`apply` calls the arrow function with 5.
+=F xfirefuncs | Hot fire: Tip splitter
+@C
+Write `splitBill(total, tipPercent, people)` that returns how much each person pays, rounded to 2 decimals as a **number**.
+
+Example: `splitBill(100, 20, 4)` returns `30`, because 100 plus a 20% tip is 120, divided by 4.
+
+Tip: `Number(x.toFixed(2))` rounds to 2 decimals and keeps it a number.
+~start
+function splitBill(total, tipPercent, people) {
+
+}
+
+~sol
+function splitBill(total, tipPercent, people) {
+  let withTip = total * (1 + tipPercent / 100);
+  return Number((withTip / people).toFixed(2));
+}
+~hint
+total * (1 + tipPercent / 100), then divide by people.
+~after
+console.log(splitBill(100, 20, 4));
+console.log(splitBill(80, 15, 2));
+console.log(splitBill(10, 0, 3));
+~out
+30
+46
+3.33
+=X scope
+=L xscope | Going deeper: tracing scope
+@T
+To find a variable, JavaScript looks in the current block first, then in each outer block, and finally in the global scope. The **first** match wins.
+~code
+let level = "global";
+
+function outer() {
+  let level = "outer";
+  function inner() {
+    console.log(level);
+  }
+  inner();
+}
+
+outer();
+console.log(level);
+@Q
+Refer to the code above. Why does `inner()` print `outer`?
+~opts
+* It finds `outer`'s `level` before the global one
+- Functions always use the global variable
+- `inner` makes its own `level`
+~why
+The search moves outward and stops at the first match.
+@P
+What does this print?
+~code
+let count = 0;
+function add() {
+  count++;
+}
+add();
+add();
+console.log(count);
+~opts
+* 2
+- 0
+- An error
+~why
+`add` changes the outer `count`, since it has no `count` of its own.
+=F xfirescope1 | Hot fire: Counter fix
+@C
+This counter always prints `1`, because `total` is reset inside the function. Move the variable so the three calls print `1`, `2`, `3`.
+~start
+function tally() {
+  let total = 0;
+  total++;
+  console.log(total);
+}
+tally();
+tally();
+tally();
+~sol
+let total = 0;
+function tally() {
+  total++;
+  console.log(total);
+}
+tally();
+tally();
+tally();
+~hint
+Declare total outside the function, so it survives between calls.
+~out
+1
+2
+3
+=F xfirescope2 | Hot fire: Block scope
+@C
+Write `labelAll(names)` that returns an array of strings like `1: Ana`, numbering from 1. Use a `for` loop with `let i`, and build the result inside the function only, with no global variables.
+
+Example: `labelAll(["Ana", "Leo"])` returns `["1: Ana", "2: Leo"]`.
+~start
+function labelAll(names) {
+
+}
+
+~sol
+function labelAll(names) {
+  let out = [];
+  for (let i = 0; i < names.length; i++) {
+    out.push(`${i + 1}: ${names[i]}`);
+  }
+  return out;
+}
+~hint
+Make an empty array inside the function, push to it, and return it.
+~after
+console.log(labelAll(["Ana", "Leo"]).join(" | "));
+console.log(labelAll([]).length);
+console.log(labelAll(["Sam"]).join(" | "));
+~out
+1: Ana | 2: Leo
+0
+1: Sam
+~must
+\bfor\s*\(\s*let :: Use a for loop with let.
+=X arrays
+=L xarrays | Going deeper: more array tools
+@T
+A few more tools you'll use a lot:
+
+`find` returns the first item that passes a test, or `undefined`.
+
+`some` asks "does any item pass?" `every` asks "do all pass?"
+
+`reduce` combines all items into one value, like a total.
+
+`sort` sorts in place. For numbers, give it `(a, b) => a - b`.
+~code
+let temps = [72, 88, 95, 64];
+
+console.log(temps.find((t) => t > 90));
+console.log(temps.some((t) => t < 65));
+console.log(temps.every((t) => t > 60));
+console.log(temps.reduce((sum, t) => sum + t, 0));
+console.log([...temps].sort((a, b) => a - b));
+@Q
+Refer to the code above. What would `temps.find((t) => t > 100)` return?
+~opts
+* `undefined`
+- `-1`
+- `[]`
+~why
+`find` gives `undefined` when nothing matches. `indexOf` is the one that gives -1.
+@P
+What does this print?
+~code
+let n = [10, 1, 5];
+n.sort();
+console.log(n);
+~opts
+* [ 1, 10, 5 ]
+- [ 1, 5, 10 ]
+- [ 10, 5, 1 ]
+~why
+Without a compare function, `sort` compares as text, and "10" comes before "5".
+=F xfirearrays | Hot fire: Top readings
+@C
+Write `topThree(readings)` that returns a **new** array of the three highest numbers, from highest to lowest. Don't change the original array.
+
+Example: `topThree([4, 99, 12, 50, 7])` returns `[99, 50, 12]`.
+~start
+function topThree(readings) {
+
+}
+
+~sol
+function topThree(readings) {
+  return [...readings].sort((a, b) => b - a).slice(0, 3);
+}
+~hint
+Copy with [...readings], sort with (a, b) => b - a, then slice(0, 3).
+~after
+let data = [4, 99, 12, 50, 7];
+console.log(topThree(data));
+console.log(data);
+console.log(topThree([3, 1]));
+~out
+[ 99, 50, 12 ]
+[ 4, 99, 12, 50, 7 ]
+[ 3, 1 ]
+=X objects
+=L xobj1 | Going deeper: nested objects and methods
+@T
+An object's values can be anything, including arrays and other objects. Chain dots and brackets to reach inside.
+
+Step through it: what does each line print?
+~code
+let book = {
+  title: "Outliers",
+  published: 2011,
+  keywords: ["success", "high-achievers"],
+  author: {
+    firstName: "Malcolm",
+    lastName: "Gladwell",
+  },
+};
+
+console.log(book.title);
+console.log(book.keywords[0]);
+console.log(book.author.lastName);
+@Q
+Refer to the code above. Which statement changes the published year to 2014?
+~opts
+* `book.published = 2014;`
+- `book[published] = 2014;`
+- `published.book = 2014;`
+~why
+`book["published"]` with quotes would also work.
+@Q
+Which statement adds a new property `isbn`?
+~opts
+* `book.isbn = "1591846013";`
+- `book.add("isbn", "1591846013");`
+- `let book.isbn = "1591846013";`
+~why
+Assigning to a property that doesn't exist creates it.
+@B
+Remove the last keyword from the book.
+~code
+___.pop();
+~opts
+* book.keywords
+- book
+- keywords
+~why
+`pop` belongs to the array, so reach the array first.
+@T
+A **method** is a function stored in an object. Inside it, `this` means the object it was called on. You can define methods inside the object, or add them later.
+~code
+let book = {
+  title: "Quiet",
+  author: { firstName: "Susan", lastName: "Cain" },
+  getAuthorName() {
+    return this.author.firstName + " " + this.author.lastName;
+  },
+};
+
+book.read = function () {
+  console.log("Reading " + this.title);
+};
+
+console.log(book.getAuthorName());
+book.read();
+@Q
+What's wrong with this method? `book.read = function () { console.log(title); };`
+~opts
+* It needs `this.title`, because `title` alone isn't a variable
+- Methods can't use console.log
+- It must be inside the object literal
+~why
+Without `this.`, JavaScript looks for a variable named `title`.
+=L xobj2 | Going deeper: getters, setters and references
+@T
+A **getter** runs when you read a property, and a **setter** runs when you assign one. They look like normal properties from outside, so the property can be calculated or checked.
+~code
+let rectangle = {
+  width: 5,
+  height: 8,
+  get area() {
+    return this.width * this.height;
+  },
+  set area(value) {
+    this.width = Math.sqrt(value);
+    this.height = this.width;
+  },
+};
+
+console.log(rectangle.area);
+rectangle.area = 100;
+console.log(rectangle.width);
+@Q
+Refer to the code above. Why is it `rectangle.area` and not `rectangle.area()`?
+~opts
+* A getter is read like a property
+- Getters can't take arguments, so parentheses are optional
+- It's a typo
+~why
+Calling `rectangle.area()` would fail, because the value 40 isn't a function.
+@T
+**Primitives** (numbers, strings, booleans) are copied. **Objects** are shared by **reference**: two names can point to the same object.
+
+When an object is passed to a function, changing its properties changes the original. Assigning the parameter a whole new object does not.
+~code
+function change(x, rect, book) {
+  x = 33;
+  rect.width = 20;
+  book = { title: "New" };
+}
+
+let level = 5;
+let rect = { width: 3 };
+let book = { title: "Old" };
+
+change(level, rect, book);
+console.log(level);
+console.log(rect.width);
+console.log(book.title);
+@Q
+Refer to the code above. Why does `book.title` stay `Old`?
+~opts
+* The function pointed its own `book` at a new object, which doesn't affect the caller's
+- Objects can't be changed in functions
+- `title` is read-only
+~why
+Changing a property affects the shared object. Replacing the whole parameter doesn't.
+@P
+What does this print?
+~code
+let a = { size: 1 };
+let b = a;
+b.size = 9;
+console.log(a.size);
+~opts
+* 9
+- 1
+- undefined
+~why
+`a` and `b` refer to the same object.
+@C
+Make an object `game` with `winner` and `loser`, each an object with `name` and `score`. Add two methods:
+
+`getMarginOfVictory()` returns the winner's score minus the loser's score
+
+`showSummary()` prints three lines, like the example
+
+Use the Broncos (24) and the Panthers (10). Expected output after calling `game.showSummary()`:
+
+```
+Broncos: 24
+Panthers: 10
+Margin of victory: 14
+```
+~start
+let game = {
+
+};
+
+~sol
+let game = {
+  winner: { name: "Broncos", score: 24 },
+  loser: { name: "Panthers", score: 10 },
+  getMarginOfVictory() {
+    return this.winner.score - this.loser.score;
+  },
+  showSummary() {
+    console.log(`${this.winner.name}: ${this.winner.score}`);
+    console.log(`${this.loser.name}: ${this.loser.score}`);
+    console.log(`Margin of victory: ${this.getMarginOfVictory()}`);
+  },
+};
+~hint
+Inside the methods, reach the data with this.winner.score.
+~after
+game.showSummary();
+console.log(game.getMarginOfVictory());
+~out
+Broncos: 24
+Panthers: 10
+Margin of victory: 14
+14
+=F xfireobj | Hot fire: Music queue
+@C
+Finish `musicQueue` by adding an accessor property `next`:
+
+**Getter:** returns the song at index `nextSong`, then adds 1 to `nextSong`. When `nextSong` goes past the end, it wraps back to 0.
+
+**Setter:** sets `nextSong` to the value, or to 0 if the value is outside the array.
+
+Example: reading `next` four times on 3 songs gives song 1, 2, 3, then 1 again.
+~start
+let musicQueue = {
+  songs: ["Skyfall", "Hello", "Roar"],
+  nextSong: 0,
+};
+
+~sol
+let musicQueue = {
+  songs: ["Skyfall", "Hello", "Roar"],
+  nextSong: 0,
+  get next() {
+    let song = this.songs[this.nextSong];
+    this.nextSong++;
+    if (this.nextSong >= this.songs.length) {
+      this.nextSong = 0;
+    }
+    return song;
+  },
+  set next(value) {
+    this.nextSong = value >= 0 && value < this.songs.length ? value : 0;
+  },
+};
+~hint
+Use get next() { ... } and set next(value) { ... } inside the object.
+~after
+console.log(musicQueue.next, musicQueue.next, musicQueue.next, musicQueue.next);
+musicQueue.next = 2;
+console.log(musicQueue.next);
+musicQueue.next = 10;
+console.log(musicQueue.next);
+~out
+Skyfall Hello Roar Skyfall
+Roar
+Skyfall
+~must
+get\s+next :: Add a getter called next.
+set\s+next :: Add a setter called next.
+=X bugs
+=L xbugs | Going deeper: reading a stack trace
+@T
+When code crashes, the error includes the **line number**. Read the message first, then go to that line, then check the values with `console.log`.
+
+Common causes:
+
+`undefined is not a function`: you called something that isn't a function, often a typo.
+
+`Cannot read properties of undefined`: something before the dot is missing.
+
+`x is not defined`: a typo, or the variable was declared in a different scope.
+~code
+let parts = [{ name: "valve" }];
+console.log(parts[0].name);
+console.log(parts[1]);
+@Q
+Refer to the code above. What would `parts[1].name` do?
+~opts
+* Throw "Cannot read properties of undefined"
+- Print `undefined`
+- Print `valve`
+~why
+`parts[1]` is `undefined`, and you can't read `.name` from undefined.
+@Q
+Your total is wrong, but there's no error. What's the best first step?
+~opts
+* Add `console.log` to see the values at each step
+- Rewrite the whole program
+- Add more semicolons
+~why
+Compare what you expect with what's actually there.
+=F xfirebugs | Hot fire: Fix the average
+@C
+This function should return the average of an array, but it has three bugs. Fix it.
+
+Example: `average([2, 4, 6])` returns `4`, and `average([])` returns `0`.
+~start
+function average(nums) {
+  let total = 0;
+  for (let i = 1; i <= nums.length; i++) {
+    total = nums[i];
+  }
+  return total / nums.length;
+}
+~sol
+function average(nums) {
+  if (nums.length === 0) return 0;
+  let total = 0;
+  for (let i = 0; i < nums.length; i++) {
+    total += nums[i];
+  }
+  return total / nums.length;
+}
+~hint
+Check where the loop starts and stops, how total is updated, and what happens for an empty array.
+~after
+console.log(average([2, 4, 6]));
+console.log(average([5]));
+console.log(average([]));
+~out
+4
+5
+0
+=X maps
+=L xmaps | Going deeper: Set, and Map vs object
+@T
+A **Set** stores unique values: duplicates are dropped. It's the quick way to remove repeats.
+
+Use a **Map** when keys change at run time or aren't strings. Use a plain **object** for a fixed shape, like a person with a name and age.
+~code
+let tags = new Set(["fuel", "ox", "fuel"]);
+tags.add("he");
+console.log(tags.size);
+console.log(tags.has("ox"));
+console.log([...new Set([3, 1, 3, 2, 1])]);
+@P
+What does this print?
+~code
+let s = new Set();
+s.add(1);
+s.add(1);
+s.add("1");
+console.log(s.size);
+~opts
+* 2
+- 1
+- 3
+~why
+The number 1 and the string "1" are different values.
+=F xfiremaps1 | Hot fire: Unique visitors
+@C
+Write `uniqueCount(names)` that returns how many different names are in the array, ignoring capital letters.
+
+Example: `uniqueCount(["Ana", "ana", "Leo"])` returns `2`.
+~start
+function uniqueCount(names) {
+
+}
+
+~sol
+function uniqueCount(names) {
+  return new Set(names.map((n) => n.toLowerCase())).size;
+}
+~hint
+Lowercase every name, then put them in a Set.
+~after
+console.log(uniqueCount(["Ana", "ana", "Leo"]));
+console.log(uniqueCount([]));
+console.log(uniqueCount(["X", "x", "X"]));
+~out
+2
+0
+1
+=F xfiremaps2 | Hot fire: Group by shift
+@C
+Write `byShift(workers)` that takes an array of `{ name, shift }` objects and returns a Map from each shift to an array of names, in order.
+
+Example: Ana on shift 1, Leo on shift 2, and Sam on shift 1 gives `1 => [Ana, Sam]` and `2 => [Leo]`.
+~start
+function byShift(workers) {
+
+}
+
+~sol
+function byShift(workers) {
+  let groups = new Map();
+  for (let w of workers) {
+    if (!groups.has(w.shift)) {
+      groups.set(w.shift, []);
+    }
+    groups.get(w.shift).push(w.name);
+  }
+  return groups;
+}
+~hint
+Make an empty array the first time you see a shift, then push names into it.
+~after
+let g = byShift([{ name: "Ana", shift: 1 }, { name: "Leo", shift: 2 }, { name: "Sam", shift: 1 }]);
+console.log(g.get(1).join(", "));
+console.log(g.get(2).join(", "));
+console.log(g.size);
+~out
+Ana, Sam
+Leo
+2
+=X strobj
+=L xstr | Going deeper: template formatting
+@T
+Combining methods is how real text work gets done. Read this chain left to right: each method works on the result of the one before.
+~code
+let raw = "  Valve-01, SEAL-02 ,hose-03 ";
+
+let ids = raw
+  .split(",")
+  .map((s) => s.trim().toUpperCase());
+
+console.log(ids);
+console.log(ids.join(" | "));
+@Q
+Refer to the code above. What does `.trim()` fix?
+~opts
+* The spaces around each piece
+- The capital letters
+- The commas
+~why
+`split` keeps the spaces next to the commas, and `trim` removes them.
+@P
+What does this print?
+~code
+console.log("rocket".slice(-3).toUpperCase());
+~opts
+* KET
+- ROC
+- rocket
+~why
+`slice(-3)` takes the last 3 characters.
+=F xfirestr1 | Hot fire: Title case
+@C
+Write `titleCase(text)` that makes the first letter of each word uppercase and the rest lowercase.
+
+Example: `titleCase("hOT fIRE test")` returns `Hot Fire Test`.
+~start
+function titleCase(text) {
+
+}
+
+~sol
+function titleCase(text) {
+  return text
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+}
+~hint
+For each word: first letter uppercase, plus the rest lowercase.
+~after
+console.log(titleCase("hOT fIRE test"));
+console.log(titleCase("a"));
+~out
+Hot Fire Test
+A
+=F xfirestr2 | Hot fire: Mask a card
+@C
+Write `mask(number)` that hides all but the last 4 characters with `*`. Keep the length the same.
+
+Example: `mask("4111222233334444")` returns `************4444`.
+~start
+function mask(number) {
+
+}
+
+~sol
+function mask(number) {
+  return number.slice(-4).padStart(number.length, "*");
+}
+~hint
+Take the last 4 with slice(-4), then padStart to the full length.
+~after
+console.log(mask("4111222233334444"));
+console.log(mask("1234"));
+console.log(mask("12345"));
+~out
+************4444
+1234
+*2345
+=X dateobj
+=L xdate | Going deeper: formatting dates
+@T
+Build date text from the parts. `padStart(2, "0")` adds a leading zero, so 3 becomes `03`. Remember the month is counted from 0, so add 1 when you display it.
+
+`toISOString()` gives a standard format, which is handy for storing dates.
+~code
+let d = new Date(2026, 10, 3, 9, 5);
+
+let mm = String(d.getMonth() + 1).padStart(2, "0");
+let dd = String(d.getDate()).padStart(2, "0");
+console.log(`${d.getFullYear()}-${mm}-${dd}`);
+console.log(`${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`);
+@Q
+Refer to the code above. Why is `+ 1` added to `getMonth()`?
+~opts
+* Months count from 0, so November is 10
+- To round up
+- Dates are always a month behind
+~why
+Days of the month count from 1, so they don't need it.
+=F xfiredate1 | Hot fire: Date stamp
+@C
+Write `stamp(date)` that returns text like `11/03/2026` (month, day, year, each month and day with 2 digits).
+~start
+function stamp(date) {
+
+}
+
+~sol
+function stamp(date) {
+  let mm = String(date.getMonth() + 1).padStart(2, "0");
+  let dd = String(date.getDate()).padStart(2, "0");
+  return `${mm}/${dd}/${date.getFullYear()}`;
+}
+~hint
+getMonth() + 1, then padStart(2, "0").
+~after
+console.log(stamp(new Date(2026, 10, 3)));
+console.log(stamp(new Date(2027, 0, 25)));
+~out
+11/03/2026
+01/25/2027
+=F xfiredate2 | Hot fire: Due date
+@C
+Write `dueDate(start, days)` that returns a **new** Date that is `days` days after `start`. Don't change `start`.
+
+Example: 40 days after January 1, 2026 is February 10.
+~start
+function dueDate(start, days) {
+
+}
+
+~sol
+function dueDate(start, days) {
+  let d = new Date(start);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+~hint
+Copy it with new Date(start), then use setDate.
+~after
+let s = new Date(2026, 0, 1);
+let d = dueDate(s, 40);
+console.log(d.getMonth() + 1, d.getDate());
+console.log(s.getDate());
+~out
+2 10
+1
+=X mathobj
+=L xmath2 | Going deeper: random choices
+@T
+Random whole numbers come from a recipe: `Math.floor(Math.random() * count) + start`.
+
+To pick a random item, use a random index from 0 up to `length - 1`.
+~code
+let tools = ["wrench", "meter", "driver"];
+let pick = tools[Math.floor(Math.random() * tools.length)];
+console.log(tools.includes(pick));
+
+let dice = Math.floor(Math.random() * 6) + 1;
+console.log(dice >= 1 && dice <= 6);
+@Q
+Refer to the code above. Why isn't `+ 1` used when picking from `tools`?
+~opts
+* Array positions start at 0
+- It would make the code slower
+- `includes` adds it
+~why
+Valid positions are 0 to length - 1, which is what the recipe gives without `+ 1`.
+=F xfiremath1 | Hot fire: Distance
+@C
+Write `distance(x1, y1, x2, y2)` that returns the straight-line distance between two points, rounded to 2 decimals as a number. Use `Math.sqrt` and `Math.pow` (or `**`).
+
+The formula is the square root of (x2 - x1)² + (y2 - y1)².
+~start
+function distance(x1, y1, x2, y2) {
+
+}
+
+~sol
+function distance(x1, y1, x2, y2) {
+  let d = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  return Number(d.toFixed(2));
+}
+~hint
+Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+~after
+console.log(distance(0, 0, 3, 4));
+console.log(distance(1, 1, 2, 2));
+~out
+5
+1.41
+=F xfiremath2 | Hot fire: Clamp
+@C
+Write `clamp(value, min, max)` that keeps a value within a range, using `Math.min` and `Math.max` (no `if`).
+
+Example: `clamp(150, 0, 100)` returns `100`, and `clamp(-5, 0, 100)` returns `0`.
+~start
+function clamp(value, min, max) {
+
+}
+
+~sol
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+~hint
+Math.max(min, value) fixes values that are too low. Then Math.min(max, ...) fixes ones that are too high.
+~after
+console.log(clamp(150, 0, 100));
+console.log(clamp(-5, 0, 100));
+console.log(clamp(42, 0, 100));
+~out
+100
+0
+42
+~must
+Math\.min :: Use Math.min.
+Math\.max :: Use Math.max.

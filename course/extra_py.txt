@@ -1,0 +1,626 @@
+=X pyout
+=L xpyout | Going deeper: print in detail
+@T
+`print()` turns every value into text and puts a space between them. Step through what each line produces.
+~code
+print("A", 1, True)
+print("A" + "1")
+print("x" * 3)
+print("Total:", 4 + 5, "parts")
+print()
+print("done")
+@Q
+Refer to the code above. What does the empty `print()` do?
+~opts
+* Prints a blank line
+- Nothing
+- An error
+~why
+It prints just the line ending.
+@P
+What does this print?
+~code
+print("ab" * 2, "c", sep="")
+~opts
+* ababc
+- abab c
+- ab ab c
+~why
+`sep=""` removes the space between values.
+@Q
+Which line prints `It's 5`?
+~opts
+* `print("It's", 5)`
+- `print('It's 5')`
+- `print("It's" + 5)`
+~why
+The second has a quote problem, and the third adds text to a number.
+=F xpyfire1 | Hot fire: Shipping label
+@C
+Read a name, then a city. Print a label using one `print` call with `sep`, so a dash line sits above and below:
+
+For `Ada` and `Austin`:
+
+```
+----------
+Ada
+Austin
+----------
+```
+
+Tip: `"-" * 10` makes the dashes, and `sep="\n"` puts each value on its own line.
+~start
+name = input()
+city = input()
+# One print call
+
+~sol
+name = input()
+city = input()
+print("-" * 10, name, city, "-" * 10, sep="\n")
+~hint
+print("-" * 10, name, city, "-" * 10, sep="\n")
+~out stdin=Ada|Austin
+----------
+Ada
+Austin
+----------
+~out stdin=Leo|Waco
+----------
+Leo
+Waco
+----------
+=X pyvars
+=L xpyvars | Going deeper: reading several values
+@T
+Lab problems often give several values on **one line**. `input().split()` breaks the line on spaces, and `map(int, ...)` converts each piece.
+~code
+a, b = input().split()
+print(a, b)
+
+x, y, z = map(int, input().split())
+print(x + y + z)
+~stdin
+left right
+1 2 3
+@Q
+Refer to the code above. What type is `a`?
+~opts
+* `str`
+- `int`
+- `list`
+~why
+`split()` gives strings. Only the second line converts with `int`.
+@P
+What does this print?
+~code
+x, y = "5", "7"
+print(x + y, int(x) + int(y))
+~opts
+* 57 12
+- 12 12
+- 57 57
+~why
+Strings join, and converted numbers add.
+=F xpyfire2 | Hot fire: Rectangle
+@C
+Read a width and a height **on one line**, separated by a space, as floats. Print the area and the perimeter, each with 1 decimal place.
+
+For `3 4.5`:
+
+```
+Area: 13.5
+Perimeter: 15.0
+```
+~start
+# Your code here
+
+~sol
+w, h = map(float, input().split())
+print(f"Area: {w * h:.1f}")
+print(f"Perimeter: {2 * (w + h):.1f}")
+~hint
+w, h = map(float, input().split())
+~out stdin=3 4.5
+Area: 13.5
+Perimeter: 15.0
+~out stdin=10 2
+Area: 20.0
+Perimeter: 24.0
+=X pymath
+=L xpymath | Going deeper: rounding rules
+@T
+Python's `round()` uses **banker's rounding**: a value exactly halfway goes to the nearest even number. So `round(2.5)` is 2, and `round(3.5)` is 4.
+
+For money, format with an f-string instead: `f"{x:.2f}"`.
+
+`abs()` drops a minus sign, and `divmod(a, b)` gives `//` and `%` together.
+~code
+print(round(2.5), round(3.5), round(2.675, 2))
+print(f"{2.675:.2f}")
+print(divmod(135, 60))
+print(abs(-12.5))
+@Q
+Refer to the code above. What does `divmod(135, 60)` return?
+~opts
+* `(2, 15)`
+- `2.25`
+- `(15, 2)`
+~why
+It's `(135 // 60, 135 % 60)`.
+@P
+What does this print?
+~code
+print(round(4.5))
+~opts
+* 4
+- 5
+- 4.5
+~why
+Halfway values go to the even number.
+=F xpyfire3 | Hot fire: Fuel mix
+@C
+A mix uses 2.6 parts fuel for every 1 part oxidizer. Read the total liters as a float. Print the fuel and oxidizer amounts with 2 decimals.
+
+For `36`:
+
+```
+Fuel: 26.00 L
+Oxidizer: 10.00 L
+```
+~start
+# Your code here
+
+~sol
+total = float(input())
+oxidizer = total / 3.6
+fuel = total - oxidizer
+print(f"Fuel: {fuel:.2f} L")
+print(f"Oxidizer: {oxidizer:.2f} L")
+~hint
+There are 3.6 parts in total, so the oxidizer is total / 3.6.
+~out stdin=36
+Fuel: 26.00 L
+Oxidizer: 10.00 L
+~out stdin=10
+Fuel: 7.22 L
+Oxidizer: 2.78 L
+=X pystr
+=L xpystr | Going deeper: checking characters
+@T
+String tests answer yes or no: `isdigit()`, `isalpha()`, `isupper()`, `islower()`, `isspace()`. Loop over a string to check each character.
+~code
+password = "Valve42"
+print(password.isalpha())
+upper = 0
+digits = 0
+for ch in password:
+    if ch.isupper():
+        upper += 1
+    elif ch.isdigit():
+        digits += 1
+print(upper, digits)
+@Q
+Refer to the code above. Why does `isalpha()` return `False`?
+~opts
+* The string contains digits
+- It has a capital letter
+- It's too long
+~why
+`isalpha` is only true when every character is a letter.
+@P
+What does this print?
+~code
+print("abc123"[::-1].upper())
+~opts
+* 321CBA
+- ABC123
+- CBA321
+~why
+`[::-1]` reverses, then `upper` capitalizes.
+=F xpyfire4 | Hot fire: Password strength
+@C
+Read a password. Give 1 point each for: 8 or more characters, an uppercase letter, a lowercase letter, and a digit. Print `Weak` for 0 to 2 points, `Medium` for 3, and `Strong` for 4.
+~start
+password = input()
+# Your code here
+
+~sol
+password = input()
+score = 0
+if len(password) >= 8:
+    score += 1
+if any(c.isupper() for c in password):
+    score += 1
+if any(c.islower() for c in password):
+    score += 1
+if any(c.isdigit() for c in password):
+    score += 1
+if score <= 2:
+    print("Weak")
+elif score == 3:
+    print("Medium")
+else:
+    print("Strong")
+~hint
+Loop through the characters with isupper(), islower() and isdigit(), or use any().
+~out stdin=abc
+Weak
+~out stdin=abcdefg1
+Medium
+~out stdin=Abcdefg1
+Strong
+~out stdin=ABCDEFGH
+Weak
+=X pyif
+=L xpyif | Going deeper: tracing conditions
+@T
+To trace an `if` chain, check each condition in order and stop at the first true one. Watch for a plain `if` that starts a new chain.
+~code
+temp = 95
+humid = True
+
+if temp > 100:
+    print("Extreme")
+elif temp > 90 and humid:
+    print("Heat warning")
+elif temp > 90:
+    print("Hot")
+else:
+    print("Normal")
+
+if temp > 80:
+    print("Drink water")
+@Q
+Refer to the code above. Why does `Drink water` also print?
+~opts
+* It's a separate `if`, not part of the first chain
+- Every `if` always runs
+- `elif` lets two branches run
+~why
+A new `if` starts a new decision.
+@P
+What does this print?
+~code
+x = 0
+if x:
+    print("yes")
+else:
+    print("no")
+~opts
+* no
+- yes
+- An error
+~why
+0 counts as false.
+=F xpyfire5 | Hot fire: Ticket price
+@C
+Read an age as an int. A ticket costs `$5` under 13 or 65 and over, `$8` from 13 to 17, and `$12` otherwise. On a second line read `yes` or `no` for a student card: students over 17 and under 65 get `$2` off.
+
+Print the price like `$10`.
+~start
+age = int(input())
+student = input()
+# Your code here
+
+~sol
+age = int(input())
+student = input()
+if age < 13 or age >= 65:
+    price = 5
+elif age <= 17:
+    price = 8
+else:
+    price = 12
+    if student == "yes":
+        price -= 2
+print(f"${price}")
+~hint
+Work out the base price first, then apply the discount for adults.
+~out stdin=10|no
+$5
+~out stdin=15|yes
+$8
+~out stdin=30|yes
+$10
+~out stdin=30|no
+$12
+~out stdin=70|yes
+$5
+=X pyloop
+=L xpyloop | Going deeper: loop patterns
+@T
+Most loop problems are one of three patterns:
+
+**Accumulate:** start a total at 0 and add to it.
+
+**Count:** start at 0 and add 1 when something matches.
+
+**Find the best:** start with the first value and replace it when you find a better one.
+~code
+nums = [4, 17, 9, 22, 3]
+total = 0
+evens = 0
+biggest = nums[0]
+for n in nums:
+    total += n
+    if n % 2 == 0:
+        evens += 1
+    if n > biggest:
+        biggest = n
+print(total, evens, biggest)
+@Q
+Refer to the code above. Why start `biggest` at `nums[0]` instead of 0?
+~opts
+* If every number were negative, 0 would be wrong
+- 0 isn't allowed
+- It makes the loop shorter
+~why
+Starting with a real value from the list is always safe.
+=F xpyfire6 | Hot fire: Grade stats
+@C
+Read scores separated by spaces. Print how many passed (60 or more), the highest score, and the average with 1 decimal place. Use one loop, not `max()` or `sum()`.
+
+For `55 90 72 40 60`:
+
+```
+Passed: 3
+Highest: 90
+Average: 63.4
+```
+~start
+scores = [int(x) for x in input().split()]
+# Your loop here
+
+~sol
+scores = [int(x) for x in input().split()]
+passed = 0
+highest = scores[0]
+total = 0
+for s in scores:
+    total += s
+    if s >= 60:
+        passed += 1
+    if s > highest:
+        highest = s
+print(f"Passed: {passed}")
+print(f"Highest: {highest}")
+print(f"Average: {total / len(scores):.1f}")
+~hint
+Count, find the best, and accumulate, all in the same loop.
+~out stdin=55 90 72 40 60
+Passed: 3
+Highest: 90
+Average: 63.4
+~out stdin=10 20
+Passed: 0
+Highest: 20
+Average: 15.0
+~must
+\bfor\b :: Use a for loop.
+=X pylist
+=L xpylist | Going deeper: lists of lists
+@T
+A list can hold other lists, like rows in a table. Use two indexes: `grid[row][col]`.
+
+Loop over rows, then over the values in each row.
+~code
+grid = [
+    [1, 2, 3],
+    [4, 5, 6],
+]
+print(grid[1][0])
+for row in grid:
+    print(sum(row))
+print([row[2] for row in grid])
+@Q
+Refer to the code above. What does `grid[0][2]` hold?
+~opts
+* 3
+- 4
+- 2
+~why
+Row 0, then position 2 in that row.
+@P
+What does this print?
+~code
+a = [[0] * 2] * 2
+a[0][0] = 9
+print(a)
+~opts
+* [[9, 0], [9, 0]]
+- [[9, 0], [0, 0]]
+- [[0, 0], [0, 0]]
+~why
+`* 2` repeated the **same** inner list twice. Use `[[0] * 2 for _ in range(2)]` instead.
+=F xpyfire7 | Hot fire: Seat map
+@C
+Read a number of rows and a number of seats per row on one line. Build a grid with a list comprehension where every seat is `"O"`, then mark row 1, seat 2 as `"X"` (counting from 0). Print each row joined by spaces.
+
+For `3 4`:
+
+```
+O O O O
+O O X O
+O O O O
+```
+~start
+rows, cols = map(int, input().split())
+# Your code here
+
+~sol
+rows, cols = map(int, input().split())
+seats = [["O"] * cols for _ in range(rows)]
+seats[1][2] = "X"
+for row in seats:
+    print(" ".join(row))
+~hint
+Use [["O"] * cols for _ in range(rows)] so each row is its own list.
+~out stdin=3 4
+O O O O
+O O X O
+O O O O
+~out stdin=2 3
+O O O
+O O X
+=X pydict
+=L xpydict | Going deeper: nested dictionaries
+@T
+Dictionaries often hold other dictionaries or lists. Read them with chained brackets, and use `.get()` with a default when a key might be missing.
+~code
+tanks = {
+    "T1": {"fuel": "LOX", "level": 80},
+    "T2": {"fuel": "RP-1", "level": 45},
+}
+print(tanks["T2"]["fuel"])
+for name, info in tanks.items():
+    print(name, info["level"])
+print(tanks.get("T3", {}).get("level", 0))
+@Q
+Refer to the code above. Why does the last line print 0 instead of crashing?
+~opts
+* Each `.get` gives a default when the key is missing
+- T3 has a level of 0
+- Dictionaries never crash
+~why
+`tanks["T3"]` would raise a KeyError.
+=F xpyfire8 | Hot fire: Inventory
+@C
+Read lines like `add valve 3` or `use valve 2` until `done`. Keep counts in a dictionary. A `use` that would go below 0 prints `Not enough valve` and changes nothing. At the end, print each item and count, sorted by name.
+~start
+# Your code here
+
+~sol
+stock = {}
+line = input()
+while line != "done":
+    action, item, qty = line.split()
+    qty = int(qty)
+    if action == "add":
+        stock[item] = stock.get(item, 0) + qty
+    elif stock.get(item, 0) < qty:
+        print(f"Not enough {item}")
+    else:
+        stock[item] -= qty
+    line = input()
+for item in sorted(stock):
+    print(item, stock[item])
+~hint
+Split each line into three parts, then update the dictionary.
+~out stdin=add valve 3|use valve 2|use seal 1|add seal 4|done
+Not enough seal
+seal 4
+valve 1
+=X pyfunc
+=L xpyfunc | Going deeper: return vs print
+@T
+A function that **prints** shows a value to a person. A function that **returns** hands it back so other code can use it. Lab graders often call your function directly, so return when asked to return.
+~code
+def area_print(w, h):
+    print(w * h)
+
+def area_return(w, h):
+    return w * h
+
+x = area_print(2, 3)
+y = area_return(2, 3)
+print(x, y)
+print(area_return(2, 3) + 1)
+@Q
+Refer to the code above. Why is `x` `None`?
+~opts
+* `area_print` has no return statement
+- 2 * 3 is too small
+- `print` returns zero
+~why
+Every function returns `None` unless it returns something else.
+=F xpyfire9 | Hot fire: Temperature tools
+@C
+Write two functions:
+
+`to_celsius(f)` returns `(f - 32) * 5 / 9` rounded to 1 decimal place
+
+`describe(f)` returns `Freezing` if the Celsius value is 0 or below, `Hot` if it's above 30, and `Mild` otherwise. It must use `to_celsius`.
+~start
+def to_celsius(f):
+    pass
+
+def describe(f):
+    pass
+
+~sol
+def to_celsius(f):
+    return round((f - 32) * 5 / 9, 1)
+
+def describe(f):
+    c = to_celsius(f)
+    if c <= 0:
+        return "Freezing"
+    if c > 30:
+        return "Hot"
+    return "Mild"
+~hint
+describe calls to_celsius first, then checks the result.
+~after
+print(to_celsius(212), to_celsius(98.6))
+print(describe(20), describe(70), describe(95))
+~out
+100.0 37.0
+Freezing Mild Hot
+=X pyerr
+=L xpyerr | Going deeper: which except runs
+@T
+Python checks `except` blocks from top to bottom and runs the **first** one that matches. Put specific errors before general ones like `Exception`.
+~code
+def check(text, divisor):
+    try:
+        return int(text) / divisor
+    except ValueError:
+        return "not a number"
+    except ZeroDivisionError:
+        return "divide by zero"
+    except Exception as e:
+        return "other: " + type(e).__name__
+
+print(check("10", 2))
+print(check("x", 2))
+print(check("10", 0))
+print(check(None, 2))
+@Q
+Refer to the code above. Which block handles `check(None, 2)`?
+~opts
+* `except Exception`, because `int(None)` raises a TypeError
+- `except ValueError`
+- None of them, so it crashes
+~why
+TypeError isn't listed by name, so the general block catches it.
+=F xpyfire10 | Hot fire: Robust average
+@C
+Write `average(values)` that returns the average of a list of numbers. If the list is empty, raise a `ValueError` with the message `no values`. If any value isn't a number, raise a `TypeError` with the message `numbers only`.
+
+Tip: `isinstance(v, (int, float))` checks for a number.
+~start
+def average(values):
+    pass
+
+~sol
+def average(values):
+    if not values:
+        raise ValueError("no values")
+    for v in values:
+        if not isinstance(v, (int, float)):
+            raise TypeError("numbers only")
+    return sum(values) / len(values)
+~hint
+Check for an empty list first, then check each value.
+~after
+print(average([2, 4, 6]))
+for bad in ([], [1, "x"]):
+    try:
+        average(bad)
+    except (ValueError, TypeError) as e:
+        print(type(e).__name__, e)
+~out
+4.0
+ValueError no values
+TypeError numbers only

@@ -1,0 +1,825 @@
+=U csfirst | First Programs | Output, variables and types.
+=L cs1a | Hello, C#
+@T
+**C#** (said "C sharp") is a language from Microsoft. It's used for Windows apps, web servers, games in Unity, and lots of test and lab software.
+
+This app runs modern C#, which lets you write statements straight into the file. `Console.WriteLine()` prints a line.
+
+C# needs a semicolon at the end of every statement. Unlike JavaScript, it isn't optional.
+~code
+Console.WriteLine("Hello, C#!");
+Console.WriteLine(2 + 3);
+@T
+`Console.Write()` prints without a new line. `//` starts a comment.
+
+Common tools like `Console`, lists and LINQ are already available here, so you don't need `using` lines.
+~code
+// Write stays on the same line
+Console.Write("Pressure: ");
+Console.WriteLine(450);
+@P
+What does this print?
+~code
+Console.Write("A");
+Console.Write("B");
+Console.WriteLine("C");
+~opts
+* ABC
+- A
+B
+C
+- AB
+C
+~why
+`Write` doesn't add a new line, so everything ends up on one line.
+@Q
+What happens if you leave off a semicolon in C#?
+~opts
+* The program won't compile
+- C# adds it for you
+- It only prints a warning
+~why
+C# is strict about it. The error names the line.
+@C
+Print `Ready` and `Set` on one line, then `Go` on the next. Use `Console.Write` for the first part.
+
+Expected output:
+
+```
+ReadySet
+Go
+```
+~start
+// Your code here
+
+~sol
+Console.Write("Ready");
+Console.WriteLine("Set");
+Console.WriteLine("Go");
+~hint
+Write for "Ready", then WriteLine for "Set", then WriteLine for "Go".
+~out
+ReadySet
+Go
+~must
+Console\.Write\( :: Use Console.Write for the first part.
+=L cs1b | Variables and types
+@T
+C# is **statically typed**: every variable has a type, and it can't change.
+
+`int` is a whole number, `double` is a decimal, `string` is text, `bool` is `true` or `false`, and `char` is one character in single quotes.
+
+`var` lets C# work out the type from the value. The type is still fixed.
+~code
+int parts = 12;
+double psi = 450.5;
+string name = "Valve";
+bool ok = true;
+char grade = 'A';
+var count = 3;
+
+Console.WriteLine($"{name}: {parts} parts at {psi} psi, ok = {ok}, grade {grade}, count {count}");
+@T
+`$"..."` is an **interpolated string**. Values go inside `{ }`. Add a format after a colon: `{psi:F1}` gives 1 decimal place.
+
+Division between two `int`s drops the remainder. Make one side a `double` to keep it.
+~code
+int a = 7;
+int b = 2;
+Console.WriteLine(a / b);
+Console.WriteLine(a % b);
+Console.WriteLine((double)a / b);
+Console.WriteLine($"{2.0 / 3:F2}");
+@P
+What does this print?
+~code
+int total = 10;
+int people = 4;
+Console.WriteLine(total / people);
+~opts
+* 2
+- 2.5
+- 3
+~why
+Both are `int`, so the decimal part is dropped. It doesn't round.
+@Q
+Which line won't compile?
+~opts
+* `int x = "5";`
+- `var y = 5;`
+- `double z = 5;`
+~why
+A string can't go into an `int`. A whole number can go into a `double`.
+@B
+Make a variable that holds `true` or `false`.
+~code
+___ isOpen = false;
+~opts
+* bool
+- boolean
+- string
+~why
+In C# it's `bool`. Java uses `boolean`.
+@C
+Make an `int` called `liters` set to `125` and a `double` called `rate` set to `2.5`. Print the total cost with 2 decimal places.
+
+Expected output:
+
+```
+Cost: 312.50
+```
+~start
+// Your code here
+
+~sol
+int liters = 125;
+double rate = 2.5;
+Console.WriteLine($"Cost: {liters * rate:F2}");
+~hint
+Use $"Cost: {liters * rate:F2}"
+~out
+Cost: 312.50
+~must
+\bint\s+liters :: Make liters an int.
+\bdouble\s+rate :: Make rate a double.
+=L cs1c | Reading input
+@T
+`Console.ReadLine()` reads one line of text. It's always a `string`.
+
+Turn text into a number with `int.Parse()` or `double.Parse()`.
+
+In this app, lessons provide the input lines for you.
+~code
+string name = Console.ReadLine();
+int age = int.Parse(Console.ReadLine());
+Console.WriteLine($"{name} turns {age + 1} next year");
+~stdin
+Ana
+30
+@P
+The input is `5`. What does this print?
+~code
+string text = "5";
+Console.WriteLine(text + 1);
+~opts
+* 51
+- 6
+- An error
+~why
+`+` with a string joins text. Use `int.Parse(text) + 1` for math.
+@B
+Read a whole number.
+~code
+int n = ___(Console.ReadLine());
+~opts
+* int.Parse
+- Convert
+- string
+~why
+`int.Parse` turns text into an `int`.
+@C
+Read a temperature in Celsius as a `double`. Print it in Fahrenheit with 1 decimal place, using `c * 9 / 5 + 32`.
+
+Example: input `100` prints `212.0 F`.
+~start
+// Your code here
+
+~sol
+double c = double.Parse(Console.ReadLine());
+Console.WriteLine($"{c * 9 / 5 + 32:F1} F");
+~hint
+double.Parse(Console.ReadLine()), then format with :F1
+~out stdin=100
+212.0 F
+~out stdin=21.5
+70.7 F
+=F csfire1a | Hot fire: Shift report
+@C
+Read a worker's name, then hours worked as a `double`, then hourly pay as a `double`. Print their pay with 2 decimal places.
+
+Example input:
+
+```
+Ada
+8
+21.50
+```
+
+Expected output:
+
+```
+Ada earned $172.00
+```
+~start
+// Your code here
+
+~sol
+string name = Console.ReadLine();
+double hours = double.Parse(Console.ReadLine());
+double rate = double.Parse(Console.ReadLine());
+Console.WriteLine($"{name} earned ${hours * rate:F2}");
+~hint
+Read three lines. The last two need double.Parse.
+~out stdin=Ada|8|21.50
+Ada earned $172.00
+~out stdin=Leo|7.5|20
+Leo earned $150.00
+=F csfire1b | Hot fire: Time split
+@C
+Read a whole number of minutes. Print how many hours and minutes that is.
+
+Example: input `135` prints `2 h 15 min`.
+~start
+// Your code here
+
+~sol
+int total = int.Parse(Console.ReadLine());
+Console.WriteLine($"{total / 60} h {total % 60} min");
+~hint
+Integer division gives the hours. % gives the minutes left over.
+~out stdin=135
+2 h 15 min
+~out stdin=59
+0 h 59 min
+~out stdin=120
+2 h 0 min
+=U csdecide | Decisions | if, else, switch and logic.
+=L cs2a | if and else
+@T
+Comparisons give a `bool`: `==`, `!=`, `<`, `>`, `<=`, `>=`.
+
+Combine them with `&&` (and), `||` (or), and `!` (not).
+
+The condition goes in parentheses, and the code in braces.
+~code
+int psi = 520;
+
+if (psi > 500)
+{
+    Console.WriteLine("Over limit");
+}
+else if (psi >= 450)
+{
+    Console.WriteLine("Near limit");
+}
+else
+{
+    Console.WriteLine("Normal");
+}
+@T
+The **ternary** operator picks one of two values in one line: `condition ? a : b`.
+
+Strings compare with `==` in C#, which checks the text itself.
+~code
+int fuel = 30;
+string status = fuel > 50 ? "Good" : "Refuel";
+Console.WriteLine(status);
+Console.WriteLine("go" == "go");
+@P
+What does this print?
+~code
+int x = 7;
+if (x > 5 && x < 10)
+{
+    Console.WriteLine("In range");
+}
+else
+{
+    Console.WriteLine("Out");
+}
+~opts
+* In range
+- Out
+- In range
+Out
+~why
+Both sides of `&&` are true.
+@B
+Print `Even` or `Odd` in one line.
+~code
+int n = 4;
+Console.WriteLine(n % 2 == 0 ___ "Even" ___ "Odd");
+~opts
+* ?
+* :
+- &&
+- ||
+~why
+`condition ? valueIfTrue : valueIfFalse`
+~out
+Even
+=L cs2b | switch
+@T
+`switch` picks a branch based on one value. Each `case` ends with `break`. `default` runs when nothing matches.
+~code
+string day = "Sat";
+
+switch (day)
+{
+    case "Sat":
+    case "Sun":
+        Console.WriteLine("Weekend");
+        break;
+    default:
+        Console.WriteLine("Weekday");
+        break;
+}
+@T
+A **switch expression** is a shorter version that gives back a value. `_` means anything else.
+~code
+int code = 404;
+string meaning = code switch
+{
+    200 => "OK",
+    404 => "Not found",
+    500 => "Server error",
+    _ => "Unknown",
+};
+Console.WriteLine(meaning);
+@Q
+In a regular `switch` statement, what ends each case?
+~opts
+* `break;`
+- `end;`
+- Nothing
+~why
+C# won't let one case fall into the next unless it's empty.
+@P
+What does this print?
+~code
+int level = 3;
+string name = level switch
+{
+    1 => "Low",
+    2 => "Medium",
+    _ => "High",
+};
+Console.WriteLine(name);
+~opts
+* High
+- Medium
+- Low
+~why
+3 doesn't match 1 or 2, so `_` catches it.
+=F csfire2a | Hot fire: Letter grade
+@C
+Read a score as an `int`. Print `A` for 90 and up, `B` for 80 to 89, `C` for 70 to 79, and `F` below that.
+
+Example: input `85` prints `B`.
+~start
+// Your code here
+
+~sol
+int score = int.Parse(Console.ReadLine());
+if (score >= 90) Console.WriteLine("A");
+else if (score >= 80) Console.WriteLine("B");
+else if (score >= 70) Console.WriteLine("C");
+else Console.WriteLine("F");
+~hint
+Start from the top grade and use else if.
+~out stdin=95
+A
+~out stdin=85
+B
+~out stdin=70
+C
+~out stdin=12
+F
+=F csfire2b | Hot fire: Pressure check
+@C
+Read a pressure as a `double`. Print:
+
+`LOW` if it's under 30
+
+`HIGH` if it's over 60
+
+`OK` otherwise
+
+Example: input `45.5` prints `OK`.
+~start
+// Your code here
+
+~sol
+double psi = double.Parse(Console.ReadLine());
+if (psi < 30) Console.WriteLine("LOW");
+else if (psi > 60) Console.WriteLine("HIGH");
+else Console.WriteLine("OK");
+~hint
+Two checks, then else.
+~out stdin=45.5
+OK
+~out stdin=29.9
+LOW
+~out stdin=60
+OK
+~out stdin=61
+HIGH
+=F csfire2c | Hot fire: Day type
+@C
+Read a day name like `Mon`. Use a `switch` expression to print `Weekend` for `Sat` or `Sun`, and `Weekday` for anything else.
+~start
+// Your code here
+
+~sol
+string day = Console.ReadLine();
+string kind = day switch
+{
+    "Sat" or "Sun" => "Weekend",
+    _ => "Weekday",
+};
+Console.WriteLine(kind);
+~hint
+"Sat" or "Sun" => "Weekend", then _ => "Weekday"
+~out stdin=Sat
+Weekend
+~out stdin=Sun
+Weekend
+~out stdin=Mon
+Weekday
+~must
+switch :: Use a switch.
+=U csloops | Loops | Repeating work.
+=L cs3a | for and while
+@T
+A `for` loop has three parts: start, keep-going test, and step. `i++` adds 1.
+
+A `while` loop runs as long as its condition is true.
+~code
+for (int i = 1; i <= 3; i++)
+{
+    Console.WriteLine($"Round {i}");
+}
+
+int tank = 0;
+while (tank < 100)
+{
+    tank += 40;
+}
+Console.WriteLine(tank);
+@T
+`break` leaves a loop early. `continue` skips to the next round.
+
+A `do`/`while` loop always runs at least once, because it checks at the end.
+~code
+for (int i = 1; i <= 10; i++)
+{
+    if (i % 2 == 0) continue;
+    if (i > 7) break;
+    Console.Write(i + " ");
+}
+Console.WriteLine();
+@P
+How many lines does this print?
+~code
+for (int i = 0; i < 4; i++)
+{
+    Console.WriteLine(i);
+}
+~opts
+* 4
+- 3
+- 5
+~why
+0, 1, 2 and 3.
+@P
+What does this print?
+~code
+int n = 1;
+while (n < 20)
+{
+    n *= 3;
+}
+Console.WriteLine(n);
+~opts
+* 27
+- 9
+- 20
+~why
+1, 3, 9, then 27 stops the loop.
+=L cs3b | foreach and arrays
+@T
+An **array** holds a fixed number of values of one type. Count from 0. `.Length` gives the size.
+
+`foreach` visits each item without an index.
+~code
+int[] readings = { 12, 40, 33 };
+
+Console.WriteLine(readings[0]);
+Console.WriteLine(readings.Length);
+
+int total = 0;
+foreach (int r in readings)
+{
+    total += r;
+}
+Console.WriteLine(total);
+@Q
+What does `readings[3]` do when the array has 3 items?
+~opts
+* Throws an `IndexOutOfRangeException`
+- Returns 0
+- Returns the last item
+~why
+Valid positions are 0, 1 and 2.
+@B
+Visit each name.
+~code
+string[] crew = { "Ana", "Leo" };
+___ (string person ___ crew)
+{
+    Console.WriteLine(person);
+}
+~opts
+* foreach
+* in
+- for
+- of
+~why
+C# uses `foreach ... in`. JavaScript's `of` doesn't work here.
+~out
+Ana
+Leo
+=F csfire3a | Hot fire: Times table
+@C
+Read a number `n`. Print its times table from 1 to 5, like this for `n = 3`:
+
+```
+3 x 1 = 3
+3 x 2 = 6
+3 x 3 = 9
+3 x 4 = 12
+3 x 5 = 15
+```
+~start
+// Your code here
+
+~sol
+int n = int.Parse(Console.ReadLine());
+for (int i = 1; i <= 5; i++)
+{
+    Console.WriteLine($"{n} x {i} = {n * i}");
+}
+~hint
+Loop i from 1 to 5 and print n * i.
+~out stdin=3
+3 x 1 = 3
+3 x 2 = 6
+3 x 3 = 9
+3 x 4 = 12
+3 x 5 = 15
+~must
+\bfor\b|\bwhile\b :: Use a loop.
+=F csfire3b | Hot fire: Max and average
+@C
+Read a line of numbers separated by spaces. Print the largest value, then the average with 1 decimal place.
+
+Example: input `4 9 2` prints:
+
+```
+Max: 9
+Average: 5.0
+```
+
+Tip: `Console.ReadLine().Split(' ')` gives an array of strings.
+~start
+// Your code here
+
+~sol
+string[] parts = Console.ReadLine().Split(' ');
+int max = int.MinValue;
+int sum = 0;
+foreach (string p in parts)
+{
+    int n = int.Parse(p);
+    sum += n;
+    if (n > max) max = n;
+}
+Console.WriteLine($"Max: {max}");
+Console.WriteLine($"Average: {(double)sum / parts.Length:F1}");
+~hint
+Keep a running sum and a running max. Cast to double before dividing.
+~out stdin=4 9 2
+Max: 9
+Average: 5.0
+~out stdin=10 11
+Max: 11
+Average: 10.5
+=F csfire3c | Hot fire: Countdown
+@C
+Read a start number. Count down to 1 with a `while` loop, printing each number. Then print `Liftoff`.
+
+Example: input `3` prints `3`, `2`, `1`, `Liftoff`, each on its own line.
+~start
+// Your code here
+
+~sol
+int n = int.Parse(Console.ReadLine());
+while (n > 0)
+{
+    Console.WriteLine(n);
+    n--;
+}
+Console.WriteLine("Liftoff");
+~hint
+Print n, then n--, inside the loop.
+~out stdin=3
+3
+2
+1
+Liftoff
+~out stdin=1
+1
+Liftoff
+~must
+\bwhile\b :: Use a while loop.
+=U csmethods | Methods | Reusable named steps.
+=L cs4a | Writing methods
+@T
+A **method** is a named block of code. Its first word is the type it returns, or `void` if it returns nothing. Each parameter has a type too.
+
+In this style of program, methods can sit below the code that calls them.
+~code
+Console.WriteLine(Area(3, 4));
+Greet("Ana");
+
+int Area(int width, int height)
+{
+    return width * height;
+}
+
+void Greet(string name)
+{
+    Console.WriteLine($"Hi, {name}");
+}
+@T
+A one-line method can use `=>`. Parameters can have default values.
+~code
+double Square(double x) => x * x;
+string Label(string text, string unit = "psi") => $"{text} {unit}";
+
+Console.WriteLine(Square(1.5));
+Console.WriteLine(Label("450"));
+Console.WriteLine(Label("31", "bar"));
+@Q
+What does `void` mean before a method's name?
+~opts
+* It returns nothing
+- It takes no parameters
+- It's private
+~why
+Use a real type like `int` or `string` when you return a value.
+@P
+What does this print?
+~code
+Console.WriteLine(Twice(Twice(3)));
+
+int Twice(int n) => n * 2;
+~opts
+* 12
+- 6
+- 9
+~why
+Twice(3) is 6, and Twice(6) is 12.
+@B
+Finish a method that returns whether a number is even.
+~code
+___ IsEven(int n)
+{
+    ___ n % 2 == 0;
+}
+~opts
+* bool
+* return
+- void
+- print
+~why
+It gives back `true` or `false`, so its type is `bool`.
+=L cs4b | Overloads, out and ref
+@T
+**Overloading** means several methods share a name but take different parameters. C# picks the right one.
+
+Overloads must live inside a class. A `static class` is a simple home for related tools, and you call them with the class name in front.
+~code
+Console.WriteLine(Tools.Add(2, 3));
+Console.WriteLine(Tools.Add(2.5, 1.25));
+
+static class Tools
+{
+    public static int Add(int a, int b) => a + b;
+    public static double Add(double a, double b) => a + b;
+}
+@T
+Normally a method gets a copy of a number. `ref` lets it change the caller's variable. `out` lets it hand back an extra result.
+
+`int.TryParse` uses `out`: it returns `true` or `false`, and puts the number in the `out` variable.
+~code
+int score = 10;
+Bonus(ref score);
+Console.WriteLine(score);
+
+if (int.TryParse("42", out int n))
+{
+    Console.WriteLine(n + 1);
+}
+Console.WriteLine(int.TryParse("abc", out int bad));
+
+void Bonus(ref int s) => s += 5;
+@Q
+Why use `int.TryParse` instead of `int.Parse`?
+~opts
+* It doesn't crash on bad input
+- It's the only way to read numbers
+- It rounds decimals
+~why
+`int.Parse("abc")` throws an exception. `TryParse` returns `false`.
+=F csfire4a | Hot fire: Is it prime?
+@C
+Write a method `bool IsPrime(int n)` that returns `true` if `n` is prime. Numbers below 2 aren't prime.
+
+Example: `IsPrime(7)` returns `true`, and `IsPrime(9)` returns `false`.
+~start
+bool IsPrime(int n)
+{
+    return false;
+}
+~sol
+bool IsPrime(int n)
+{
+    if (n < 2) return false;
+    for (int d = 2; d * d <= n; d++)
+    {
+        if (n % d == 0) return false;
+    }
+    return true;
+}
+~hint
+Try dividing by every number from 2 up. If any divides evenly, it isn't prime.
+~after
+Console.WriteLine(IsPrime(1));
+Console.WriteLine(IsPrime(2));
+Console.WriteLine(IsPrime(7));
+Console.WriteLine(IsPrime(9));
+Console.WriteLine(IsPrime(97));
+~out
+False
+True
+True
+False
+True
+=F csfire4b | Hot fire: Safe number
+@C
+Write `int ReadOrDefault(string text, int fallback)`. Return the number in `text` if it's a valid `int`, or `fallback` if it isn't. Use `int.TryParse`.
+
+Example: `ReadOrDefault("12", 0)` returns `12`, and `ReadOrDefault("abc", 5)` returns `5`.
+~start
+int ReadOrDefault(string text, int fallback)
+{
+    return 0;
+}
+~sol
+int ReadOrDefault(string text, int fallback)
+{
+    return int.TryParse(text, out int n) ? n : fallback;
+}
+~hint
+if (int.TryParse(text, out int n)) return n;
+~after
+Console.WriteLine(ReadOrDefault("12", 0));
+Console.WriteLine(ReadOrDefault("abc", 5));
+Console.WriteLine(ReadOrDefault("", -1));
+~out
+12
+5
+-1
+~must
+TryParse :: Use int.TryParse.
+=F csfire4c | Hot fire: Unit converter
+@C
+In a `static class Units`, write two overloads of `Convert`:
+
+`string Convert(double feet)` returns the meters with 2 decimals, like `3.05 m`
+
+`string Convert(int inches)` returns the centimeters with 1 decimal, like `25.4 cm`
+
+1 foot is 0.3048 m, and 1 inch is 2.54 cm. Remember `public static` on each method.
+~start
+static class Units
+{
+
+}
+~sol
+static class Units
+{
+    public static string Convert(double feet) => $"{feet * 0.3048:F2} m";
+    public static string Convert(int inches) => $"{inches * 2.54:F1} cm";
+}
+~hint
+Two methods with the same name inside the class, one taking double and one taking int.
+~after
+Console.WriteLine(Units.Convert(10.0));
+Console.WriteLine(Units.Convert(10));
+Console.WriteLine(Units.Convert(1.5));
+~out
+3.05 m
+25.4 cm
+0.46 m

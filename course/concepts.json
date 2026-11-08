@@ -114,5 +114,525 @@
     ["spf1", "sv2"],
     ["sp1", "sp2", "sn2", "sa2"],
     ["sg1", "sg2"]
-  ]
+  ],
+  "xfirefirst": [["hello", "values"]],
+  "xfirevars": [["xvars", "boxes"]],
+  "xfiremath": [["arith", "xmath"]],
+  "xfiredecide": [["ifelse", "compare"]],
+  "xfireloops": [["xloops", "forloop"]],
+  "xfirefuncs": [["xfuncs", "returns", "arith"]],
+  "xfirescope1": [["scope1", "xscope"]],
+  "xfirescope2": [["xscope", "scope1"]],
+  "xfirearrays": [["xarrays", "arrtools", "lists"]],
+  "xfireobj": [["xobj1", "objlist", "arrtools"]],
+  "xfiremaps1": [["xmaps", "lists"]],
+  "xfiremaps2": [["map1", "objlist", "forloop"]],
+  "xfirestr1": [["str1", "strtools", "arrtools"]],
+  "xfirestr2": [["str1", "xstr"]],
+  "xfiredate1": [["xdate", "date1"]],
+  "xfiredate2": [["date1"]],
+  "xfiremath1": [["math1", "arith"]],
+  "xfiremath2": [["math1", "compare"]],
+  "xfirebugs": [["xbugs", "errors", "arith"]],
+  "xfirewebjs1": [["webjs1"]],
+  "xfirewebjs2": [["xwebjs", "webjs1"]],
+  "xfiredom1": [["dom1"]],
+  "xfiredom2": [["xdom", "dom1", "arrtools"]],
+  "xfiredommod1": [["xdommod", "dommod1"]],
+  "xfiredommod2": [["dommod1", "dom1"]],
+  "xfireevents1": [["events1", "dom1"]],
+  "xfireevents2": [["events1", "strtools"]],
+  "xfiretimers1": [["timers1", "events1"]],
+  "xfiretimers2": [["timers1"]],
+  "xfirecssjs1": [["cssjs1", "ifelse"]],
+  "xfirecssjs2": [["xcssjs", "cssjs1", "events1"]],
+  "xfireforms1": [["forms1", "xforms", "compare"]],
+  "xfireforms2": [["forms1", "arith"]],
+  "xfirejson1": [["json1", "trycatch"]],
+  "xfirejson2": [["xjson", "json1", "objlist"]],
+  "xfirexhr1": [["xhr1", "xxhr"]],
+  "xfirexhr2": [["xhr1", "xdommod", "json1"]],
+  "xfireex21": [["ex21", "lists"]],
+  "xfireex22": [["ex22", "xhr1", "objlist"]],
+  "xfireregex1": [["regex1", "xregex"]],
+  "xfireregex2": [["xregex", "regex1"]],
+  "xfireclasses1": [["class1", "xclasses"]],
+  "xfireclasses2": [["class1", "keys"]],
+  "xfireclosures1": [["clos1", "xclosures"]],
+  "xfireclosures2": [["xclosures", "clos1"]],
+  "xfiremodules1": [
+    ["mod1"],
+    ["mod1"],
+    ["mod1"]
+  ],
+  "xfiremodules2": [["strict1", "scope1"]],
+  "xfirestorage1": [["stor1"]],
+  "xfirestorage2": [["xstorage", "arrtools"]],
+  "xfirecanvas1": [["xcanvas", "canvas1"]],
+  "xfirecanvas2": [["canvas1", "math1"]],
+  "xfiresockets1": [["ws1", "events1"]],
+  "xfiresockets2": [
+    ["ws1"],
+    ["ws1"],
+    ["ws1"]
+  ],
+  "xfirepromises1": [["async1", "prom1", "trycatch"]],
+  "xfirepromises2": [["prom1", "timers1"]],
+  "xfirefetch1": [["fetch1", "async1", "xdommod"]],
+  "xfirefetch2": [["fetch1", "json1", "async1"]],
+  "xfirejq11": [["jq11", "xjq1"]],
+  "xfirejq12": [["jq11", "dom1"]],
+  "xfirejq21": [["jq21", "jq11"]],
+  "xfirejq22": [["xjq2", "jq21"]],
+  "xfirejq31": [["jq32", "jq11"]],
+  "xfirejq32": [["jq32", "jq21"]],
+  "xfirejq41": [["jq41", "xjq4"]],
+  "xfirejq42": [["jq41", "jq11"]],
+  "xfireng11": [
+    ["ng11", "xng1"],
+    ["ng11", "xng1"],
+    ["ng11", "xng1"]
+  ],
+  "xfireng12": [
+    ["xng1", "ng11"],
+    ["xng1", "ng11"]
+  ],
+  "xfireng21": [
+    ["ng21"],
+    ["ng21"]
+  ],
+  "xfireng22": [
+    ["ng21", "xng1"],
+    ["ng21", "xng1"]
+  ],
+  "xfireng31": [
+    ["ng31"],
+    ["ng31"]
+  ],
+  "xfireng32": [
+    ["ng31", "xng3"],
+    ["ng31", "xng3"]
+  ],
+  "xfireng41": [
+    ["ng41"],
+    ["ng41"]
+  ],
+  "xfireng42": [
+    ["ng41"],
+    ["ng41"]
+  ],
+  "xfireng51": [
+    ["ng52"],
+    ["ng52"]
+  ],
+  "xfireng52": [
+    ["ng51"],
+    ["ng51"]
+  ],
+  "xfireng61": [
+    ["ng61"],
+    ["ng61"]
+  ],
+  "xfireng62": [
+    ["ng61", "ng31"],
+    ["ng61", "ng31"]
+  ],
+  "xfireng71": [
+    ["ng71"],
+    ["ng71"]
+  ],
+  "xfireng72": [
+    ["ng72"],
+    ["ng72"]
+  ],
+  "xfirere11": [
+    ["xre1", "re11"],
+    ["xre1", "re11"]
+  ],
+  "xfirere12": [
+    ["xre1", "re11"],
+    ["xre1", "re11"]
+  ],
+  "xfirere21": [
+    ["re22", "xre2"],
+    ["re22", "xre2"]
+  ],
+  "xfirere22": [
+    ["re22", "xre2"],
+    ["re22", "xre2"]
+  ],
+  "xfirere31": [
+    ["re31", "arrtools"],
+    ["re31", "arrtools"]
+  ],
+  "xfirere32": [
+    ["re31", "re22"],
+    ["re31", "re22"]
+  ],
+  "xfirere41": [
+    ["re42"],
+    ["re42"]
+  ],
+  "xfirere42": [
+    ["re41"],
+    ["re41"]
+  ],
+  "xfirere51": [
+    ["re51"],
+    ["re51"]
+  ],
+  "xfirere52": [
+    ["re51", "re42"],
+    ["re51", "re42"]
+  ],
+  "xfirea11y11": [
+    ["a111", "xa11y1"],
+    ["a111", "xa11y1"]
+  ],
+  "xfirea11y12": [
+    ["xa11y1", "a111"],
+    ["xa11y1", "a111"]
+  ],
+  "xfirea11y21": [
+    ["a121"],
+    ["a121"]
+  ],
+  "xfirea11y22": [
+    ["a121"],
+    ["a121"]
+  ],
+  "xfirea11y31": [
+    ["a131"],
+    ["a131"]
+  ],
+  "xfirea11y32": [
+    ["a131"],
+    ["a131"]
+  ],
+  "xfirea11y41": [
+    ["a141"],
+    ["a141"]
+  ],
+  "xfirea11y42": [
+    ["a141"],
+    ["a141"]
+  ],
+  "xpyfire1": [["xpyout", "pyhello"]],
+  "xpyfire2": [["xpyvars", "pyinput"]],
+  "xpyfire3": [["pyops", "xpymath"]],
+  "xpyfire4": [["xpystr", "pymethods"]],
+  "xpyfire5": [["pybranch", "xpyif"]],
+  "xpyfire6": [["xpyloop", "pyfor", "pyfstr"]],
+  "xpyfire7": [["xpylist", "pylists"]],
+  "xpyfire8": [["xpydict", "pydicts"]],
+  "xpyfire9": [["pydef", "xpyfunc"]],
+  "xpyfire10": [["pytry", "xpyerr", "pyfor"]],
+  "xfireh1a": [["h1a"]],
+  "xfireh1b": [["h1b", "xhstart"]],
+  "xfireh2a": [["xhcontent", "h2a", "h2b"]],
+  "xfireh2b": [["h2b"]],
+  "xfireh3a": [["h3a", "xhtables"]],
+  "xfireh3b": [["h3b"]],
+  "xfireh4a": [["h4a", "xhsem"]],
+  "xfireh4b": [["h4a", "h4b"]],
+  "xfirec1a": [["c1a", "c1b"]],
+  "xfirec1b": [["c1b", "c1a"]],
+  "xfirec2a": [["c2a", "c2b"]],
+  "xfirec2b": [["c2b", "c2a"]],
+  "xfirec3a": [["c3a", "xcflex"]],
+  "xfirec3b": [["c3a"]],
+  "xfirec4a": [["c4a"]],
+  "xfirec4b": [["xcgrid", "c4a"]],
+  "xfirec5a": [["xcselect", "c5a"]],
+  "xfirec5b": [["c5a", "c5b"]],
+  "xfirec6a": [["c6a", "c3a"]],
+  "xfirec6b": [["xcresp", "c6a"]],
+  "xfirec7a": [["c7a", "xceffects"]],
+  "xfirec7b": [["c7b"]],
+  "xjfhira": [
+    ["hgs", "hga", "hgn"],
+    ["hgn", "hga"],
+    ["hgn", "xhira"],
+    ["hgs", "hgg"]
+  ],
+  "xjfkata": [
+    ["kts"],
+    ["kta", "ktr", "ktg"],
+    ["ktd", "kts", "xkata"],
+    ["kts", "ktn", "xkata"]
+  ],
+  "xjfsound1": [
+    ["js1"],
+    ["js1", "hgs"],
+    ["js1", "ktd", "ktr"]
+  ],
+  "xjfsound2": [
+    ["hgs", "hgr", "hgd"],
+    ["js1"],
+    ["js1", "hgg", "hga"]
+  ],
+  "xjfgreet1": [
+    ["jg3"],
+    ["xjgreet", "jg2"],
+    ["jg2"]
+  ],
+  "xjfgreet2": [
+    ["jg1", "xjgreet"],
+    ["jg2"],
+    ["jg1", "jg2"]
+  ],
+  "xjfnum1": [
+    ["jn1", "xjnum"],
+    ["jn1", "xjnum"],
+    ["xjnum"]
+  ],
+  "xjfnum2": [
+    ["jn2"],
+    ["jn3"],
+    ["jn2"]
+  ],
+  "xjfbasic1": [
+    ["jb1", "jb3"],
+    ["jb2"],
+    ["jb1"]
+  ],
+  "xjfbasic2": [
+    ["jb2"],
+    ["jb2", "jb1"],
+    ["jb2", "hgn"]
+  ],
+  "xjfverb1": [
+    ["jv2", "jn2", "jv1"],
+    ["jv1"],
+    ["jv1", "jv2"]
+  ],
+  "xjfverb2": [
+    ["jv1"],
+    ["jv1", "jv2"],
+    ["jv1"]
+  ],
+  "xjfadj1": [
+    ["ja1"],
+    ["ja1"],
+    ["ja2", "xjadj"]
+  ],
+  "xjfadj2": [
+    ["ja3"],
+    ["ja3", "ja2"],
+    ["ja1", "ja3"]
+  ],
+  "xjfn5": [
+    ["jr2", "xjjlpt5"],
+    ["jr2"],
+    ["jr2", "xjjlpt5"]
+  ],
+  "xjfk1a": [
+    ["jk12"],
+    ["jk13", "xjk1"],
+    ["jk13"]
+  ],
+  "xjfk1b": [
+    ["jk12", "jn3"],
+    ["jk12"],
+    ["jk12", "jn3"]
+  ],
+  "xjfte1": [
+    ["jt2", "jt1"],
+    ["jt2", "jt1"],
+    ["jt2", "jt1"]
+  ],
+  "xjfte2": [
+    ["jt3", "jt2"],
+    ["jt3"],
+    ["jt3"]
+  ],
+  "xjfplain1": [
+    ["jp1"],
+    ["jp1"],
+    ["jp1", "jv4"]
+  ],
+  "xjfplain2": [
+    ["xjplain", "xjte"],
+    ["xjte", "jp1"],
+    ["xjplain"]
+  ],
+  "xjfn4a": [
+    ["jm1", "xjn4"],
+    ["xjn4"],
+    ["xjn4"]
+  ],
+  "xjfn4b": [
+    ["jm2"],
+    ["jm1"],
+    ["jm2", "jt3"]
+  ],
+  "xjfn3a": [
+    ["jx1", "xjn3"],
+    ["jx3"],
+    ["jx3"]
+  ],
+  "xjfn3b": [
+    ["jp3"],
+    ["jx3"],
+    ["jx1", "xjn3"]
+  ],
+  "xjfread": [
+    ["jre1", "xjread"],
+    ["jv3", "jre1"],
+    ["ja2", "jre1"],
+    ["ja3", "jre1"]
+  ],
+  "xsfsound1": [
+    ["ss1"],
+    ["ss1"],
+    ["ss2", "xssound"]
+  ],
+  "xsfsound2": [
+    ["ss1"],
+    ["ss1"],
+    ["ss1"]
+  ],
+  "xsfgreet1": [
+    ["sg1"],
+    ["sg1"],
+    ["sg2"]
+  ],
+  "xsfgreet2": [
+    ["sg2"],
+    ["sg2"],
+    ["sg3"]
+  ],
+  "xsfnum1": [
+    ["sn1", "xsnum"],
+    ["sn1"],
+    ["sn1", "xsnum"]
+  ],
+  "xsfnum2": [
+    ["sn2"],
+    ["sn2"],
+    ["sn2", "xsnum"]
+  ],
+  "xsfbasic1": [
+    ["sb1"],
+    ["sb1", "ss2"],
+    ["sb1", "sb4"]
+  ],
+  "xsfbasic2": [
+    ["xsbasic", "sb2", "sb3"],
+    ["sb3", "sb4"],
+    ["sb3"]
+  ],
+  "xsfverb2": [
+    ["xsverb", "sv3"],
+    ["sv2"],
+    ["sv3", "xsverb"]
+  ],
+  "xsflife1": [
+    ["sl2", "xslife"],
+    ["xslife", "sl2"],
+    ["sg3", "xslife"]
+  ],
+  "xsflife2": [
+    ["sl4"],
+    ["sl4"],
+    ["sl1"]
+  ],
+  "xsfpast1": [
+    ["sp2"],
+    ["sp1"],
+    ["sp2"]
+  ],
+  "xsfpast2": [
+    ["sp3", "sp1"],
+    ["sp3"],
+    ["sp3", "sn2"]
+  ],
+  "xsffuture1": [
+    ["sf1", "sv2"],
+    ["sf1"],
+    ["sf1", "sl3"]
+  ],
+  "xsffuture2": [
+    ["sf2"],
+    ["sv4"],
+    ["sf3", "sf2"]
+  ],
+  "xsfperf1": [
+    ["spf1"],
+    ["spf1"],
+    ["spf1"]
+  ],
+  "xsfperf2": [
+    ["xsperf"],
+    ["spf1"],
+    ["spf1", "sb3"]
+  ],
+  "xsfsubj1": [
+    ["sj2", "sj1"],
+    ["xssubj", "sj1"],
+    ["sj2"]
+  ],
+  "xsfsubj2": [
+    ["sj2", "xssubj"],
+    ["sj2"],
+    ["xssubj", "sj1"]
+  ],
+  "xsfadv1": [
+    ["sa1", "xsadv"],
+    ["sa1", "xsadv"],
+    ["sa1", "xsadv"]
+  ],
+  "xsfadv2": [
+    ["sa2"],
+    ["sa2"],
+    ["sa2"]
+  ],
+  "xsfread2": [
+    ["sr1", "xsread"],
+    ["sr1", "sl1"],
+    ["sr1", "sl3"],
+    ["sp3", "sp1"]
+  ],
+  "csfire1a": [["cs1b", "cs1c", "cs1a"]],
+  "csfire1b": [["cs1b", "cs1c"]],
+  "csfire2a": [["cs2a"]],
+  "csfire2b": [["cs2a", "cs1b"]],
+  "csfire2c": [["cs2b"]],
+  "csfire3a": [["cs3a"]],
+  "csfire3b": [["cs3b", "cs2a"]],
+  "csfire3c": [["cs3a", "cs2a"]],
+  "csfire4a": [["cs4a", "cs3a", "cs2a"]],
+  "csfire4b": [["cs4b", "cs4a", "cs1c"]],
+  "csfire4c": [["cs4a", "cs1b"]],
+  "csfire5a": [["cs5b", "cs5a"]],
+  "csfire5b": [["cs5a", "cs3b"]],
+  "csfire5c": [["cs5b", "cs5a"]],
+  "csfire6a": [["cs6a", "cs4a"]],
+  "csfire6b": [["cs6a", "cs6b", "cs5a"]],
+  "csfire7a": [["cs7a", "cs6a"]],
+  "csfire7b": [["cs7b", "cs7a"]],
+  "csfire8a": [["cs8a", "cs4a"]],
+  "csfire8b": [["cs8a", "cs3b"]],
+  "csfire8c": [["cs8b", "cs5a"]],
+  "rsfire1a": [["rs1b", "rs1a"]],
+  "rsfire1b": [["rs1b"]],
+  "rsfire2a": [["rs2a", "rs1b"]],
+  "rsfire2b": [["rs2a"]],
+  "rsfire2c": [["rs2b", "rs2a"]],
+  "rsfire3a": [["rs3a", "rs2a"]],
+  "rsfire3b": [["rs3a", "rs1b"]],
+  "rsfire4a": [["rs4b", "rs4a"]],
+  "rsfire4b": [["rs4b", "rs4a"]],
+  "rsfire5a": [["rs5a", "rs3a"]],
+  "rsfire5b": [["rs5a", "rs4b"]],
+  "rsfire6a": [["rs6a", "rs2b"]],
+  "rsfire6b": [["rs6a", "rs2a", "rs4b"]],
+  "rsfire7a": [["rs7a", "rs5a"]],
+  "rsfire7b": [["rs7b", "rs7a"]],
+  "rsfire7c": [["rs7a", "rs1b"]],
+  "rsfire8a": [["rs8a", "rs3a"]],
+  "rsfire8b": [["rs8a", "rs7a"]],
+  "rsfire8c": [["rs8a", "rs4b"]],
+  "rsfire9a": [["rs9a", "rs5a"]],
+  "rsfire9b": [["rs9a", "rs3a"]]
 }

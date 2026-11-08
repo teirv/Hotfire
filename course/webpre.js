@@ -7,13 +7,17 @@ __w.requestAnimationFrame=self.requestAnimationFrame=f=>self.setTimeout(()=>f(pe
 Object.defineProperty(self,"location",{configurable:true,value:{href:"https://app.test/",protocol:"https:",host:"app.test",origin:"https://app.test",pathname:"/",search:"",hash:""}});
 Object.defineProperty(__d,"implementation",{value:{createHTMLDocument:()=>__parseHTML("<!doctype html><html><head></head><body></body></html>").document}});
 try{Object.defineProperty(__d,"location",{value:__w.location})}catch(e){}
+{const sel=Object.getPrototypeOf(__d.createElement("select"));const ov=o=>o.getAttribute("value")??o.textContent;
+  Object.defineProperty(sel,"value",{configurable:true,get(){const o=this.querySelector("option[selected]")||this.querySelector("option");return o?ov(o):""},
+    set(v){for(const o of this.querySelectorAll("option")){if(ov(o)===String(v))o.setAttribute("selected","");else o.removeAttribute("selected")}}})}
 const __cf=__d.createDocumentFragment.bind(__d);
 __d.createDocumentFragment=()=>{const f=__cf();Object.defineProperty(f,"textContent",{configurable:true,get(){return ""},set(){for(const c of [...this.childNodes])c.remove()}});return f};
 const __canvases=[];
 Object.getPrototypeOf(__d.createElement("canvas")).getContext=function(){if(this.__c)return this.__c;const ops=[];this.__ops=ops;__canvases.push(this);
   this.__c=new Proxy({canvas:this},{get:(t,p)=>{if(p==="canvas")return t.canvas;if(p in t&&typeof p==="string")return t[p];if(typeof p!=="string")return undefined;return(...a)=>{ops.push([p,...a]);if(p==="measureText")return{width:String(a[0]).length*7}}},set:(t,p,v)=>{t[p]=v;ops.push(["=",p,v]);return true}});return this.__c};
 self.__calls=n=>__canvases.flatMap(c=>c.__ops).filter(o=>o[0]===n);
-function __act(el,type,val){if(val!==undefined){if(el.type==="checkbox"||el.type==="radio")el.checked=!!val;else el.value=val}
+function __act(el,type,val){if(val!==undefined){if(el.type==="checkbox"||el.type==="radio")el.checked=!!val;
+  else el.value=val}
   el.dispatchEvent(new __w.Event(type,{bubbles:true,cancelable:true}));
   if(type==="click"){const t=(el.type||"").toLowerCase(),f=el.closest&&el.closest("form");if(f&&(t==="submit"||(el.tagName==="BUTTON"&&t!=="button")))f.dispatchEvent(new __w.Event("submit",{bubbles:true,cancelable:true}))}}
 self.__click=s=>{const e=__d.querySelector(s);if(!e)throw new Error("Test could not find "+s);__act(e,"click")};

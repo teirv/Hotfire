@@ -1,0 +1,782 @@
+=X hstart
+=L xhstart | Going deeper: how the browser reads HTML
+@T
+The browser reads your HTML from top to bottom and builds a tree of elements. It's forgiving: if you forget a closing tag, it guesses. Its guess isn't always what you meant, which is why matching tags matters.
+
+Try removing the `</strong>` below and watch the rest of the text turn bold.
+~code
+<p>Torque to <strong>25 Nm</strong> before testing.</p>
+<p>Then check the seal.</p>
+@Q
+Refer to the code above. What's the parent of `<strong>`?
+~opts
+* The first `<p>`
+- The `<body>`
+- The second `<p>`
+~why
+It sits inside the first paragraph.
+@Q
+Which characters must be written as entities, like `&lt;`, to show them as text?
+~opts
+* `<` and `&`
+- `!` and `?`
+- Numbers
+~why
+The browser would otherwise read `<` as the start of a tag. `&amp;` shows `&`.
+=F xfireh1a | Hot fire: Notice board
+@C
+Build a notice with:
+
+An `h1` that says `Shop notice`
+
+A `p` with the word `closed` wrapped in `strong`
+
+A second `p` that says `Back at 9` with a line break (`br`) before it
+~start
+<!-- Your HTML here -->
+
+~sol
+<h1>Shop notice</h1>
+<p>The shop is <strong>closed</strong> today.</p>
+<p><br>Back at 9</p>
+~hint
+Put strong inside the first paragraph.
+~after
+console.log(document.querySelector("h1").textContent);
+console.log(document.querySelector("p strong").textContent);
+console.log(document.querySelectorAll("p").length, !!document.querySelector("br"));
+~out
+Shop notice
+closed
+2 true
+=F xfireh1b | Hot fire: Full skeleton
+@C
+Write a full page skeleton: `<!doctype html>`, then `html` with `lang="en"`, a `head` with a `title` of `Test Log`, and a `body` with an `h1` of `Log`.
+~start
+<!-- Your full page here -->
+
+~sol
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Test Log</title>
+  </head>
+  <body>
+    <h1>Log</h1>
+  </body>
+</html>
+~hint
+The title goes in head, and the heading goes in body.
+~after
+console.log(document.documentElement.getAttribute("lang"));
+console.log(document.querySelector("head title").textContent);
+console.log(document.querySelector("body h1").textContent);
+~out
+en
+Test Log
+Log
+=X hcontent
+=L xhcontent | Going deeper: link types
+@T
+Links can do more than open pages:
+
+`href="#notes"` jumps to the element with `id="notes"` on the same page.
+
+`href="mailto:ops@example.com"` starts an email.
+
+`href="tel:5551234"` starts a call on phones.
+
+`download` asks the browser to save the file instead of opening it.
+~code
+<a href="#notes">Jump to notes</a>
+<p style="height:120px">...</p>
+<h2 id="notes">Notes</h2>
+@Q
+Refer to the code above. What does `href="#notes"` need to work?
+~opts
+* An element on the page with `id="notes"`
+- A file called notes.html
+- A `name` attribute on the link
+~why
+The part after `#` matches an id.
+=F xfireh2a | Hot fire: Contents list
+@C
+Make a contents list: a `ul` with two links, `Setup` going to `#setup` and `Safety` going to `#safety`. Below it, add an `h2` with `id="setup"` and one with `id="safety"`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<ul>
+  <li><a href="#setup">Setup</a></li>
+  <li><a href="#safety">Safety</a></li>
+</ul>
+<h2 id="setup">Setup</h2>
+<h2 id="safety">Safety</h2>
+~hint
+Each link's href is # plus an id further down.
+~after
+console.log([...document.querySelectorAll("ul a")].map((a) => a.getAttribute("href")).join(" "));
+console.log(!!document.getElementById("setup"), !!document.getElementById("safety"));
+~out
+#setup #safety
+true true
+=F xfireh2b | Hot fire: Nested list
+@C
+Make an ordered list of 2 steps: `Prep` and `Test`. Inside the `Prep` item, add a bullet list with `Gloves` and `Goggles`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<ol>
+  <li>Prep
+    <ul>
+      <li>Gloves</li>
+      <li>Goggles</li>
+    </ul>
+  </li>
+  <li>Test</li>
+</ol>
+~hint
+The ul goes inside the first li, before its closing tag.
+~after
+console.log(document.querySelectorAll("ol > li").length);
+console.log(document.querySelectorAll("ol > li:first-child ul li").length);
+~out
+2
+2
+=X htables
+=L xhtables | Going deeper: spanning cells and captions
+@T
+`colspan="2"` makes a cell stretch across two columns, and `rowspan` stretches it down. A `<caption>` gives the table a title that screen readers announce.
+~code
+<table border="1">
+  <caption>Shift plan</caption>
+  <tr><th>Day</th><th colspan="2">Crew</th></tr>
+  <tr><td>Mon</td><td>Ana</td><td>Leo</td></tr>
+</table>
+@Q
+Refer to the code above. Why does the header row only have 2 `th` but cover 3 columns?
+~opts
+* `colspan="2"` stretches the second header
+- Browsers add one automatically
+- `caption` counts as a column
+~why
+Without it, the table would look lopsided.
+=F xfireh3a | Hot fire: Parts table
+@C
+Make a table with a `caption` of `Parts`, a header row of `Part` and `Qty` in a `thead`, and two body rows in a `tbody`: `Valve 3` and `Seal 12`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<table>
+  <caption>Parts</caption>
+  <thead><tr><th>Part</th><th>Qty</th></tr></thead>
+  <tbody>
+    <tr><td>Valve</td><td>3</td></tr>
+    <tr><td>Seal</td><td>12</td></tr>
+  </tbody>
+</table>
+~hint
+caption first, then thead, then tbody.
+~after
+console.log(document.querySelector("caption").textContent);
+console.log(document.querySelectorAll("thead th").length, document.querySelectorAll("tbody tr").length);
+console.log(document.querySelector("tbody tr:last-child td:last-child").textContent);
+~out
+Parts
+2 2
+12
+=F xfireh3b | Hot fire: Survey form
+@C
+Make a form with:
+
+A `fieldset` with a `legend` of `Shift`, and two radio buttons with `name="shift"`, values `day` and `night`, each with a label
+
+A checkbox with id `ppe`, labeled `I have PPE`
+
+A submit button
+~start
+<!-- Your HTML here -->
+
+~sol
+<form>
+  <fieldset>
+    <legend>Shift</legend>
+    <input type="radio" id="day" name="shift" value="day"><label for="day">Day</label>
+    <input type="radio" id="night" name="shift" value="night"><label for="night">Night</label>
+  </fieldset>
+  <input type="checkbox" id="ppe"><label for="ppe">I have PPE</label>
+  <button type="submit">Send</button>
+</form>
+~hint
+Radio buttons in a group share the same name.
+~after
+console.log(document.querySelector("legend").textContent);
+console.log(document.querySelectorAll('input[type="radio"][name="shift"]').length);
+console.log(document.querySelector('label[for="ppe"]').textContent);
+~out
+Shift
+2
+I have PPE
+=X hsem
+=L xhsem | Going deeper: choosing the right tag
+@T
+When picking a tag, ask what the content **is**, not how it should look.
+
+A clickable action is a `<button>`. Going somewhere is an `<a>`. A date is `<time datetime="2026-11-03">`. A highlighted search term is `<mark>`. An abbreviation is `<abbr title="...">`.
+~code
+<p>Hot fire on <time datetime="2026-11-03">Nov 3</time>.</p>
+<p><abbr title="Ground Support Equipment">GSE</abbr> checks are <mark>required</mark>.</p>
+@Q
+Something that opens a menu without leaving the page should be which tag?
+~opts
+* `<button>`
+- `<a href="#">`
+- `<div>`
+~why
+Buttons do things, and links go places.
+=F xfireh4a | Hot fire: Blog post
+@C
+Build an `article` with a `header` holding an `h2` of `Test day` and a `time` element with `datetime="2026-11-03"`, then two `p` elements, then a `footer` saying `Posted by Ops`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<article>
+  <header>
+    <h2>Test day</h2>
+    <time datetime="2026-11-03">Nov 3, 2026</time>
+  </header>
+  <p>The burn went well.</p>
+  <p>Data review is tomorrow.</p>
+  <footer>Posted by Ops</footer>
+</article>
+~hint
+header and footer can go inside an article.
+~after
+console.log(document.querySelector("article header h2").textContent);
+console.log(document.querySelector("article time").getAttribute("datetime"));
+console.log(document.querySelectorAll("article > p").length, document.querySelector("article footer").textContent);
+~out
+Test day
+2026-11-03
+2 Posted by Ops
+=F xfireh4b | Hot fire: Site layout
+@C
+Build a page with `header`, `nav` (with 2 links), `main` (with an `h1`), an `aside` with `Tips`, and a `footer`. `main` should come before `aside`.
+~start
+<!-- Your HTML here -->
+
+~sol
+<header>Hotfire</header>
+<nav><a href="#a">Home</a> <a href="#b">Logs</a></nav>
+<main><h1>Dashboard</h1></main>
+<aside>Tips</aside>
+<footer>2026</footer>
+~hint
+Five sections, in order.
+~after
+console.log([...document.body.children].map((e) => e.tagName.toLowerCase()).join(" "));
+console.log(document.querySelectorAll("nav a").length, document.querySelector("aside").textContent);
+~out
+header nav main aside footer
+2 Tips
+=X cstart
+=L xcstart | Going deeper: where CSS goes
+@T
+Three places for CSS:
+
+**Inline:** `style="color:red"` on one element. Hard to reuse.
+
+**Internal:** a `<style>` tag in the page.
+
+**External:** a `.css` file linked in the `<head>`. Best for real sites, since every page can share it.
+
+You can also group selectors with commas so they share a rule.
+~code
+<style>
+  h1, h2 { font-family: Georgia, serif; }
+  .card, .panel { padding: 10px; background: #eef; }
+</style>
+<h1>Title</h1>
+<div class="card">Card</div>
+<div class="panel">Panel</div>
+@Q
+Refer to the code above. What does `h1, h2` mean?
+~opts
+* Both h1 and h2 get the rule
+- An h2 inside an h1
+- Only h1s next to h2s
+~why
+A comma separates selectors in a group.
+=F xfirec1a | Hot fire: Style a notice
+@C
+Give `.notice` a `background-color` of `gold`, a `color` of `black`, and `font-weight` of `700`. Make every `h2` `navy`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<h2>Heads up</h2>
+<p class="notice">Valve test at 3 PM</p>
+~sol
+<style>
+  .notice { background-color: gold; color: black; font-weight: 700; }
+  h2 { color: navy; }
+</style>
+<h2>Heads up</h2>
+<p class="notice">Valve test at 3 PM</p>
+~hint
+Two rules: .notice and h2.
+~style
+.notice :: backgroundColor :: rgb(255, 215, 0)
+.notice :: color :: rgb(0, 0, 0)
+.notice :: fontWeight :: 700
+h2 :: color :: rgb(0, 0, 128)
+=F xfirec1b | Hot fire: Text styles
+@C
+Make `p` text `18px` with a `line-height` of `1.6` and `text-align: justify`. Make links (`a`) have no underline with `text-decoration: none`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<p>Read the <a href="#">manual</a> first.</p>
+~sol
+<style>
+  p { font-size: 18px; line-height: 1.6; text-align: justify; }
+  a { text-decoration: none; }
+</style>
+<p>Read the <a href="#">manual</a> first.</p>
+~hint
+line-height has no unit here.
+~style
+p :: fontSize :: 18px
+p :: textAlign :: justify
+a :: textDecorationLine :: none
+=X cbox
+=L xcbox | Going deeper: margins that collapse
+@T
+When two block elements stack, their vertical margins don't add up. The larger one wins. This is called **margin collapse**.
+
+Here the gap between the boxes is 30px, not 50px. Padding and borders never collapse.
+~code
+<style>
+  .a { margin-bottom: 20px; background: #def; }
+  .b { margin-top: 30px; background: #fed; }
+</style>
+<div class="a">A</div>
+<div class="b">B</div>
+@Q
+Refer to the code above. How do you get a full 50px gap?
+~opts
+* Use padding, or a flex or grid parent with `gap`
+- Add `!important`
+- Use bigger numbers
+~why
+Margins don't collapse between children of a flex or grid container.
+=F xfirec2a | Hot fire: Card
+@C
+Style `.card` as a centered card: `width` of `300px`, `margin` of `0 auto` (auto left and right), `padding` of `20px`, a `border` of `1px solid gray`, and `border-radius` of `8px`. Set `box-sizing: border-box`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="card">Card</div>
+~sol
+<style>
+  .card { box-sizing: border-box; width: 300px; margin: 0 auto; padding: 20px; border: 1px solid gray; border-radius: 8px; }
+</style>
+<div class="card">Card</div>
+~hint
+margin: 0 auto centers a block that has a width.
+~style
+.card :: width :: 300px
+.card :: boxSizing :: border-box
+.card :: paddingLeft :: 20px
+.card :: borderTopWidth :: 1px
+.card :: borderTopLeftRadius :: 8px
+=F xfirec2b | Hot fire: Pills
+@C
+Make every `.pill` an `inline-block` with `padding` of `4px 12px`, a `background-color` of `lightgray`, and a `border-radius` of `999px`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<span class="pill">Fuel</span> <span class="pill">Ox</span>
+~sol
+<style>
+  .pill { display: inline-block; padding: 4px 12px; background-color: lightgray; border-radius: 999px; }
+</style>
+<span class="pill">Fuel</span> <span class="pill">Ox</span>
+~hint
+Spans are inline by default, so set display.
+~style
+.pill :: display :: inline-block
+.pill :: paddingTop :: 4px
+.pill :: paddingLeft :: 12px
+.pill :: backgroundColor :: rgb(211, 211, 211)
+=X cflex
+=L xcflex | Going deeper: flex grow, shrink and wrap
+@T
+`flex: 1` is short for "grow to fill, shrink if needed". Give items different numbers to share space unevenly: `flex: 2` takes twice the share of `flex: 1`.
+
+`flex-wrap: wrap` lets items move to a new row, and `align-self` lets one item break the alignment.
+~code
+<style>
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .row div { padding: 10px; background: #def; }
+  .wide { flex: 2; }
+  .narrow { flex: 1; }
+</style>
+<div class="row"><div class="wide">2 shares</div><div class="narrow">1 share</div></div>
+@Q
+Refer to the code above. What fraction of the space does `.wide` get?
+~opts
+* About two thirds
+- Half
+- All of it
+~why
+2 shares out of 3 in total.
+=F xfirec3a | Hot fire: Toolbar
+@C
+Make `.toolbar` a flex row with `align-items: center` and `gap` of `8px`. Make `.spacer` grow to fill the leftover space with `flex: 1`, so the last button sits on the right.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="toolbar"><button>Save</button><div class="spacer"></div><button>Exit</button></div>
+~sol
+<style>
+  .toolbar { display: flex; align-items: center; gap: 8px; }
+  .spacer { flex: 1; }
+</style>
+<div class="toolbar"><button>Save</button><div class="spacer"></div><button>Exit</button></div>
+~hint
+The empty spacer pushes everything after it to the right.
+~style
+.toolbar :: display :: flex
+.toolbar :: alignItems :: center
+.toolbar :: columnGap :: 8px
+.spacer :: flexGrow :: 1
+=F xfirec3b | Hot fire: Centered box
+@C
+Center `.box` both ways inside `.stage` with flexbox. Give `.stage` a `height` of `200px`, and use `justify-content` and `align-items`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="stage"><div class="box">Centered</div></div>
+~sol
+<style>
+  .stage { display: flex; height: 200px; justify-content: center; align-items: center; }
+</style>
+<div class="stage"><div class="box">Centered</div></div>
+~hint
+Both centering properties go on the parent.
+~style
+.stage :: display :: flex
+.stage :: height :: 200px
+.stage :: justifyContent :: center
+.stage :: alignItems :: center
+=X cgrid
+=L xcgrid | Going deeper: named areas
+@T
+`grid-template-areas` draws your layout with words. Each string is a row, and each word is a cell. Then each element says which area it fills.
+~code
+<style>
+  .page {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    grid-template-areas:
+      "head head"
+      "side main";
+    gap: 6px;
+  }
+  .page > * { background: #def; padding: 8px; }
+  header { grid-area: head; }
+  aside { grid-area: side; }
+  main { grid-area: main; }
+</style>
+<div class="page"><header>Header</header><aside>Side</aside><main>Main</main></div>
+@Q
+Refer to the code above. Why does the header span both columns?
+~opts
+* `head` appears twice in the first row
+- Headers are always full width
+- `gap` stretches it
+~why
+Repeating an area name across cells makes it span them.
+=F xfirec4a | Hot fire: Photo grid
+@C
+Make `.photos` a grid with 3 equal columns (`repeat(3, 1fr)`) and a `gap` of `4px`. Make `.big` span 2 columns with `grid-column: span 2`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="photos"><div class="big">1</div><div>2</div><div>3</div><div>4</div></div>
+~sol
+<style>
+  .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .big { grid-column: span 2; }
+</style>
+<div class="photos"><div class="big">1</div><div>2</div><div>3</div><div>4</div></div>
+~hint
+grid-column: span 2 goes on .big.
+~style
+.photos :: display :: grid
+.photos :: rowGap :: 4px
+.big :: gridColumnStart :: span 2
+~must
+repeat\(\s*3\s*,\s*1fr\s*\) :: Use repeat(3, 1fr).
+=F xfirec4b | Hot fire: Dashboard layout
+@C
+Use `grid-template-areas` on `.dash` to lay out a `head` row across 2 columns, then `side` and `main` below. Columns are `150px 1fr`. Assign `header`, `nav` and `main` to the areas.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="dash"><header>Top</header><nav>Menu</nav><main>Charts</main></div>
+~sol
+<style>
+  .dash { display: grid; grid-template-columns: 150px 1fr; grid-template-areas: "head head" "side main"; }
+  header { grid-area: head; }
+  nav { grid-area: side; }
+  main { grid-area: main; }
+</style>
+<div class="dash"><header>Top</header><nav>Menu</nav><main>Charts</main></div>
+~hint
+Two strings in grid-template-areas, one per row.
+~style
+.dash :: display :: grid
+header :: gridArea :: head
+nav :: gridArea :: side
+main :: gridArea :: main
+=X cselect
+=L xcselect | Going deeper: attribute and sibling selectors
+@T
+More selectors:
+
+`[type="email"]` matches an attribute value.
+
+`a[href^="https"]` matches values that start with something.
+
+`h2 + p` is the paragraph right after an h2.
+
+`h2 ~ p` is every paragraph after an h2 with the same parent.
+
+`:not(.done)` excludes a class.
+~code
+<style>
+  input[type="email"] { border: 2px solid teal; }
+  h2 + p { font-weight: bold; }
+  li:not(.done) { color: crimson; }
+</style>
+<input type="email"> <input type="text">
+<h2>Steps</h2><p>First paragraph</p><p>Second</p>
+<ul><li class="done">Inspect</li><li>Torque</li></ul>
+@Q
+Refer to the code above. Why isn't the second paragraph bold?
+~opts
+* `h2 + p` only matches the paragraph right after the h2
+- Only one element can be bold
+- The second p has no class
+~why
+`h2 ~ p` would match both.
+=F xfirec5a | Hot fire: Form styling
+@C
+Give `input[type="email"]` a `border-color` of `blue`, and give `input:focus` an `outline` of `2px solid orange`. Make `label + input` have a `margin-left` of `6px`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<label>Email</label><input id="e" type="email">
+<input id="t" type="text">
+~sol
+<style>
+  input[type="email"] { border-color: blue; }
+  input:focus { outline: 2px solid orange; }
+  label + input { margin-left: 6px; }
+</style>
+<label>Email</label><input id="e" type="email">
+<input id="t" type="text">
+~hint
+Three separate rules.
+~style
+#e :: borderTopColor :: rgb(0, 0, 255)
+#e :: marginLeft :: 6px
+#t :: marginLeft :: 0px
+~must
+:focus :: Add an input:focus rule.
+=F xfirec5b | Hot fire: Striped list
+@C
+Make every even `li` (`nth-child(even)`) have a `background-color` of `whitesmoke`. Make every `li` that doesn't have the class `done` have `font-weight: bold`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<ul><li id="a" class="done">One</li><li id="b">Two</li><li id="c">Three</li></ul>
+~sol
+<style>
+  li:nth-child(even) { background-color: whitesmoke; }
+  li:not(.done) { font-weight: bold; }
+</style>
+<ul><li id="a" class="done">One</li><li id="b">Two</li><li id="c">Three</li></ul>
+~hint
+:nth-child(even) and :not(.done)
+~style
+#b :: backgroundColor :: rgb(245, 245, 245)
+#a :: fontWeight :: 400
+#c :: fontWeight :: 700
+=X cresp
+=L xcresp | Going deeper: fluid sizes
+@T
+Not everything needs a media query. These scale smoothly:
+
+`clamp(min, preferred, max)` for font sizes.
+
+`min()` and `max()` for widths, like `width: min(600px, 100%)`.
+
+`aspect-ratio: 16 / 9` keeps a box's shape as it resizes.
+~code
+<style>
+  h1 { font-size: clamp(1.5rem, 5vw, 3rem); }
+  .frame { width: min(400px, 100%); aspect-ratio: 16 / 9; background: #cde; }
+</style>
+<h1>Fluid title</h1>
+<div class="frame"></div>
+@Q
+Refer to the code above. What does `width: min(400px, 100%)` do on a 300px-wide phone?
+~opts
+* The box is 300px wide
+- The box is 400px and overflows
+- The box disappears
+~why
+`min` picks the smaller of the two.
+=F xfirec6a | Hot fire: Responsive nav
+@C
+Mobile first: `.nav` uses `display: flex` with `flex-direction: column`. At `min-width: 600px`, change it to `flex-direction: row`.
+
+The test checks the column default.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<nav class="nav"><a href="#">Home</a><a href="#">Logs</a></nav>
+~sol
+<style>
+  .nav { display: flex; flex-direction: column; }
+  @media (min-width: 600px) {
+    .nav { flex-direction: row; }
+  }
+</style>
+<nav class="nav"><a href="#">Home</a><a href="#">Logs</a></nav>
+~hint
+Column first, then the media query switches to row.
+~style
+.nav :: display :: flex
+~must
+@media\s*\(\s*min-width:\s*600px :: Add a min-width: 600px media query.
+flex-direction:\s*column :: Start with flex-direction: column.
+=F xfirec6b | Hot fire: Fluid image card
+@C
+Make `.media` have `max-width: 100%` and `aspect-ratio: 4 / 3`. Make `.card h2` use `font-size: clamp(1rem, 4vw, 2rem)`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="card"><div class="media"></div><h2>Title</h2></div>
+~sol
+<style>
+  .media { max-width: 100%; aspect-ratio: 4 / 3; }
+  .card h2 { font-size: clamp(1rem, 4vw, 2rem); }
+</style>
+<div class="card"><div class="media"></div><h2>Title</h2></div>
+~hint
+Two rules.
+~style
+.media :: maxWidth :: 100%
+.media :: aspectRatio :: 4 / 3
+~must
+clamp\( :: Use clamp() for the font size.
+=X ceffects
+=L xceffects | Going deeper: stacking and z-index
+@T
+When elements overlap, `z-index` decides which is on top: higher numbers win. It only works on positioned elements (`relative`, `absolute`, `fixed` or `sticky`).
+
+`position: sticky; top: 0` keeps a header at the top once you scroll to it.
+~code
+<style>
+  .a, .b { position: absolute; width: 80px; height: 50px; }
+  .a { background: tomato; z-index: 2; }
+  .b { background: steelblue; left: 40px; top: 20px; z-index: 1; }
+  .wrap { position: relative; height: 90px; }
+</style>
+<div class="wrap"><div class="a"></div><div class="b"></div></div>
+@Q
+Refer to the code above. Which box is on top?
+~opts
+* The red one, with `z-index: 2`
+- The blue one, because it comes later
+- Neither
+~why
+Without z-index, the later element would be on top.
+=F xfirec7a | Hot fire: Sticky header
+@C
+Make `header` stick to the top with `position: sticky` and `top: 0`, give it `z-index: 10`, and a `background-color` of `white`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<header>Hotfire</header>
+<main>Content</main>
+~sol
+<style>
+  header { position: sticky; top: 0; z-index: 10; background-color: white; }
+</style>
+<header>Hotfire</header>
+<main>Content</main>
+~hint
+Four declarations on header.
+~style
+header :: position :: sticky
+header :: top :: 0px
+header :: zIndex :: 10
+header :: backgroundColor :: rgb(255, 255, 255)
+=F xfirec7b | Hot fire: Theme variables
+@C
+On `:root`, define `--bg: white`, `--fg: black` and `--radius: 6px`. Use them for `.panel`'s `background-color`, `color` and `border-radius`, and add a `transition` on `background-color` of `0.3s`.
+~start
+<style>
+  /* Your CSS here */
+
+</style>
+<div class="panel">Panel</div>
+~sol
+<style>
+  :root { --bg: white; --fg: black; --radius: 6px; }
+  .panel { background-color: var(--bg); color: var(--fg); border-radius: var(--radius); transition: background-color 0.3s; }
+</style>
+<div class="panel">Panel</div>
+~hint
+Use var(--bg) and the others.
+~style
+.panel :: backgroundColor :: rgb(255, 255, 255)
+.panel :: borderTopLeftRadius :: 6px
+.panel :: transitionDuration :: 0.3s
+~must
+var\(\s*--bg :: Use var(--bg).
+var\(\s*--radius :: Use var(--radius).

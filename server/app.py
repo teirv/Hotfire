@@ -23,6 +23,8 @@ ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 ANTHROPIC_URL = os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com").rstrip("/")
 ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-5-5")
 PUBLIC_URL = os.environ.get("PUBLIC_URL", "https://YOUR-DOMAIN").rstrip("/")
+RUNNER_URL = os.environ.get("RUNNER_URL", "").rstrip("/")
+RUN_LIMIT = int(os.environ.get("RUN_LIMIT_PER_MINUTE", "40"))
 EXPLAIN_LIMIT = int(os.environ.get("EXPLAIN_DAILY_LIMIT", "30"))
 DUMMY_HASH = generate_password_hash("not-a-real-password")
 
@@ -40,6 +42,7 @@ CREATE TABLE IF NOT EXISTS invites(code_hash TEXT PRIMARY KEY, label TEXT NOT NU
 CREATE TABLE IF NOT EXISTS progress(user_id INTEGER PRIMARY KEY REFERENCES users(id), doc TEXT NOT NULL, updated_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS fails(key TEXT NOT NULL, at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS fails_key ON fails(key);
+CREATE TABLE IF NOT EXISTS run_use(user_id INTEGER NOT NULL, minute INTEGER NOT NULL, n INTEGER NOT NULL, PRIMARY KEY(user_id, minute));
 CREATE TABLE IF NOT EXISTS explain_use(user_id INTEGER NOT NULL, day TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY(user_id, day));
 """
 
@@ -397,6 +400,33 @@ def leaderboard():
             stats = EMPTY_STATS
         rows.append({"username": row["username"], "you": row["id"] == me_id, **stats})
     return jsonify(rows=rows)
+
+
+@app.post("/api/run")
+@login_required
+def run_code():
+    """Pass C# and Rust lesson code to the runner container."""
+    if not RUNNER_URL:
+        return jsonify(error="not_configured"), 501
+    body = request.get_json(silent=True) or {}
+    fields = {k: body.get(k, "") for k in ("lang", "code", "stdin", "prefix", "suffix")}
+    if fields["lang"] not in ("csharp", "rust") or not all(isinstance(v, str) for v in fields.values()):
+        return jsonify(error="invalid"), 400
+    if sum(len(v) for v in fields.values()) > 40000:
+        return jsonify(error="too_large"), 413
+    uid, minute = current_user()["id"], int(time.time() // 60)
+    db().execute("DELETE FROM run_use WHERE minute<?", (minute - 5,))
+    row = db().execute("SELECT n FROM run_use WHERE user_id=? AND minute=?", (uid, minute)).fetchone()
+    if row and row["n"] >= RUN_LIMIT:
+        return jsonify(error="rate_limited"), 429
+    db().execute("INSERT INTO run_use VALUES(?,?,1) ON CONFLICT(user_id,minute) DO UPDATE SET n=n+1", (uid, minute))
+    db().commit()
+    req = urllib.request.Request(RUNNER_URL + "/run", data=json.dumps(fields).encode(), headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return jsonify(json.load(r))
+    except (urllib.error.URLError, ValueError, TimeoutError):
+        return jsonify(error="runner_unavailable"), 502
 
 
 @app.post("/api/explain")

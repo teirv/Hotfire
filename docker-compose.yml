@@ -6,5 +6,40 @@ services:
     ports:
       - "8095:8000"
     env_file: .env
+    environment:
+      RUNNER_URL: http://hotfire-runner:8100
     volumes:
       - /DATA/AppData/hotfire:/data
+    networks:
+      - default
+      - runner
+
+  # Compiles and runs C# and Rust lessons. It can't reach the internet, and
+  # only the hotfire container can reach it.
+  hotfire-runner:
+    image: ${HOTFIRE_RUNNER_IMAGE:-ghcr.io/teirv/hotfire-runner:latest}
+    container_name: hotfire-runner
+    restart: unless-stopped
+    networks:
+      - runner
+    read_only: true
+    tmpfs:
+      - /tmp:exec,size=512m
+    mem_limit: 1g
+    pids_limit: 512
+    cpus: 2
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - KILL
+      - DAC_OVERRIDE
+      - FOWNER
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  runner:
+    internal: true

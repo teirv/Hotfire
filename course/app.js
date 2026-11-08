@@ -495,7 +495,7 @@ function shell(inner,foot){const q=L.queue;
   return `<div class="lesson${panel?" with-concepts":""}"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button>${(L.peek??L.i)>0?`<button class="x" data-prevcard="1" aria-label="Previous card">${ICON.left}</button>`:""}<div class="seg" role="group" aria-label="Lesson cards">${q.map((_,i)=>{const c=i===L.peek?"look":i<L.i?"on":i===L.i?"now":"";return i<=L.i?`<button class="segb" data-seg="${i}" aria-label="Go to card ${i+1}"><i class="${c}"></i></button>`:`<span class="segb"><i></i></span>`}).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
   ${panel}<div class="lbody">${inner}</div><div class="lfoot" id="foot">${foot}</div></div>`}
 function showCard(){const c=L.queue[L.i];if(!c)return finish();
-  const s=c.s,lang=L.lang,crumb=`<div class="crumb">${esc(L.title)}</div>`;L.sel=null;L.fills=[];L.locked=false;L.fails=0;ed=null;
+  const s=c.s,lang=L.lang,crumb=`<div class="crumb">${esc(L.title)}</div>`+(s.ctx?`<div class="ctx prose">${md(s.ctx)}</div>`:"");L.sel=null;L.fills=[];L.locked=false;L.fails=0;ed=null;
   const a=$("#app");
   if(s.k==="T"){a.innerHTML=shell(crumb+teachingBody(s,lang,"ed"),`<button class="btn" id="primary" data-next="1">Continue</button>`);
     ed=mountTeachingExample(s,lang,"ed")}
@@ -511,7 +511,7 @@ function showCard(){const c=L.queue[L.i];if(!c)return finish();
   window.scrollTo(0,0)}
 /* Looking back is read-only: it never scores, and never touches XP, saved place or missed cards */
 function showPeek(){const c=L.queue[L.peek],s=c.s,lang=L.lang,last=L.peek+1>=L.i;ed=null;
-  const top=`<div class="crumb">${esc(L.title)}</div><p class="peeknote">Looking back. Your progress is safe.</p>`,why=s.why?`<div class="peekwhy">${inline(s.why)}</div>`:"";let body="";
+  const top=`<div class="crumb">${esc(L.title)}</div><p class="peeknote">Looking back. Your progress is safe.</p>`+(s.ctx?`<div class="ctx prose">${md(s.ctx)}</div>`:""),why=s.why?`<div class="peekwhy">${inline(s.why)}</div>`:"";let body="";
   if(s.k==="T")body=teachingBody(s,lang,"ed");
   if(s.k==="Q"||s.k==="P")body=`<div class="prose">${md(s.prompt)}</div>`+(s.code?`<pre class="static" tabindex="0">${hl(s.code,lang)}</pre>`:"")+`<div class="opts">${s.opts.map(o=>`<div class="opt ${o.ok?"right":""}"><span class="v">${s.k==="P"?`<pre>${esc(o.t)}</pre>`:inline(o.t)}</span></div>`).join("")}</div>`+why;
   if(s.k==="B"){const parts=s.code.split("___");body=`<div class="prose">${md(s.prompt)}</div><pre class="static">${parts.map((p,i)=>hl(p,lang)+(i<parts.length-1?`<span class="blank">${tx(s.ans[i])}</span>`:"")).join("")}</pre>`+why}

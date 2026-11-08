@@ -792,6 +792,7 @@ A library is `biblioteca`. A false friend.
 @T
 Read this:
 `El sábado pasado fui al mercado con mi hermana. Había mucha gente. Compramos frutas y flores. Después, comimos en un restaurante pequeño. ¡Fue un día perfecto!`
+~keep
 @Q
 Who did they go with?
 ~opts

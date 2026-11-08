@@ -313,3 +313,6 @@ button.segb:disabled{cursor:default}
 .tests .tcode{font-size:13px;margin:0}
 .tout{background:var(--sunk);border-radius:4px;padding:6px 10px;font-size:13.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
 .remote-note{flex:1;margin:0}
+
+.ctx{background:var(--panel,rgba(127,127,127,.08));border-left:3px solid var(--accent,#f5a623);border-radius:6px;padding:10px 14px;margin:0 0 14px}
+.ctx p:first-child{margin-top:0}.ctx p:last-child{margin-bottom:0}

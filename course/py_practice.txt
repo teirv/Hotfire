@@ -1,0 +1,633 @@
+=U pyprac | Practice Test | 14 exam-style problems. Match the output exactly.
+=L pyprac0 | How the practice test works
+@T
+Each problem is like one on your exam: read the task, write the whole program, and match the sample output **exactly**, including capitals, spaces and punctuation.
+
+**Input:** use `input()` with nothing inside the parentheses. Samples show lines like `Enter index:`, but that's the console asking. It isn't part of the output, so adding it would make your output wrong.
+
+**Run** uses the first sample input. **Check** tests every input listed under **What Check tests**, so your program has to work for any value, not just the sample.
+
+Stuck on an idea? Use the **Review** buttons next to each problem to reopen the lesson that teaches it. Your place in the test stays put.
+@Q
+The sample says `Enter base 1: 3`. Which line reads that value correctly for the exam?
+~opts
+* `b1 = int(input())`
+- `b1 = int(input("Enter base 1: "))`
+- `b1 = input()`
+~why
+No prompt text, so nothing extra gets printed. `int()` turns the text into a number.
+=F pyprac1 | Practice 1: Travel distance
+@C
+Read three integers: the number of trips to a job site this month for Employee A, B and C, in that order. Each trip is:
+
+Employee A: 15.62 miles
+
+Employee B: 41.85 miles
+
+Employee C: 32.67 miles
+
+Output the total distance to two decimal places in this format:
+
+`Distance: total_miles_traveled miles`
+
+Sample input `3`, `10`, `5` gives `Distance: 628.71 miles`
+~start
+# Read three integers, then print the total distance
+
+~sol
+a = int(input())
+b = int(input())
+c = int(input())
+total = a * 15.62 + b * 41.85 + c * 32.67
+print(f"Distance: {total:.2f} miles")
+~hint
+Multiply each count by that employee's miles, add them, then use `:.2f` inside an f-string.
+~out stdin=3|10|5
+Distance: 628.71 miles
+~out stdin=0|0|0
+Distance: 0.00 miles
+~out stdin=1|2|3
+Distance: 197.33 miles
+~out stdin=20|4|11
+Distance: 839.17 miles
+=F pyprac2 | Practice 2: Ounces to tons
+@C
+Read an integer number of ounces. Convert it to tons, pounds and remaining ounces. There are 16 ounces in a pound and 2,000 pounds in a ton.
+
+Output format:
+
+```
+Tons: value_1
+Pounds: value_2
+Ounces: value_3
+```
+
+Sample input `32500` gives:
+
+```
+Tons: 1
+Pounds: 31
+Ounces: 4
+```
+~start
+# Read the ounces, then print tons, pounds and ounces
+
+~sol
+ounces = int(input())
+tons = ounces // (16 * 2000)
+ounces = ounces % (16 * 2000)
+pounds = ounces // 16
+ounces = ounces % 16
+print(f"Tons: {tons}")
+print(f"Pounds: {pounds}")
+print(f"Ounces: {ounces}")
+~hint
+A ton is 16 * 2000 ounces. Use `//` for whole units and `%` for what's left.
+~out stdin=32500
+Tons: 1
+Pounds: 31
+Ounces: 4
+~out stdin=15
+Tons: 0
+Pounds: 0
+Ounces: 15
+~out stdin=64000
+Tons: 2
+Pounds: 0
+Ounces: 0
+~out stdin=100000
+Tons: 3
+Pounds: 250
+Ounces: 0
+=F pyprac3 | Practice 3: Data types
+@C
+Read an integer index for the list below.
+
+Get the element at that index, and find its type name with `type(element).__name__`.
+
+If the element is a list, str or dict, the message is `This element is iterable.`
+
+If it's an int or float, the message is `This element is numeric.`
+
+Otherwise, the message is `This is a different data type.`
+
+Output format:
+
+`Element: [element_value], Type: [data_type], Message: [category_message]`
+
+Sample input `3` gives:
+
+`Element: ['apple', 'banana', 'coconut'], Type: list, Message: This element is iterable.`
+~start
+data_mixture = ["Python is fun", 2024, 5.67, ["apple", "banana", "coconut"], None, {"name": "John", "age": 25}]
+
+# Read the index, then print the element, its type and a message
+
+~sol
+data_mixture = ["Python is fun", 2024, 5.67, ["apple", "banana", "coconut"], None, {"name": "John", "age": 25}]
+
+index = int(input())
+element = data_mixture[index]
+data_type = type(element).__name__
+if data_type in ["list", "str", "dict"]:
+    message = "This element is iterable."
+elif data_type in ["int", "float"]:
+    message = "This element is numeric."
+else:
+    message = "This is a different data type."
+print(f"Element: {element}, Type: {data_type}, Message: {message}")
+~hint
+Compare `type(element).__name__` to the names in a list with `in`.
+~out stdin=3
+Element: ['apple', 'banana', 'coconut'], Type: list, Message: This element is iterable.
+~out stdin=1
+Element: 2024, Type: int, Message: This element is numeric.
+~out stdin=4
+Element: None, Type: NoneType, Message: This is a different data type.
+~out stdin=0
+Element: Python is fun, Type: str, Message: This element is iterable.
+~out stdin=2
+Element: 5.67, Type: float, Message: This element is numeric.
+~out stdin=5
+Element: {'name': 'John', 'age': 25}, Type: dict, Message: This element is iterable.
+=F pyprac4 | Practice 4: Trapezoid area
+@C
+Read three integers: base 1, base 2 and the height of a trapezoid in meters. Output the exact area as a float. Don't round.
+
+`A = ((b1 + b2) * h) / 2`
+
+Output format:
+
+`Trapezoid area: area_value square meters`
+
+Sample input `3`, `4`, `5` gives `Trapezoid area: 17.5 square meters`
+
+Sample input `3`, `5`, `7` gives `Trapezoid area: 28.0 square meters`
+~start
+# Read b1, b2 and h, then print the area
+
+~sol
+b1 = int(input())
+b2 = int(input())
+h = int(input())
+area = ((b1 + b2) * h) / 2
+print(f"Trapezoid area: {area} square meters")
+~hint
+`/` always gives a float, so 28 prints as `28.0`. Don't format it.
+~out stdin=3|4|5
+Trapezoid area: 17.5 square meters
+~out stdin=3|5|7
+Trapezoid area: 28.0 square meters
+~out stdin=10|6|3
+Trapezoid area: 24.0 square meters
+~out stdin=1|2|1
+Trapezoid area: 1.5 square meters
+=F pyprac5 | Practice 5: Three kinds of sum
+@C
+Read five integers. Output the sum three ways:
+
+As integers
+
+After converting each to a float
+
+After converting each to a string, which joins them
+
+Output format:
+
+```
+Integer: integer_sum_value
+Float: float_sum_value
+String: string_sum_value
+```
+
+Sample input `1`, `3`, `6`, `2`, `7` gives:
+
+```
+Integer: 19
+Float: 19.0
+String: 13627
+```
+~start
+# Read five integers, then print the three sums
+
+~sol
+nums = []
+for i in range(5):
+    nums.append(int(input()))
+int_sum = 0
+float_sum = 0.0
+str_sum = ""
+for n in nums:
+    int_sum += n
+    float_sum += float(n)
+    str_sum += str(n)
+print(f"Integer: {int_sum}")
+print(f"Float: {float_sum}")
+print(f"String: {str_sum}")
+~hint
+Adding strings joins them: `"1" + "3"` is `"13"`.
+~out stdin=1|3|6|2|7
+Integer: 19
+Float: 19.0
+String: 13627
+~out stdin=10|20|30|40|50
+Integer: 150
+Float: 150.0
+String: 1020304050
+~out stdin=0|0|0|0|5
+Integer: 5
+Float: 5.0
+String: 00005
+=F pyprac6 | Practice 6: Student ID
+@C
+Read a 9-digit student identification number as an integer. Output it as a string with dashes and no spaces, in this format:
+
+`xxx-xx-xxxx`
+
+Sample input `123456789` gives `123-45-6789`
+~start
+# Read the ID, then print it with dashes
+
+~sol
+student_id = str(int(input()))
+print(f"{student_id[:3]}-{student_id[3:5]}-{student_id[5:]}")
+~hint
+Turn it into a string, then slice it: `[:3]`, `[3:5]` and `[5:]`.
+~out stdin=123456789
+123-45-6789
+~out stdin=987654321
+987-65-4321
+~out stdin=555001234
+555-00-1234
+=F pyprac7 | Practice 7: In the list?
+@C
+Read an integer. Define a function named `is_in_list()` that returns `True` if the value is in `predef_list`, and `False` if not.
+
+Output format:
+
+`Is the input present in the list? Boolean_value`
+
+Sample input `20` gives `Is the input present in the list? False`
+
+Sample input `33` gives `Is the input present in the list? True`
+~start
+predef_list = [4, -27, 15, 33, -10]
+
+# Define is_in_list(), read an integer, then print the result
+
+~sol
+predef_list = [4, -27, 15, 33, -10]
+
+def is_in_list(value):
+    return value in predef_list
+
+num = int(input())
+print(f"Is the input present in the list? {is_in_list(num)}")
+~hint
+`value in predef_list` is already `True` or `False`, so return it.
+~out stdin=20
+Is the input present in the list? False
+~out stdin=33
+Is the input present in the list? True
+~out stdin=-27
+Is the input present in the list? True
+~out stdin=0
+Is the input present in the list? False
+~must
+def\s+is_in_list\s*\( :: Define a function named `is_in_list()`.
+=F pyprac8 | Practice 8: Safe list lookup
+@C
+Read an integer index and output that element of `frameworks`. Put the lookup in a `try` block. If the index doesn't work, output `Error`.
+
+Output format:
+
+`frameworks_element`
+
+Sample input `2` gives `CherryPy`
+
+Sample input `7` gives `Error`
+~start
+frameworks = ["Django", "Flask", "CherryPy", "Bottle", "Web2Py", "TurboGears"]
+
+# Read the index, then print the element or Error
+
+~sol
+frameworks = ["Django", "Flask", "CherryPy", "Bottle", "Web2Py", "TurboGears"]
+
+try:
+    index = int(input())
+    print(frameworks[index])
+except IndexError:
+    print("Error")
+~hint
+A bad index raises `IndexError`. Catch it with `except IndexError:`.
+~out stdin=2
+CherryPy
+~out stdin=7
+Error
+~out stdin=0
+Django
+~out stdin=5
+TurboGears
+~out stdin=6
+Error
+~must
+\btry\s*: :: Put the lookup in a `try` block.
+\bexcept\b :: Add an `except` block.
+=F pyprac9 | Practice 9: Water state
+@C
+Read an integer water temperature in degrees Fahrenheit and output its state:
+
+Below 33: `Frozen`
+
+33 up to 80 (33 included): `Cold`
+
+80 up to 115 (80 included): `Warm`
+
+115 up to 211 (115 included): `Hot`
+
+212 or more: `Boiling`
+
+Then, only in these cases, output a safety comment on the next line:
+
+Exactly 212: `Caution: Hot!`
+
+Below 33: `Watch out for ice!`
+
+Output format:
+
+```
+water_state
+optional_safety_comment
+```
+~start
+# Read the temperature, then print the state and any safety comment
+
+~sol
+temp = int(input())
+if temp < 33:
+    print("Frozen")
+elif temp < 80:
+    print("Cold")
+elif temp < 115:
+    print("Warm")
+elif temp < 212:
+    print("Hot")
+else:
+    print("Boiling")
+if temp == 212:
+    print("Caution: Hot!")
+elif temp < 33:
+    print("Watch out for ice!")
+~hint
+Check from coldest to hottest with `elif`. The safety comment is a second, separate `if`.
+~out stdin=20
+Frozen
+Watch out for ice!
+~out stdin=33
+Cold
+~out stdin=79
+Cold
+~out stdin=80
+Warm
+~out stdin=115
+Hot
+~out stdin=211
+Hot
+~out stdin=212
+Boiling
+Caution: Hot!
+~out stdin=250
+Boiling
+=F pyprac10 | Practice 10: Stock purchase
+@C
+Read an integer: how many stocks are being bought. Then read that many stock symbols, one per line. Look up each price in `stocks` and output the total to two decimal places.
+
+Output format:
+
+`Total price: $cost_of_stocks`
+
+Sample input `3`, `SOFI`, `AMZN`, `LVLU` gives `Total price: $150.53`
+
+Sample input `2`, `KIRK`, `TSLA` gives `Total price: $921.58`
+~start
+stocks = {'TSLA': 912.86, 'BBBY': 24.84, 'AAPL': 174.26, 'SOFI': 6.92, 'KIRK': 8.72, 'AURA': 22.12, 'AMZN': 141.28, 'EMBK': 12.29, 'LVLU': 2.33}
+
+# Read the count, then that many symbols, then print the total
+
+~sol
+stocks = {'TSLA': 912.86, 'BBBY': 24.84, 'AAPL': 174.26, 'SOFI': 6.92, 'KIRK': 8.72, 'AURA': 22.12, 'AMZN': 141.28, 'EMBK': 12.29, 'LVLU': 2.33}
+
+count = int(input())
+total = 0
+for i in range(count):
+    symbol = input()
+    total += stocks[symbol]
+print(f"Total price: ${total:.2f}")
+~hint
+Loop `count` times with `range(count)`, adding `stocks[symbol]` each time.
+~out stdin=3|SOFI|AMZN|LVLU
+Total price: $150.53
+~out stdin=2|KIRK|TSLA
+Total price: $921.58
+~out stdin=1|AAPL
+Total price: $174.26
+~out stdin=4|BBBY|AURA|EMBK|EMBK
+Total price: $71.54
+=F pyprac11 | Practice 11: Grocery discount
+@C
+Read an item name, then an integer quantity. Look up the price in `purchase`.
+
+Fewer than 10 items: full price
+
+10 to 20 items (both included): 5% off
+
+21 or more items: 10% off
+
+Output format:
+
+`quantity item_purchased total cost: $total_purchase_cost`
+
+Sample input `bananas`, `12` gives `12 bananas total cost: $21.09`
+
+Sample input `cookies`, `144` gives `144 cookies total cost: $585.79`
+~start
+purchase = {"bananas": 1.85, "steak": 19.99, "cookies": 4.52, "celery": 2.81, "milk": 4.34}
+
+# Read the item and quantity, then print the total
+
+~sol
+purchase = {"bananas": 1.85, "steak": 19.99, "cookies": 4.52, "celery": 2.81, "milk": 4.34}
+
+item = input()
+quantity = int(input())
+total = purchase[item] * quantity
+if quantity >= 21:
+    total = total * 0.90
+elif quantity >= 10:
+    total = total * 0.95
+print(f"{quantity} {item} total cost: ${total:.2f}")
+~hint
+Work out the full cost first, then multiply by `0.95` or `0.90` for the discount.
+~out stdin=bananas|12
+12 bananas total cost: $21.09
+~out stdin=cookies|144
+144 cookies total cost: $585.79
+~out stdin=steak|2
+2 steak total cost: $39.98
+~out stdin=milk|10
+10 milk total cost: $41.23
+~out stdin=celery|21
+21 celery total cost: $53.11
+=F pyprac12 | Practice 12: Append a sentence
+@C
+Read the name of a text file. It has three lines, each with one word.
+
+Read the three words, join them with single spaces into a sentence, and append that sentence to the end of the file on a new line. Then output the file's updated contents.
+
+Use `open()`, `read()` and `write()`.
+
+Sample input `WordTextFile.txt`, where the file holds `cat`, `chases`, `dog`, gives:
+
+```
+cat
+chases
+dog
+cat chases dog
+```
+~start
+# Read the file name, append the sentence, then print the whole file
+
+~sol
+file_name = input()
+with open(file_name, "r") as f:
+    words = f.read().split()
+with open(file_name, "a") as f:
+    f.write(" ".join(words) + "\n")
+with open(file_name, "r") as f:
+    print(f.read(), end="")
+~hint
+`"a"` mode adds to the end. `.split()` turns the three lines into a list of words.
+~file WordTextFile.txt
+cat
+chases
+dog
+~file Animals.txt
+owl
+hunts
+mice
+~out stdin=WordTextFile.txt
+cat
+chases
+dog
+cat chases dog
+~out stdin=Animals.txt
+owl
+hunts
+mice
+owl hunts mice
+~must
+\bopen\s*\( :: Use `open()`.
+\.write\s*\( :: Use `write()` to append the sentence.
+=F pyprac13 | Practice 13: Reverse CSV rows
+@C
+Read the name of a CSV file. Use the `csv` module to read it, and for each row, output its values in reverse order as a list.
+
+Use `open()`, `csv.reader()` and a loop. Hint: `[::-1]` reverses a list.
+
+Sample input `input1.csv` gives:
+
+```
+['countries', 'sports', 'fruits']
+['United States', 'football', 'banana']
+['Brazil', 'soccer', 'apple']
+['Canada', 'volleyball', 'orange']
+```
+~start
+import csv
+
+# Read the file name, then print each row reversed
+
+~sol
+import csv
+
+file_name = input()
+with open(file_name, "r") as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print(row[::-1])
+~hint
+`for row in csv.reader(f):` gives each row as a list.
+~file input1.csv
+fruits,sports,countries
+banana,football,United States
+apple,soccer,Brazil
+orange,volleyball,Canada
+~file input2.csv
+name,team
+Ana,Ops
+~out stdin=input1.csv
+['countries', 'sports', 'fruits']
+['United States', 'football', 'banana']
+['Brazil', 'soccer', 'apple']
+['Canada', 'volleyball', 'orange']
+~out stdin=input2.csv
+['team', 'name']
+['Ops', 'Ana']
+~must
+csv\.reader\s*\( :: Use `csv.reader()`.
+=F pyprac14 | Practice 14: Factorial compare
+@C
+Read two integers: a number to find the factorial of, and a number to compare it against. Use `math.factorial()`.
+
+Output the factorial, then `True` if it's greater than the second number, or `False` if not.
+
+Output format:
+
+```
+The factorial value of number is factorial_value
+Boolean_value
+```
+
+Sample input `6`, `500` gives:
+
+```
+The factorial value of 6 is 720
+True
+```
+
+Sample input `4`, `50` gives:
+
+```
+The factorial value of 4 is 24
+False
+```
+~start
+import math
+
+# Read both numbers, then print the factorial and the comparison
+
+~sol
+import math
+
+num = int(input())
+compare = int(input())
+result = math.factorial(num)
+print(f"The factorial value of {num} is {result}")
+print(result > compare)
+~hint
+`result > compare` is already `True` or `False`, so print it.
+~out stdin=6|500
+The factorial value of 6 is 720
+True
+~out stdin=4|50
+The factorial value of 4 is 24
+False
+~out stdin=5|120
+The factorial value of 5 is 120
+False
+~out stdin=0|0
+The factorial value of 0 is 1
+True
+~must
+math\.factorial\s*\( :: Use `math.factorial()`.

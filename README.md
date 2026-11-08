@@ -86,4 +86,10 @@ Lesson format: `=U` starts a unit, `=L` a lesson, `=F` a hot fire. `@T` is a tea
 
 In `@C` challenges, `~after` is test code that runs after the learner's code. For C#, it runs before the learner's code instead, and for Rust it's an `fn main`. Learners see the tests under **What Check tests**.
 
+Python challenges can include files with `~file name.txt` followed by the contents. Programs can `open()`, read, write and append them, and use `csv`. Each run starts from fresh copies.
+
+**Review buttons:** every question in a hot fire links to up to 10 earlier lessons that teach what it uses. `course/concepts.js` lists what each idea looks like in code. The build finds the first lesson that teaches each one, so links update when lessons change. To pick the links yourself, add `~review lessonid, lessonid` to a card.
+
+The Python **Practice Test** is in `course/py_practice.txt`.
+
 Test every card with `node tests/verify.js`. For C# and Rust, start `runner/runner.py` on port 8101 first.

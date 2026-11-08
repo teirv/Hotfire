@@ -1,0 +1,658 @@
+=U rsfirst | First Programs | Printing, variables and types.
+=L rs1a | Hello, Rust
+@T
+**Rust** is a fast language that catches many bugs before the program runs. It's used for systems software, embedded devices, and tools where safety matters.
+
+Every program starts in `fn main()`. `println!` prints a line. The `!` means it's a **macro**, a special kind of function.
+~code
+fn main() {
+    println!("Hello, Rust!");
+    println!("2 + 3 = {}", 2 + 3);
+}
+@T
+`{}` in the text is a placeholder, filled in by the values after it, in order. `{:.2}` shows 2 decimal places. You can also put a variable's name inside: `{name}`.
+~code
+fn main() {
+    let psi = 451.267;
+    let name = "PT-101";
+    println!("{} reads {:.1}", name, psi);
+    println!("{name} reads {psi:.2}");
+}
+@P
+What does this print?
+~code
+fn main() {
+    println!("{} and {}", 10, "go");
+}
+~opts
+* 10 and go
+- {} and {}
+- 10go
+~why
+Each `{}` takes the next value in order.
+@C
+Write a `main` that prints `Engine` and `start`, then the result of `6 * 7`, each on its own line.
+
+Expected output:
+
+```
+Engine
+start
+42
+```
+~start
+fn main() {
+
+}
+~sol
+fn main() {
+    println!("Engine");
+    println!("start");
+    println!("{}", 6 * 7);
+}
+~hint
+println!("{}", 6 * 7); prints the result.
+~out
+Engine
+start
+42
+~must
+6\s*\*\s*7 :: Calculate 6 * 7 in the code.
+=L rs1b | Variables and types
+@T
+`let` makes a variable. Variables **can't change** unless you add `mut`. That's on purpose: Rust makes change visible.
+
+Common types: `i32` (whole number), `f64` (decimal), `bool`, `char` (one character in single quotes), and `&str` (text). Rust usually works the type out for you.
+~code
+fn main() {
+    let parts = 12;
+    let mut level = 0;
+    level += 40;
+    let psi: f64 = 450.5;
+    let ok = true;
+    println!("{parts} {level} {psi} {ok}");
+}
+@T
+Rust never mixes number types by itself. Convert with `as`.
+
+Division between whole numbers drops the remainder, like in C#.
+~code
+fn main() {
+    let total = 7;
+    let people = 2;
+    println!("{}", total / people);
+    println!("{}", total % people);
+    println!("{}", total as f64 / people as f64);
+}
+@Q
+What happens here? `let x = 5; x = 6;`
+~opts
+* A compile error, because `x` isn't `mut`
+- `x` becomes 6
+- A warning, then `x` becomes 6
+~why
+Write `let mut x = 5;` to allow changes.
+@P
+What does this print?
+~code
+fn main() {
+    let a = 9;
+    let b = 4;
+    println!("{}", a / b);
+}
+~opts
+* 2
+- 2.25
+- 3
+~why
+Both are whole numbers, so the remainder is dropped.
+@T
+**Shadowing** means using `let` again with the same name. It makes a brand new variable, which can even have a new type.
+~code
+fn main() {
+    let reading = "42";
+    let reading: i32 = reading.parse().unwrap();
+    println!("{}", reading + 1);
+}
+@B
+Make a variable you can change.
+~code
+let ___ count = 0;
+count += 1;
+~opts
+* mut
+- var
+- change
+~why
+`mut` is short for mutable.
+=F rsfire1a | Hot fire: Cost report
+@C
+In `main`, make `liters` set to `125` (a whole number) and `rate` set to `2.5` (an `f64`). Print the cost with 2 decimal places.
+
+Expected output:
+
+```
+Cost: 312.50
+```
+~start
+fn main() {
+
+}
+~sol
+fn main() {
+    let liters = 125;
+    let rate = 2.5;
+    println!("Cost: {:.2}", liters as f64 * rate);
+}
+~hint
+Convert liters with as f64 before multiplying.
+~out
+Cost: 312.50
+~must
+\bas\s+f64 :: Convert with as f64.
+=F rsfire1b | Hot fire: Time split
+@C
+Write `fn split(minutes: i32) -> String` that returns hours and minutes, like `2 h 15 min` for 135.
+
+Tip: `format!` works like `println!` but returns a `String`.
+~start
+fn split(minutes: i32) -> String {
+    String::new()
+}
+~sol
+fn split(minutes: i32) -> String {
+    format!("{} h {} min", minutes / 60, minutes % 60)
+}
+~hint
+format!("{} h {} min", minutes / 60, minutes % 60)
+~after
+fn main() {
+    println!("{}", split(135));
+    println!("{}", split(59));
+    println!("{}", split(120));
+}
+~out
+2 h 15 min
+0 h 59 min
+2 h 0 min
+=U rsflow | Control Flow | if, loops and match.
+=L rs2a | if and loops
+@T
+`if` doesn't need parentheses, but it always needs braces. In Rust, `if` is an **expression**, so it can give back a value.
+~code
+fn main() {
+    let psi = 520;
+    if psi > 500 {
+        println!("Over limit");
+    } else {
+        println!("Normal");
+    }
+
+    let status = if psi > 500 { "HIGH" } else { "OK" };
+    println!("{}", status);
+}
+@T
+`for` loops over a **range**: `1..4` is 1, 2, 3, and `1..=4` includes 4. `while` repeats while true, and `loop` repeats until `break`.
+~code
+fn main() {
+    for i in 1..=3 {
+        println!("Round {i}");
+    }
+
+    let mut tank = 0;
+    while tank < 100 {
+        tank += 40;
+    }
+    println!("{tank}");
+
+    let mut n = 1;
+    let result = loop {
+        n *= 2;
+        if n > 50 {
+            break n;
+        }
+    };
+    println!("{result}");
+}
+@P
+How many lines does this print?
+~code
+fn main() {
+    for i in 0..4 {
+        println!("{}", i);
+    }
+}
+~opts
+* 4
+- 5
+- 3
+~why
+`0..4` stops before 4.
+@B
+Count from 1 to 5, including 5.
+~code
+for i in 1___5 {
+    println!("{i}");
+}
+~opts
+* ..=
+- ..
+- to
+~why
+`..=` includes the end.
+=L rs2b | match
+@T
+`match` compares a value against **patterns** and runs the first that fits. It must cover every possible value, so `_` catches the rest.
+
+Patterns can be single values, alternatives with `|`, or ranges.
+~code
+fn main() {
+    let code = 404;
+    let meaning = match code {
+        200 => "OK",
+        301 | 302 => "Moved",
+        400..=499 => "Client error",
+        _ => "Other",
+    };
+    println!("{meaning}");
+}
+@Q
+What happens if a `match` on a number leaves out `_`?
+~opts
+* It won't compile, because not every value is covered
+- Unmatched values do nothing
+- It returns 0
+~why
+Rust checks that every case is handled.
+@P
+What does this print?
+~code
+fn main() {
+    let score = 85;
+    let grade = match score {
+        90..=100 => 'A',
+        80..=89 => 'B',
+        _ => 'C',
+    };
+    println!("{}", grade);
+}
+~opts
+* B
+- A
+- C
+~why
+85 falls in 80 to 89.
+=F rsfire2a | Hot fire: FizzBuzz
+@C
+Write `fn fizzbuzz(n: i32) -> String`. Return `Fizz` if `n` divides by 3, `Buzz` if it divides by 5, `FizzBuzz` if both, and otherwise the number as text.
+
+Tip: `n.to_string()` turns a number into a `String`.
+~start
+fn fizzbuzz(n: i32) -> String {
+    String::new()
+}
+~sol
+fn fizzbuzz(n: i32) -> String {
+    match (n % 3, n % 5) {
+        (0, 0) => "FizzBuzz".to_string(),
+        (0, _) => "Fizz".to_string(),
+        (_, 0) => "Buzz".to_string(),
+        _ => n.to_string(),
+    }
+}
+~hint
+Check the "both" case first.
+~after
+fn main() {
+    for n in [1, 3, 5, 15, 22] {
+        println!("{}", fizzbuzz(n));
+    }
+}
+~out
+1
+Fizz
+Buzz
+FizzBuzz
+22
+=F rsfire2b | Hot fire: Sum of a range
+@C
+Write `fn sum_to(n: u32) -> u32` that adds up every number from 1 to `n` with a `for` loop.
+
+Example: `sum_to(10)` returns 55.
+~start
+fn sum_to(n: u32) -> u32 {
+    0
+}
+~sol
+fn sum_to(n: u32) -> u32 {
+    let mut total = 0;
+    for i in 1..=n {
+        total += i;
+    }
+    total
+}
+~hint
+let mut total = 0; then add each i.
+~after
+fn main() {
+    println!("{}", sum_to(10));
+    println!("{}", sum_to(1));
+    println!("{}", sum_to(0));
+}
+~out
+55
+1
+0
+~must
+\bfor\b :: Use a for loop.
+=F rsfire2c | Hot fire: Pressure status
+@C
+Write `fn status(psi: f64) -> &'static str` that returns `LOW` under 30, `HIGH` over 60, and `OK` otherwise.
+
+`&'static str` just means "text written straight in the code".
+~start
+fn status(psi: f64) -> &'static str {
+    "OK"
+}
+~sol
+fn status(psi: f64) -> &'static str {
+    if psi < 30.0 {
+        "LOW"
+    } else if psi > 60.0 {
+        "HIGH"
+    } else {
+        "OK"
+    }
+}
+~hint
+Compare to 30.0 and 60.0, since psi is an f64.
+~after
+fn main() {
+    for p in [29.9, 30.0, 45.5, 60.0, 61.0] {
+        println!("{}", status(p));
+    }
+}
+~out
+LOW
+OK
+OK
+OK
+HIGH
+=U rsfn | Functions | Parameters, returns and expressions.
+=L rs3a | Writing functions
+@T
+`fn name(param: Type) -> ReturnType`. Every parameter needs a type.
+
+The **last expression** without a semicolon is the return value. `return` also works for leaving early.
+~code
+fn area(width: f64, height: f64) -> f64 {
+    width * height
+}
+
+fn describe(psi: i32) -> String {
+    if psi < 0 {
+        return String::from("Invalid");
+    }
+    format!("{psi} psi")
+}
+
+fn main() {
+    println!("{}", area(2.5, 4.0));
+    println!("{}", describe(450));
+    println!("{}", describe(-1));
+}
+@Q
+Why does adding a semicolon to `width * height;` break the function?
+~opts
+* It becomes a statement, so the function returns nothing
+- Semicolons aren't allowed in Rust
+- It changes the math
+~why
+Rust then says it expected `f64` but found `()`, which means nothing.
+@P
+What does this print?
+~code
+fn twice(n: i32) -> i32 {
+    n * 2
+}
+
+fn main() {
+    println!("{}", twice(twice(3)));
+}
+~opts
+* 12
+- 6
+- 9
+~why
+twice(3) is 6, and twice(6) is 12.
+@B
+Finish a function that returns whether a number is even.
+~code
+fn is_even(n: i32) -> ___ {
+    n % 2 == 0
+}
+~opts
+* bool
+- i32
+- void
+~why
+A comparison gives a `bool`.
+=F rsfire3a | Hot fire: Is it prime?
+@C
+Write `fn is_prime(n: u32) -> bool`. Numbers below 2 aren't prime.
+
+Example: `is_prime(7)` returns `true`, and `is_prime(9)` returns `false`.
+~start
+fn is_prime(n: u32) -> bool {
+    false
+}
+~sol
+fn is_prime(n: u32) -> bool {
+    if n < 2 {
+        return false;
+    }
+    let mut d = 2;
+    while d * d <= n {
+        if n % d == 0 {
+            return false;
+        }
+        d += 1;
+    }
+    true
+}
+~hint
+Try dividing by every number from 2 up. If any divides evenly, return false.
+~after
+fn main() {
+    for n in [1, 2, 7, 9, 97] {
+        println!("{}", is_prime(n));
+    }
+}
+~out
+false
+true
+true
+false
+true
+=F rsfire3b | Hot fire: Fahrenheit
+@C
+Write `fn to_f(c: f64) -> f64` using `c * 9.0 / 5.0 + 32.0`, and `fn label(c: f64) -> String` that uses `to_f` and returns text like `100 C is 212.0 F`.
+~start
+fn to_f(c: f64) -> f64 {
+    0.0
+}
+
+fn label(c: f64) -> String {
+    String::new()
+}
+~sol
+fn to_f(c: f64) -> f64 {
+    c * 9.0 / 5.0 + 32.0
+}
+
+fn label(c: f64) -> String {
+    format!("{} C is {:.1} F", c, to_f(c))
+}
+~hint
+format!("{} C is {:.1} F", c, to_f(c))
+~after
+fn main() {
+    println!("{}", to_f(0.0));
+    println!("{}", label(100.0));
+    println!("{}", label(21.5));
+}
+~out
+32
+100 C is 212.0 F
+21.5 C is 70.7 F
+=U rsown | Ownership and Borrowing | Rust's big idea.
+=L rs4a | Ownership
+@T
+Every value in Rust has one **owner**. When the owner goes away, the value is cleaned up. That's how Rust manages memory without a garbage collector.
+
+A `String` owns its text. Assigning it to another variable **moves** it, and the old name can't be used anymore.
+
+Simple values like numbers are **copied** instead.
+~code
+fn main() {
+    let a = String::from("valve");
+    let b = a;
+    // println!("{a}"); would fail: a was moved into b
+    println!("{b}");
+
+    let x = 5;
+    let y = x;
+    println!("{x} {y}");
+
+    let c = b.clone();
+    println!("{b} {c}");
+}
+@Q
+After `let b = a;` where `a` is a `String`, what happens if you use `a`?
+~opts
+* A compile error: the value was moved
+- It prints an empty string
+- It works normally
+~why
+Use `.clone()` if you really need two copies.
+@Q
+Why can you still use `x` after `let y = x;` when `x` is `5`?
+~opts
+* Numbers are copied, not moved
+- Rust ignores ownership for short programs
+- `y` is a reference
+~why
+Small, simple types implement `Copy`.
+=L rs4b | Borrowing
+@T
+Instead of moving, you can **borrow** with `&`. A **reference** lets a function read a value without taking it.
+
+`&mut` borrows with permission to change. You can have many `&` borrows, or one `&mut` borrow, but not both at once.
+~code
+fn length(text: &String) -> usize {
+    text.len()
+}
+
+fn shout(text: &mut String) {
+    text.push('!');
+}
+
+fn main() {
+    let mut s = String::from("go");
+    println!("{}", length(&s));
+    shout(&mut s);
+    println!("{s}");
+}
+@T
+`&str` is a borrowed view of text. Functions that only read text usually take `&str`, so they accept both `"literal"` and `&my_string`.
+~code
+fn first_word(text: &str) -> &str {
+    text.split(' ').next().unwrap_or("")
+}
+
+fn main() {
+    let line = String::from("hot fire test");
+    println!("{}", first_word(&line));
+    println!("{}", first_word("cold flow"));
+}
+@B
+Let `add_one` change the caller's number.
+~code
+fn add_one(n: ___ i32) {
+    *n += 1;
+}
+~opts
+* &mut
+- &
+- mut
+~why
+`&mut` borrows with permission to change. `*n` reaches the value behind it.
+@Q
+Which function signature is the most flexible for reading text?
+~opts
+* `fn f(text: &str)`
+- `fn f(text: String)`
+- `fn f(text: &mut String)`
+~why
+It borrows, so the caller keeps its value, and it accepts string literals too.
+=F rsfire4a | Hot fire: Initials
+@C
+Write `fn initials(name: &str) -> String` that returns the uppercase first letter of each word.
+
+Example: `initials("ada king lovelace")` returns `AKL`.
+
+Tip: `word.chars().next()` gives the first character as an `Option`.
+~start
+fn initials(name: &str) -> String {
+    String::new()
+}
+~sol
+fn initials(name: &str) -> String {
+    let mut out = String::new();
+    for word in name.split_whitespace() {
+        if let Some(c) = word.chars().next() {
+            out.push(c.to_ascii_uppercase());
+        }
+    }
+    out
+}
+~hint
+Loop over name.split_whitespace(), and push the first char of each word.
+~after
+fn main() {
+    println!("{}", initials("ada king lovelace"));
+    println!("{}", initials("teir"));
+    println!("[{}]", initials(""));
+}
+~out
+AKL
+T
+[]
+=F rsfire4b | Hot fire: Add to a log
+@C
+Write `fn log_event(log: &mut Vec<String>, event: &str)` that adds the event to the log as `#N event`, where N counts from 1.
+
+Example: after two calls, the log holds `#1 start` and `#2 stop`.
+~start
+fn log_event(log: &mut Vec<String>, event: &str) {
+
+}
+~sol
+fn log_event(log: &mut Vec<String>, event: &str) {
+    let n = log.len() + 1;
+    log.push(format!("#{n} {event}"));
+}
+~hint
+log.len() + 1 gives the next number.
+~after
+fn main() {
+    let mut log = Vec::new();
+    log_event(&mut log, "start");
+    log_event(&mut log, "stop");
+    for line in &log {
+        println!("{line}");
+    }
+}
+~out
+#1 start
+#2 stop

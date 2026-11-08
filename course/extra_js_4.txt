@@ -1,0 +1,682 @@
+=X ng1
+=L xng1 | Going deeper: how an Angular app starts
+@T
+When you run `ng serve`, the CLI builds your TypeScript into JavaScript and serves it. The browser loads `index.html`, which contains a tag like `<app-root>`. Angular finds the component with that selector and draws it.
+
+```
+// main.ts
+bootstrapApplication(AppComponent);
+```
+@Q
+What connects `<app-root>` in `index.html` to your code?
+~opts
+* The component's `selector: "app-root"`
+- The file name `app-root.html`
+- A script tag with that id
+~why
+Selectors are how Angular finds where each component goes.
+=F xfireng11 | Hot fire: Angular basics
+@Q
+**Hot fire** is a mixed test. What's the main difference between a library and a framework?
+~opts
+* You call a library, while a framework calls your code
+- A library is always bigger
+- Frameworks can't use JavaScript
+~why
+Angular decides when your components run.
+@Q
+Which command creates a new component?
+~opts
+* `ng generate component name`
+- `ng new component`
+- `npm component name`
+~why
+`ng g c name` is the short version.
+@Q
+What does TypeScript add to JavaScript?
+~opts
+* Types that are checked before the code runs
+- A new browser
+- Faster loops
+~why
+It catches mistakes like passing text where a number is expected.
+=F xfireng12 | Hot fire: Reading a component
+@Q
+Refer to the code below. What shows on the page?
+
+```
+@Component({
+  selector: "app-hello",
+  template: `<p>{{ greeting }}, {{ name }}</p>`,
+})
+export class HelloComponent {
+  greeting = "Hi";
+  name = "Ana";
+}
+```
+~opts
+* Hi, Ana
+- {{ greeting }}, {{ name }}
+- greeting, name
+~why
+Interpolation swaps in the class's values.
+@Q
+In the same component, how would another template show it?
+~opts
+* `<app-hello></app-hello>`
+- `<HelloComponent />`
+- `{{ app-hello }}`
+~why
+The selector becomes a tag.
+=X ng2
+=F xfireng21 | Hot fire: Structure
+@Q
+**Hot fire** is a mixed test. Which file holds a component's HTML when it's not inline?
+~opts
+* `name.component.html`
+- `name.html.ts`
+- `index.html`
+~why
+`templateUrl` points to it.
+@Q
+An error says it can't bind to `ngModel`. What's the usual fix?
+~opts
+* Import `FormsModule`
+- Restart the computer
+- Rename the component
+~why
+Errors like this usually mean a missing import.
+=F xfireng22 | Hot fire: Component tree
+@Q
+A page has a header, a list, and list items. What's a good component split?
+~opts
+* `app-header`, `app-list`, and `app-list-item` nested inside the list
+- One component for everything
+- A component for every HTML tag
+~why
+Each component should have one clear job.
+@Q
+Where do you look first when a template shows nothing?
+~opts
+* The browser console for an error
+- The CSS file
+- The router
+~why
+Angular errors name the template and line.
+=X ng3
+=L xng3 | Going deeper: input and output in practice
+@T
+Here's a parent and a child working together. The parent passes a value **down** with `[ ]` and listens for events **up** with `( )`.
+
+```
+<!-- parent template -->
+<app-counter [start]="5" (changed)="total = $event"></app-counter>
+<p>Total: {{ total }}</p>
+```
+
+`$event` is the value the child sent with `emit`.
+@Q
+Refer to the code above. What does `$event` hold when the child calls `changed.emit(6)`?
+~opts
+* 6
+- The click event
+- The child component
+~why
+It's whatever was emitted.
+=F xfireng31 | Hot fire: Binding
+@Q
+**Hot fire** is a mixed test. Which binding disables a button while saving?
+~opts
+* `<button [disabled]="saving">`
+- `<button (disabled)="saving">`
+- `<button {{disabled}}>`
+~why
+Square brackets set a property from data.
+@Q
+Which one runs `next()` when a key is released?
+~opts
+* `(keyup)="next()"`
+- `[keyup]="next()"`
+- `{{ keyup }}`
+~why
+Parentheses listen for events.
+=F xfireng32 | Hot fire: Calculator
+@Q
+In the calculator exercise, typing in an input should update `a` and the shown result at once. Which binding fits?
+~opts
+* `[(ngModel)]="a"`
+- `{{ a }}`
+- `(a)="ngModel"`
+~why
+Two-way binding keeps the input and the property in sync.
+@Q
+`result` is a getter: `get result() { return this.a + this.b; }`. Why does the page update when `a` changes?
+~opts
+* Change detection re-reads `result` after events
+- Getters are cached forever
+- The page reloads
+~why
+Angular checks bindings again after events.
+=X ng4
+=F xfireng41 | Hot fire: Directives
+@Q
+**Hot fire** is a mixed test. What does this show when `parts` is empty?
+
+```
+<li *ngFor="let p of parts">{{ p }}</li>
+<p *ngIf="parts.length === 0">No parts</p>
+```
+~opts
+* No parts
+- An empty bullet
+- An error
+~why
+`ngFor` repeats nothing, and `ngIf` shows the message.
+@Q
+Which adds the class `low` when `qty < 5`?
+~opts
+* `[class.low]="qty < 5"`
+- `*ngIf="low"`
+- `(class)="low"`
+~why
+Class binding toggles one class. `[ngClass]` handles many.
+=F xfireng42 | Hot fire: Services
+@Q
+Two components both need the list of parts. Where should loading it live?
+~opts
+* In a service injected into both
+- Copied into each component
+- In the HTML
+~why
+One source of truth, shared through dependency injection.
+@Q
+What does `providedIn: "root"` mean?
+~opts
+* One shared copy of the service for the whole app
+- A new copy for every component
+- The service is private
+~why
+It's a single shared instance.
+=X ng5
+=F xfireng51 | Hot fire: Forms
+@Q
+**Hot fire** is a mixed test. In a reactive form, how do you check whether the whole form is valid?
+~opts
+* `form.valid`
+- `form.check()`
+- `form.ok`
+~why
+Each control also has `valid`, `touched` and `errors`.
+@Q
+Which validator requires at least 8 characters?
+~opts
+* `Validators.minLength(8)`
+- `Validators.min(8)`
+- `Validators.length(8)`
+~why
+`min` is for numbers.
+=F xfireng52 | Hot fire: Modules
+@Q
+Your app is slow to load, and the admin area is rarely used. What helps most?
+~opts
+* Lazy load the admin feature
+- Add more components
+- Use `*ngIf` everywhere
+~why
+Users who never open admin never download it.
+@Q
+What's a standalone component?
+~opts
+* A component that declares its own imports, without an NgModule
+- A component with no template
+- A component in its own browser tab
+~why
+Newer Angular apps often use only standalone components.
+=X ng6
+=F xfireng61 | Hot fire: Pipes
+@Q
+**Hot fire** is a mixed test. What does `{{ 1234.5 | currency }}` show by default?
+~opts
+* $1,234.50
+- 1234.5
+- USD
+~why
+The default currency is US dollars.
+@Q
+Which pipe shows an object for debugging?
+~opts
+* `json`
+- `debug`
+- `print`
+~why
+`{{ data | json }}` shows the object as text.
+=F xfireng62 | Hot fire: Practice apps
+@Q
+In the Product Hunt exercise, products are sorted by votes. Where should the sorting happen?
+~opts
+* In the component or service code
+- In the CSS
+- In `index.html`
+~why
+Templates should display data, not hold logic.
+@Q
+In the Favorite Films exercise, adding a film should show it at once. What do you change?
+~opts
+* The films array in the component
+- The HTML by hand
+- The router
+~why
+Change the data, and the template follows.
+=X ng7
+=F xfireng71 | Hot fire: Routing
+@Q
+**Hot fire** is a mixed test. Which link goes to the part with id 7?
+~opts
+* `<a routerLink="/parts/7">`
+- `<a href="#parts7">`
+- `<a route="7">`
+~why
+`routerLink` navigates without reloading the page.
+@Q
+What happens if there's no `<router-outlet>`?
+~opts
+* Routed components have nowhere to appear
+- The app crashes
+- Links open new tabs
+~why
+The outlet is where routes render.
+=F xfireng72 | Hot fire: Observables
+@Q
+What does this print, and when?
+
+```
+interval(1000).pipe(take(3)).subscribe(n => console.log(n));
+```
+~opts
+* 0, 1, 2, one per second
+- 3, once
+- Nothing
+~why
+`take(3)` stops after three values.
+@Q
+You called `this.http.get(url)` but no request appears in the network tab. Why?
+~opts
+* Nothing subscribed to it
+- The URL needs https
+- HttpClient is broken
+~why
+Observables are lazy.
+=X re1
+=L xre1 | Going deeper: what JSX becomes
+@T
+JSX is not HTML. A build tool turns each tag into a function call. This is why JSX can sit anywhere a value can.
+
+```
+const el = <p className="tip">Hi {name}</p>;
+
+// becomes roughly:
+const el = React.createElement("p", { className: "tip" }, "Hi ", name);
+```
+@Q
+Why must a component return one parent element?
+~opts
+* A function can only return one value
+- Browsers require it
+- CSS needs a wrapper
+~why
+Use `<>...</>` (a fragment) to group without adding a real element.
+=F xfirere11 | Hot fire: JSX
+@Q
+**Hot fire** is a mixed test. Which line is valid JSX?
+~opts
+* `<label htmlFor="email">Email</label>`
+- `<label for="email">Email</label>`
+- `<label for={email}>Email</label`
+~why
+`for` is also a JavaScript word, so JSX uses `htmlFor`.
+@Q
+What does `{items.length > 0 && <List />}` show when items is empty?
+~opts
+* Nothing
+- The List
+- false
+~why
+React draws nothing for `false`. Watch out: `0 && ...` would show `0`.
+=F xfirere12 | Hot fire: Reading JSX
+@Q
+What does this show?
+
+```
+function Total({ a, b }) {
+  return <p>{a} + {b} = {a + b}</p>;
+}
+<Total a={2} b={3} />
+```
+~opts
+* 2 + 3 = 5
+- a + b = a + b
+- {2} + {3} = {5}
+~why
+Each `{ }` is evaluated.
+@Q
+Why does `<Total a="2" b="3" />` show `23` at the end?
+~opts
+* The props are strings, so `+` joins them
+- JSX can't add
+- The component is broken
+~why
+Use braces for numbers: `a={2}`.
+=X re2
+=L xre2 | Going deeper: state updates
+@T
+State updates don't happen instantly. React schedules a re-render. When the new value depends on the old one, pass a function to the setter.
+
+```
+// Might only add 1, because count is read twice from the same render
+setCount(count + 1);
+setCount(count + 1);
+
+// Always adds 2
+setCount(c => c + 1);
+setCount(c => c + 1);
+```
+@Q
+Refer to the code above. Why does the function form work?
+~opts
+* React passes each update the latest value
+- Arrow functions are faster
+- It skips re-rendering
+~why
+Use it whenever the next state depends on the previous one.
+=F xfirere21 | Hot fire: State
+@Q
+**Hot fire** is a mixed test. How do you change one property of an object in state?
+~opts
+* `setUser({ ...user, name: "Ana" })`
+- `user.name = "Ana"`
+- `setUser.name("Ana")`
+~why
+Copy the object with the change, so React sees a new value.
+@Q
+How do you remove the item with id 3 from a state array?
+~opts
+* `setItems(items.filter(i => i.id !== 3))`
+- `items.splice(...)`
+- `delete items[3]`
+~why
+`filter` makes a new array without changing the old one.
+=F xfirere22 | Hot fire: Events
+@Q
+A form reloads the page on submit. What's missing?
+~opts
+* `e.preventDefault()` in the onSubmit handler
+- A `key` prop
+- `useEffect`
+~why
+It stops the browser's default form action.
+@Q
+How do you pass an id to a click handler?
+~opts
+* `onClick={() => remove(item.id)}`
+- `onClick={remove(item.id)}`
+- `onClick="remove(item.id)"`
+~why
+Wrap it in an arrow function, so it runs on click instead of during rendering.
+=X re3
+=F xfirere31 | Hot fire: Lists
+@Q
+**Hot fire** is a mixed test. What's wrong with using the array index as a key when items can be reordered?
+~opts
+* React may mix up which item is which
+- Indexes aren't allowed
+- It makes the list longer
+~why
+Keys should stay with the item, like a database id.
+@Q
+Which code shows only the done tasks?
+~opts
+* `{tasks.filter(t => t.done).map(t => <li key={t.id}>{t.text}</li>)}`
+- `{tasks.map(t => t.done)}`
+- `{tasks.done}`
+~why
+Filter first, then map to elements.
+=F xfirere32 | Hot fire: Forms
+@Q
+An input has `value={name}` but no `onChange`. What happens when you type?
+~opts
+* Nothing changes, because React keeps it equal to `name`
+- It works normally
+- The page crashes
+~why
+A controlled input needs `onChange` to update state.
+@Q
+In the Todo List example, where does the list of todos live?
+~opts
+* In the state of the component that shows the list
+- In each todo item
+- In the CSS
+~why
+State lives where the data is used.
+=X re4
+=F xfirere41 | Hot fire: Effects
+@Q
+**Hot fire** is a mixed test. An effect loads data, then sets state, with no dependency array. What happens?
+~opts
+* It runs after every render, so it loops
+- It runs once
+- It never runs
+~why
+Add `[]` to run it once.
+@Q
+How do you reload when `city` changes?
+~opts
+* `useEffect(() => { ... }, [city])`
+- `useEffect(city)`
+- `useCity()`
+~why
+The effect re-runs when a listed value changes.
+=F xfirere42 | Hot fire: Routing and styling
+@Q
+Which makes a link without reloading the page in React Router?
+~opts
+* `<Link to="/about">About</Link>`
+- `<a href="/about" reload={false}>`
+- `<Route link="/about">`
+~why
+`Link` changes the URL inside the app.
+@Q
+What's the React version of `style="font-size: 20px"`?
+~opts
+* `style={{ fontSize: 20 }}`
+- `style="fontSize: 20"`
+- `style={fontSize: 20px}`
+~why
+An object with camelCase names. Plain numbers mean pixels.
+=X re5
+=F xfirere51 | Hot fire: Full stack
+@Q
+**Hot fire** is a mixed test. The front end sends a new message. What usually happens on the back end?
+~opts
+* It checks it, saves it, and returns the saved message
+- It redraws the page
+- It runs React
+~why
+The back end owns the stored data.
+@Q
+Why shouldn't API keys live in React code?
+~opts
+* Anyone can read the code in their browser
+- React can't store strings
+- It slows rendering
+~why
+Keep secrets on the server.
+=F xfirere52 | Hot fire: Labs
+@Q
+In the Word Guess lab, where should the guessed letters live?
+~opts
+* In state, as an array or set
+- In a CSS class
+- In a global variable
+~why
+Changing them should re-render the word.
+@Q
+In the Quotes Fetcher lab, what should the page show while the quote is loading?
+~opts
+* A loading message, using a loading state
+- Nothing at all
+- An error
+~why
+Track loading, data, and error as state.
+=X a11y1
+=L xa11y1 | Going deeper: who you're designing for
+@T
+Accessibility helps far more people than you might think: people who are blind or have low vision, people who can't use a mouse, people with hearing loss watching video, people with temporary injuries, and anyone using a phone in bright sun.
+
+A quick checklist for any page: can you use it with only the keyboard, is the text readable, do images have `alt` text, and do form fields have labels?
+@Q
+Which test catches the most problems quickly?
+~opts
+* Use the page with only the keyboard
+- Check it on a larger screen
+- Count the images
+~why
+Tab, Enter and Space should reach everything, with a visible focus.
+=F xfirea11y11 | Hot fire: Basics
+@Q
+**Hot fire** is a mixed test. Who benefits from good contrast?
+~opts
+* Everyone, especially people with low vision or in bright light
+- Only blind users
+- Only people using screen readers
+~why
+Many accessibility fixes help everyone.
+@Q
+An automated checker finds no problems. Does that mean the page is accessible?
+~opts
+* No, automated tools only catch some problems
+- Yes, always
+- Only on phones
+~why
+Try it with a keyboard and a screen reader too.
+=F xfirea11y12 | Hot fire: Tools
+@Q
+Which is a screen reader?
+~opts
+* NVDA
+- Lighthouse
+- Chrome DevTools
+~why
+VoiceOver on Apple devices and TalkBack on Android are others.
+@Q
+What should keyboard focus look like?
+~opts
+* Clearly visible, like an outline
+- Hidden for a cleaner look
+- Only visible on hover
+~why
+Removing focus outlines makes keyboard users lose their place.
+=X a11y2
+=F xfirea11y21 | Hot fire: Structure
+@Q
+**Hot fire** is a mixed test. Headings on a page go h1, h4, h2. What's the problem?
+~opts
+* Headings skip a level, which confuses screen reader navigation
+- There's nothing wrong
+- h4 is too small
+~why
+Use headings in order to show structure. Style them with CSS for size.
+@Q
+Which element should a "Menu" button that opens a list be?
+~opts
+* `<button aria-expanded="false">`
+- `<div class="button">`
+- `<span onclick>`
+~why
+Update `aria-expanded` to true when it's open.
+=F xfirea11y22 | Hot fire: ARIA
+@Q
+What does `aria-hidden="true"` do?
+~opts
+* Hides the element from screen readers
+- Hides it from everyone
+- Makes it invisible but clickable
+~why
+Use it for decorative icons, never for focusable controls.
+@Q
+A live score updates without reloading. How do screen readers hear the change?
+~opts
+* Put it in a region with `aria-live="polite"`
+- Use a bigger font
+- Add alt text
+~why
+Live regions announce changes.
+=X a11y3
+=F xfirea11y31 | Hot fire: Images and color
+@Q
+**Hot fire** is a mixed test. What `alt` text fits a chart image?
+~opts
+* A short summary of what the chart shows
+- `chart.png`
+- `Image`
+~why
+Describe the meaning, like "Pressure rose steadily to 450 psi."
+@Q
+A required field is shown only with a red asterisk. What helps?
+~opts
+* Also say "required" in text
+- Make it a darker red
+- Remove the asterisk
+~why
+Don't rely on color alone.
+=F xfirea11y32 | Hot fire: Links
+@Q
+A page has five links that all say "Read more". What's the problem?
+~opts
+* Out of context, they all sound the same
+- Links must be short
+- There's no problem
+~why
+Use text like "Read more about valve testing".
+@Q
+Should a link that opens a PDF say so?
+~opts
+* Yes, like "Test report (PDF)"
+- No, people will find out
+- Only on phones
+~why
+Tell people what to expect.
+=X a11y4
+=F xfirea11y41 | Hot fire: Forms
+@Q
+**Hot fire** is a mixed test. Where should an error message go?
+~opts
+* Next to the field, linked with `aria-describedby`
+- Only at the top of the page
+- In the console
+~why
+Say what's wrong and how to fix it.
+@Q
+Which input type brings up a number keypad on phones?
+~opts
+* `type="number"` or `inputmode="numeric"`
+- `type="text"`
+- `type="keypad"`
+~why
+The right type also helps validation.
+=F xfirea11y42 | Hot fire: Text
+@Q
+Users zoom the page to 200%. What should happen?
+~opts
+* Text grows and the layout still works
+- The page breaks
+- Text stays the same size
+~why
+Use relative units like `rem` and flexible layouts.
+@Q
+Which is easier to read?
+~opts
+* Left-aligned text with comfortable line spacing
+- Fully justified text with tight lines
+- All capital letters
+~why
+Uneven gaps in justified text slow some readers down.

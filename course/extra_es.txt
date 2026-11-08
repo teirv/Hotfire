@@ -1,0 +1,818 @@
+=X ssound
+=L xssound | Going deeper: stress and accents
+@T
+Spanish stress follows simple rules:
+
+Words ending in a vowel, `n` or `s` stress the second-to-last syllable: `casa`, `hablan`.
+
+Other words stress the last syllable: `hablar`, `ciudad`.
+
+A written accent breaks the rule: `café`, `teléfono`. It can also change meaning: `si` (if) vs `sí` (yes).
+@Q
+Where's the stress in `ciudad`?
+~opts
+* The last syllable, `dad`
+- The first syllable, `ciu`
+~why
+It ends in d, so the last syllable is stressed.
+@Q
+What does the accent change in `tú` vs `tu`?
+~opts
+* `tú` is "you", and `tu` is "your"
+- Nothing, it's optional
+- `tu` is louder
+~why
+Some accents only tell words apart.
+=F xsfsound1 | Hot fire: Letters
+@Q
+How does `ll` sound in Latin America, as in `llamo`?
+~opts
+* Like the y in "yes"
+- Like "l"
+- Silent
+~why
+In Argentina, it can sound like "sh".
+@Q
+Which letter is always silent?
+~opts
+* `h`
+- `j`
+- `ñ`
+~why
+`hola` sounds like "ola".
+@W
+Type the Spanish for "yes".
+~accept
+sí
+si
+~why
+Written with an accent.
+=F xsfsound2 | Hot fire: Tricky sounds
+@Q
+How does `j` sound in `jugo`?
+~opts
+* Like a breathy h
+- Like the j in "jump"
+- Like a y
+~why
+Also `g` before e or i: `gente`.
+@Q
+Which word has a rolled rr?
+~opts
+* `perro`
+- `pero`
+- `para`
+~why
+`perro` dog vs `pero` but.
+@Q
+How do you say `que`?
+~opts
+* "keh"
+- "kway"
+- "kew"
+~why
+The u is silent after q.
+=X sgreet
+=L xsgreet | Going deeper: tú vs usted
+@T
+Spanish has two "you"s:
+
+`tú` friends, family, kids, people your age
+
+`usted` strangers, elders, bosses, customers
+
+Verbs change too: `¿Cómo estás?` (tú) vs `¿Cómo está?` (usted).
+
+In much of Latin America, `ustedes` is "you all" for everyone.
+@Q
+You're talking to a hotel manager. Which?
+~opts
+* `¿Cómo está usted?`
+- `¿Cómo estás?`
+- `¿Qué onda?`
+~why
+Usted for formal situations.
+=F xsfgreet1 | Hot fire: Hello and goodbye
+@Q
+It's 8 PM. How do you greet someone?
+~opts
+* `Buenas noches`
+- `Buenos días`
+- `Buenas tardes`
+~why
+`noches` is used in the evening too.
+@O
+Put the goodbye in order.
+~lines
+Bueno,
+me voy.
+¡Hasta luego!
+~why
+Well, I'm leaving, see you later.
+@W
+Type the Spanish for "please".
+~accept
+por favor
+~why
+And `gracias` is thank you.
+=F xsfgreet2 | Hot fire: Being polite
+@Q
+You bump into someone. What do you say?
+~opts
+* `Perdón`
+- `De nada`
+- `Salud`
+~why
+`Con permiso` is for getting past.
+@Q
+Someone says `Gracias`. Reply.
+~opts
+* `De nada`
+- `Por favor`
+- `Lo siento`
+~why
+You're welcome.
+@B
+Say "Nice to meet you."
+~code
+Mucho ___.
+~opts
+* gusto
+- bueno
+- placer
+~why
+`Encantado` or `Encantada` also works.
+=X snum
+=L xsnum | Going deeper: big numbers and dates
+@T
+`cien` is exactly 100. `ciento` is for 101–199: `ciento veinte`.
+
+`mil` is 1,000. `dos mil` 2,000. No "un" before mil.
+
+`un millón de` personas: millón needs `de` before a noun.
+
+Dates go day, then month: `el 3 de noviembre`. The 1st is often `el primero`.
+@Q
+How do you say 150?
+~opts
+* `ciento cincuenta`
+- `cien cincuenta`
+- `un ciento cincuenta`
+~why
+cien only for exactly 100.
+=F xsfnum1 | Hot fire: Prices
+@Q
+What is `mil quinientos pesos`?
+~opts
+* 1,500 pesos
+- 15,000 pesos
+- 150 pesos
+~why
+mil 1,000, quinientos 500.
+@W
+Type the Spanish for "How much is it?" (`¿Cuánto cuesta?`).
+~accept
+¿cuánto cuesta?
+cuánto cuesta
+cuanto cuesta
+¿cuanto cuesta?
+~why
+`cuesta` from costar.
+@Q
+How do you say 100 dollars?
+~opts
+* `cien dólares`
+- `ciento dólares`
+- `un cien dólares`
+~why
+Exactly 100 is cien.
+=F xsfnum2 | Hot fire: Clock and calendar
+@Q
+What time is `Son las tres y media`?
+~opts
+* 3:30
+- 3:15
+- 2:30
+~why
+y media is half past.
+@B
+Say "It's one o'clock."
+~code
+___ la una.
+~opts
+* Es
+- Son
+- Está
+~why
+Only one o'clock uses es.
+@Q
+How do you say November 3?
+~opts
+* `el 3 de noviembre`
+- `noviembre 3`
+- `el noviembre 3`
+~why
+Day de month.
+=X sbasic
+=L xsbasic | Going deeper: ser vs estar
+@T
+Both mean "to be".
+
+**Ser** is what something is: identity, origin, job, time. `Soy ingeniero.`
+
+**Estar** is how or where: feelings, location, condition. `Estoy cansado.` `Está en casa.`
+
+Some words change meaning: `es aburrido` (is boring) vs `está aburrido` (is bored).
+@Q
+"The coffee is cold." Which verb?
+~opts
+* `El café está frío.`
+- `El café es frío.`
+~why
+It's a current condition.
+@Q
+"The party is at 8." Which verb?
+~opts
+* `La fiesta es a las ocho.`
+- `La fiesta está a las ocho.`
+~why
+Events use ser, even for location.
+=F xsfbasic1 | Hot fire: Gender and plurals
+@B
+Say "the problem."
+~code
+___ problema
+~opts
+* el
+- la
+~why
+`problema` ends in a but is masculine.
+@Q
+Plural of `lápiz`?
+~opts
+* `lápices`
+- `lápizes`
+- `lápiz`
+~why
+z becomes ces.
+@B
+Say "the red cars."
+~code
+los coches ___
+~opts
+* rojos
+- roja
+- rojo
+~why
+Adjectives match gender and number.
+=F xsfbasic2 | Hot fire: To be
+@B
+Say "I'm from Texas and I'm happy."
+~code
+___ de Texas y ___ feliz.
+~opts
+* Soy
+* estoy
+- Estoy
+- soy
+~why
+Feliz with estar is a current mood. Origin is ser.
+@Q
+"Where is the bank?"
+~opts
+* `¿Dónde está el banco?`
+- `¿Dónde es el banco?`
+- `¿Dónde hay el banco?`
+~why
+Location uses estar.
+@W
+Type the Spanish for "there is" or "there are".
+~accept
+hay
+~why
+`Hay un problema.`
+=X sverb
+=L xsverb | Going deeper: stem changers
+@T
+Some verbs change their stem in the present, except for nosotros:
+
+`e → ie` querer: `quiero`, `queremos`
+
+`o → ue` poder: `puedo`, `podemos`
+
+`e → i` pedir: `pido`, `pedimos`
+
+`jugar` is the only `u → ue`: `juego`.
+@Q
+"I can't." Which?
+~opts
+* `No puedo.`
+- `No podo.`
+- `No pueda.`
+~why
+o becomes ue.
+=F xsfverb2 | Hot fire: Present tense
+@Q
+"We want to eat." Which?
+~opts
+* `Queremos comer.`
+- `Quieremos comer.`
+- `Queramos comer.`
+~why
+Nosotros doesn't change the stem.
+@B
+Say "I do my homework."
+~code
+___ la tarea.
+~opts
+* Hago
+- Haco
+- Hace
+~why
+`hacer` is irregular in the yo form.
+@Q
+"She orders tacos." Which?
+~opts
+* `Ella pide tacos.`
+- `Ella pede tacos.`
+- `Ella pida tacos.`
+~why
+pedir is e → i.
+=X slife
+=L xslife | Going deeper: reflexive verbs
+@T
+Reflexive verbs are actions you do to yourself. They use `me`, `te`, `se`, `nos`:
+
+`Me levanto` I get up. `Te duchas` you shower. `Se viste` she gets dressed.
+
+The pronoun goes before the verb, or attaches to an infinitive: `Voy a ducharme`.
+@Q
+"I go to bed at 11." Which?
+~opts
+* `Me acuesto a las once.`
+- `Acuesto a las once.`
+- `Se acuesto a las once.`
+~why
+acostarse with me.
+=F xsflife1 | Hot fire: Morning routine
+@O
+Put the morning in order.
+~lines
+Me despierto a las seis.
+Me ducho.
+Desayuno.
+Salgo de casa.
+~why
+Wake, shower, eat, leave.
+@B
+Say "We get dressed."
+~code
+___ vestimos.
+~opts
+* Nos
+- Se
+- Me
+~why
+nosotros uses nos.
+@Q
+What does `Se llama Ana` mean?
+~opts
+* Her name is Ana
+- She calls Ana
+- I'm called Ana
+~why
+Literally "she calls herself Ana".
+=F xsflife2 | Hot fire: Getting around
+@Q
+Ask "How do I get to the station?"
+~opts
+* `¿Cómo llego a la estación?`
+- `¿Dónde llego la estación?`
+- `¿Qué es la estación?`
+~why
+llegar a to arrive at.
+@B
+Say "Turn right."
+~code
+Gire a la ___.
+~opts
+* derecha
+- izquierda
+- recto
+~why
+izquierda is left, and derecho or recto straight.
+@W
+Type the Spanish for "my mother".
+~accept
+mi madre
+mi mamá
+mi mama
+~why
+mamá is common in Latin America.
+=X spast
+=L xspast | Going deeper: verbs that change meaning
+@T
+Some verbs mean slightly different things in each past tense:
+
+`Conocí a Ana` I met Ana. `Conocía a Ana` I knew Ana.
+
+`Supe la verdad` I found out. `Sabía la verdad` I knew.
+
+`No pude` I couldn't (and failed). `No podía` I wasn't able (in general).
+
+Preterite is a moment. Imperfect is a background state.
+@Q
+"I met my wife in 2015." Which?
+~opts
+* `Conocí a mi esposa en 2015.`
+- `Conocía a mi esposa en 2015.`
+~why
+Meeting happens at a moment.
+=F xsfpast1 | Hot fire: Preterite
+@Q
+"I went to Mexico." Which?
+~opts
+* `Fui a México.`
+- `Iba a México.`
+- `Voy a México.`
+~why
+A completed trip.
+@B
+Say "They ate tacos."
+~code
+Ellos ___ tacos.
+~opts
+* comieron
+- comían
+- comen
+~why
+ellos -ieron.
+@Q
+"I had a meeting yesterday." Which?
+~opts
+* `Ayer tuve una reunión.`
+- `Ayer tenía una reunión.`
+- `Ayer tengo una reunión.`
+~why
+tener's preterite stem is tuv-.
+=F xsfpast2 | Hot fire: Telling a story
+@B
+Say "It was raining when I left."
+~code
+___ cuando ___.
+~opts
+* Llovía
+* salí
+- Llovió
+- salía
+~why
+Background imperfect, then the action in preterite.
+@Q
+"When I was a kid, I played soccer." Which?
+~opts
+* `De niño, jugaba al fútbol.`
+- `De niño, jugué al fútbol.`
+~why
+A repeated habit in the past.
+@Q
+What does `Era la una` mean?
+~opts
+* It was one o'clock
+- It was one time
+- It's one o'clock
+~why
+Time in the past uses the imperfect.
+=X sfuture
+=L xsfuture | Going deeper: double pronouns
+@T
+When you have both an indirect object (to whom) and a direct object (what), the indirect comes first: `Me lo das` you give it to me.
+
+`le` and `les` become `se` before `lo` or `la`: `Se lo doy` I give it to him.
+@Q
+"I'll give it to her." Which?
+~opts
+* `Se lo voy a dar.`
+- `Le lo voy a dar.`
+- `Lo le voy a dar.`
+~why
+le becomes se before lo.
+=F xsffuture1 | Hot fire: Plans
+@Q
+"I'm going to travel next year." Which?
+~opts
+* `Voy a viajar el próximo año.`
+- `Viajé el próximo año.`
+- `Viajo el año pasado.`
+~why
+ir a plus infinitive.
+@B
+Say "We will see."
+~code
+___.
+~opts
+* Veremos
+- Vimos
+- Vemos
+~why
+The future adds -emos to the infinitive.
+@Q
+"I would like a coffee." Which?
+~opts
+* `Me gustaría un café.`
+- `Me gusta un café.`
+- `Me gustará un café.`
+~why
+The conditional is polite.
+=F xsffuture2 | Hot fire: Pronouns
+@Q
+"Do you have the keys? Yes, I have them." Which?
+~opts
+* `Sí, las tengo.`
+- `Sí, los tengo.`
+- `Sí, tengo las.`
+~why
+las llaves is feminine plural.
+@Q
+"I like the songs." Which?
+~opts
+* `Me gustan las canciones.`
+- `Me gusta las canciones.`
+- `Yo gusto las canciones.`
+~why
+gustar matches the thing liked.
+@B
+Say "Tell me."
+~code
+Di___.
+~opts
+* me
+- lo
+- te
+~why
+Pronouns attach to commands.
+=X sperf
+=L xsperf | Going deeper: past perfect
+@T
+`había` + participle is "had done":
+
+`Cuando llegué, ya habían comido.` When I arrived, they had already eaten.
+
+Common irregular participles: `hecho` done, `dicho` said, `visto` seen, `escrito` written, `puesto` put, `vuelto` returned, `abierto` opened.
+@Q
+"I had never seen the ocean." Which?
+~opts
+* `Nunca había visto el mar.`
+- `Nunca he visto el mar.`
+- `Nunca había veído el mar.`
+~why
+había plus the past participle visto.
+=F xsfperf1 | Hot fire: Has it happened?
+@Q
+"Have you eaten?" Which?
+~opts
+* `¿Has comido?`
+- `¿Tienes comido?`
+- `¿Comiste ya?`
+~why
+haber plus participle. Latin America often uses the preterite too.
+@B
+Say "I've done my homework."
+~code
+He ___ la tarea.
+~opts
+* hecho
+- hacido
+- hizo
+~why
+An irregular participle.
+@W
+Type the participle of `escribir`.
+~accept
+escrito
+~why
+Not escribido.
+=F xsfperf2 | Hot fire: Before that
+@Q
+What does `Ya se había ido` mean?
+~opts
+* He had already left
+- He has already left
+- He will leave
+~why
+había plus participle.
+@B
+Say "Have you seen the movie?"
+~code
+¿___ ___ la película?
+~opts
+* Has
+* visto
+- Hay
+- veído
+~why
+Has visto.
+@Q
+"The door is open." Which?
+~opts
+* `La puerta está abierta.`
+- `La puerta está abrida.`
+- `La puerta es abierto.`
+~why
+The participle works like an adjective here.
+=X ssubj
+=L xssubj | Going deeper: WEIRDO
+@T
+The subjunctive comes after phrases of:
+
+**W**ishes: `Quiero que vengas.`
+
+**E**motions: `Me alegra que estés aquí.`
+
+**I**mpersonal opinions: `Es importante que estudies.`
+
+**R**equests: `Te pido que me llames.`
+
+**D**oubt: `Dudo que llueva.`
+
+**O**jalá: `Ojalá que gane.`
+
+Note: `creo que` takes the normal form, but `no creo que` takes the subjunctive.
+@Q
+"I don't think it's true." Which?
+~opts
+* `No creo que sea verdad.`
+- `No creo que es verdad.`
+~why
+Doubt takes the subjunctive.
+=F xsfsubj1 | Hot fire: Wishes
+@B
+Say "I want you to come."
+~code
+Quiero que ___.
+~opts
+* vengas
+- vienes
+- venir
+~why
+A wish for someone else.
+@Q
+"Hopefully it doesn't rain." Which?
+~opts
+* `Ojalá que no llueva.`
+- `Ojalá que no llueve.`
+- `Ojalá no lloviendo.`
+~why
+Ojalá always takes the subjunctive.
+@Q
+"I want to go." Which?
+~opts
+* `Quiero ir.`
+- `Quiero que vaya.`
+~why
+Same subject, so use the infinitive.
+=F xsfsubj2 | Hot fire: Feelings and doubt
+@B
+Say "I'm glad you're here."
+~code
+Me alegra que ___ aquí.
+~opts
+* estés
+- estás
+- estar
+~why
+An emotion about someone else.
+@Q
+"I think he's coming." Which?
+~opts
+* `Creo que viene.`
+- `Creo que venga.`
+~why
+Belief takes the normal form.
+@Q
+"It's important that you sleep." Which?
+~opts
+* `Es importante que duermas.`
+- `Es importante que duermes.`
+- `Es importante dormes.`
+~why
+An impersonal opinion.
+=X sadv
+=L xsadv | Going deeper: if-clauses
+@T
+Three types of "if":
+
+**Likely:** `Si tengo tiempo, voy.` present plus present or future
+
+**Unlikely:** `Si tuviera dinero, viajaría.` past subjunctive plus conditional
+
+**Didn't happen:** `Si hubiera sabido, habría venido.` If I had known, I would have come.
+
+Never use the present subjunctive after `si`.
+@Q
+"If I were rich, I'd buy a house." Which?
+~opts
+* `Si fuera rico, compraría una casa.`
+- `Si soy rico, compraría una casa.`
+- `Si sea rico, compro una casa.`
+~why
+An unlikely situation.
+=F xsfadv1 | Hot fire: If
+@B
+Say "If it rains, I'll stay home."
+~code
+Si ___, me quedo en casa.
+~opts
+* llueve
+- llueva
+- lloviera
+~why
+Likely, so use the present.
+@Q
+What does `Si hubiera estudiado, habría aprobado` mean?
+~opts
+* If I had studied, I would have passed
+- If I study, I'll pass
+- I studied and passed
+~why
+It didn't happen.
+@Q
+Which is never correct after `si`?
+~opts
+* The present subjunctive
+- The present
+- The past subjunctive
+~why
+`Si tenga` is always wrong.
+=F xsfadv2 | Hot fire: Sounding natural
+@Q
+What does `Se me olvidó` mean?
+~opts
+* I forgot (it slipped my mind)
+- I forgot him on purpose
+- He forgot me
+~why
+The se me form makes it accidental.
+@Q
+What does `Acabo de llegar` mean?
+~opts
+* I just arrived
+- I'm about to arrive
+- I finished arriving
+~why
+acabar de means "just did".
+@Q
+"I've been working here for two years." Which?
+~opts
+* `Llevo dos años trabajando aquí.`
+- `Trabajo aquí por dos años.`
+- `Estoy trabajando dos años.`
+~why
+llevar plus time plus gerund.
+=X sread
+=L xsread | Going deeper: reading tips
+@T
+When reading Spanish:
+
+Find the verb first. Its ending tells you who and when.
+
+Look for cognates: `información`, `importante` and `problema` are easy wins.
+
+Watch false friends: `embarazada` is pregnant, not embarrassed. `éxito` is success, not exit.
+
+Read for gist first, then go back for details.
+@Q
+What does `librería` mean?
+~opts
+* bookstore
+- library
+- liberty
+~why
+A library is `biblioteca`. A false friend.
+=F xsfread2 | Hot fire: Short story
+@T
+Read this:
+`El sábado pasado fui al mercado con mi hermana. Había mucha gente. Compramos frutas y flores. Después, comimos en un restaurante pequeño. ¡Fue un día perfecto!`
+@Q
+Who did they go with?
+~opts
+* Their sister
+- Their mother
+- A friend
+~why
+`con mi hermana`.
+@Q
+What did they buy?
+~opts
+* Fruit and flowers
+- Clothes
+- Books
+~why
+`frutas y flores`.
+@Q
+Why is it `Había mucha gente` and not `Hubo`?
+~opts
+* It describes the background scene
+- It happened once
+- It's the future
+~why
+Descriptions use the imperfect.

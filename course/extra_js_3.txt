@@ -1,0 +1,259 @@
+=X jq1
+=L xjq1 | Going deeper: jQuery vs plain JavaScript
+@T
+jQuery is shorter, but modern browsers can do the same things. Knowing both helps you read older code and write new code.
+
+`$("#a")` is like `document.querySelector("#a")`. `$(".x").addClass("on")` is like looping over `querySelectorAll(".x")` and calling `classList.add("on")`.
+
+`$(el)` wraps a plain element, and `$(".x")[0]` or `.get(0)` unwraps it.
+~html
+<p class="x">One</p><p class="x">Two</p>
+~code
+$(".x").addClass("on");
+
+document.querySelectorAll(".x").forEach((el) => el.classList.add("plain"));
+
+console.log($(".x").first().attr("class"));
+console.log($(".x")[0] === document.querySelector(".x"));
+@Q
+Refer to the code above. What's the plain JavaScript version of `$("#a").text("Hi")`?
+~opts
+* `document.querySelector("#a").textContent = "Hi";`
+- `document.text("#a", "Hi");`
+- `$("#a").textContent = "Hi";`
+~why
+A jQuery object doesn't have `textContent`. Unwrap it, or use `.text()`.
+=F xfirejq11 | Hot fire: Highlight rows
+@C
+With jQuery, add the class `odd` to every other row in `#log` (the 1st, 3rd and 5th), and set the text of `#count` to the number of rows.
+
+Tip: `$("#log tr:even")` matches the 1st, 3rd and 5th rows, because jQuery counts from 0.
+~html
+<table id="log"><tr><td>a</td></tr><tr><td>b</td></tr><tr><td>c</td></tr><tr><td>d</td></tr><tr><td>e</td></tr></table>
+<p id="count"></p>
+~start
+// Your code here
+
+~sol
+$("#log tr").filter((i) => i % 2 === 0).addClass("odd");
+$("#count").text($("#log tr").length);
+~hint
+.filter((i) => i % 2 === 0) keeps every other row, counting from 0.
+~after
+console.log($(".odd").length, $("#count").text());
+console.log($("#log tr").map(function () { return $(this).hasClass("odd") ? 1 : 0; }).get().join(""));
+~out
+3 5
+10101
+=F xfirejq12 | Hot fire: Read a list
+@C
+Use jQuery to collect the text of every `li` in `#parts` into an array called `names`, then print it joined with `, `.
+
+Expected output:
+
+```
+Valve, Seal, Hose
+```
+~html
+<ul id="parts"><li>Valve</li><li>Seal</li><li>Hose</li></ul>
+~start
+// Your code here
+
+~sol
+let names = $("#parts li").map(function () {
+  return $(this).text();
+}).get();
+console.log(names.join(", "));
+~hint
+.map(function () { return $(this).text(); }).get() gives a plain array.
+~out
+Valve, Seal, Hose
+=X jq2
+=L xjq2 | Going deeper: event details
+@T
+jQuery handlers get an event object too. `e.preventDefault()` stops a link or form's normal action, and `$(this)` is the element that was used.
+
+`.off("click")` removes handlers, and `.one("click", fn)` runs only once.
+~html
+<a id="go" href="https://example.com">Go</a>
+<button id="once">Once</button>
+<p id="out"></p>
+~code
+$("#go").on("click", (e) => {
+  e.preventDefault();
+  $("#out").text("Link blocked");
+});
+
+let n = 0;
+$("#once").one("click", () => $("#out").text("Clicked " + ++n));
+$("#once").trigger("click");
+$("#once").trigger("click");
+console.log($("#out").text());
+@Q
+Refer to the code above. Why does the text say `Clicked 1` after two clicks?
+~opts
+* `.one` removes the handler after the first time
+- `trigger` only works once
+- `n` resets
+~why
+That's what `one` is for.
+=F xfirejq21 | Hot fire: Tabs
+@C
+Clicking a `.tab` button should add the class `active` to it, remove `active` from the other tabs, and show its name in `#panel`. Use jQuery and `$(this)`.
+~html
+<button class="tab active">Logs</button><button class="tab">Charts</button><button class="tab">Alarms</button>
+<div id="panel">Logs</div>
+~start
+// Your code here
+
+~sol
+$(".tab").on("click", function () {
+  $(".tab").removeClass("active");
+  $(this).addClass("active");
+  $("#panel").text($(this).text());
+});
+~hint
+Remove active from all tabs first, then add it to $(this).
+~after
+$(".tab").eq(2).trigger("click");
+console.log($(".active").length, $(".active").text(), $("#panel").text());
+~out
+1 Alarms Alarms
+=F xfirejq22 | Hot fire: Enter to add
+@C
+When Enter is pressed in `#item`, add its text as an `li` to `#list` and clear the input. Ignore empty text.
+
+Check `e.key === "Enter"` in a `keydown` handler.
+~html
+<input id="item"><ul id="list"></ul>
+~start
+// Your code here
+
+~sol
+$("#item").on("keydown", function (e) {
+  if (e.key !== "Enter") return;
+  let text = $(this).val().trim();
+  if (!text) return;
+  $("#list").append($("<li>").text(text));
+  $(this).val("");
+});
+~hint
+$("<li>").text(text) makes a safe new element.
+~after
+const press = (v) => { $("#item").val(v); const e = $.Event("keydown"); e.key = "Enter"; $("#item").trigger(e); };
+press("Torque"); press("  "); press("Inspect");
+console.log($("#list li").map(function () { return $(this).text(); }).get().join(", "), $("#item").val() === "");
+~out
+Torque, Inspect true
+=X jq3
+=F xfirejq31 | Hot fire: Build a table
+@C
+Given `parts`, use jQuery to add one row per part to `#body`, with the name and quantity in two cells. Add the class `low` to rows with a quantity under 5.
+~html
+<table><tbody id="body"></tbody></table>
+~start
+let parts = [{ name: "Valve", qty: 3 }, { name: "Seal", qty: 12 }, { name: "Hose", qty: 1 }];
+// Your code here
+
+~sol
+let parts = [{ name: "Valve", qty: 3 }, { name: "Seal", qty: 12 }, { name: "Hose", qty: 1 }];
+for (let p of parts) {
+  let row = $("<tr>").append($("<td>").text(p.name), $("<td>").text(p.qty));
+  if (p.qty < 5) row.addClass("low");
+  $("#body").append(row);
+}
+~hint
+$("<tr>").append($("<td>").text(...), $("<td>").text(...))
+~after
+console.log($("#body tr").length, $("#body tr.low td:first-child").map(function () { return $(this).text(); }).get().join(","));
+~out
+3 Valve,Hose
+=F xfirejq32 | Hot fire: Edit in place
+@C
+Clicking a `.name` replaces its text with an `input` holding that text. Do this with jQuery: empty the span, then append the input.
+~html
+<span class="name">Valve</span> <span class="name">Seal</span>
+~start
+// Your code here
+
+~sol
+$(".name").on("click", function () {
+  let text = $(this).text();
+  $(this).empty().append($("<input>").val(text));
+});
+~hint
+.empty() clears it, then .append($("<input>").val(text)).
+~after
+$(".name").eq(1).trigger("click");
+console.log($(".name input").length, $(".name input").val(), $(".name").eq(0).text());
+~out
+1 Seal Valve
+=X jq4
+=L xjq4 | Going deeper: $.ajax options
+@T
+`$.ajax` takes one settings object. The key settings are `url`, `method`, `data` (sent as query values for GET), and `dataType`. It returns a promise-like object, so `await` works too.
+~html
+<p id="w"></p>
+~code
+async function run() {
+  let data = await $.ajax({
+    url: "https://api.example.com/weather",
+    method: "GET",
+    data: { city: "Seattle" },
+    dataType: "json",
+  });
+  console.log(data.condition);
+}
+run();
+@Q
+Refer to the code above. What does `data: { city: "Seattle" }` do for a GET request?
+~opts
+* Adds `?city=Seattle` to the URL
+- Sends a JSON body
+- Saves the city to storage
+~why
+jQuery builds the query string for you.
+=F xfirejq41 | Hot fire: Forecast
+@C
+Write `async function forecast(city)` that uses `$.ajax` (or `$.getJSON`) to load `https://api.example.com/forecast?city=CITY` and returns the days as text like `88, 90, 85`.
+~html
+<p id="out"></p>
+~start
+async function forecast(city) {
+
+}
+
+~sol
+async function forecast(city) {
+  let data = await $.getJSON("https://api.example.com/forecast", { city: city });
+  return data.days.join(", ");
+}
+~hint
+The response has a days array.
+~after
+console.log(await forecast("Austin"));
+console.log(await forecast("Chicago"));
+~out
+88, 90, 85
+41, 43, 38
+=F xfirejq42 | Hot fire: Plugin
+@C
+Write a jQuery plugin `$.fn.badge(text)` that appends a `span` with class `badge` and the given text to each matched element, and returns `this` so it can be chained.
+~html
+<p class="item">A</p><p class="item">B</p>
+~start
+// Your plugin here
+
+~sol
+$.fn.badge = function (text) {
+  return this.each(function () {
+    $(this).append($("<span>").addClass("badge").text(text));
+  });
+};
+~hint
+return this.each(function () { ... }) keeps it chainable.
+~after
+$(".item").badge("new").addClass("done");
+console.log($(".badge").length, $(".item.done").length, $(".badge").first().text());
+~out
+2 2 new

@@ -1,0 +1,990 @@
+=X hira
+=L xhira | Going deeper: look-alike hiragana
+@T
+A few hiragana are easy to mix up. Look for the one stroke that differs:
+
+`さ` sa and `ち` chi are mirror images.
+
+`ぬ` nu has a loop at the end, and `め` me doesn't.
+
+`ね` ne ends in a loop, `れ` re kicks out, and `わ` wa curves round.
+
+`は` ha and `ほ` ho: ho has an extra line on top.
+@Q
+Which one is `ne`?
+~opts
+* `ね`
+- `れ`
+- `わ`
+~why
+It ends in a little loop.
+@Q
+Which one is `chi`?
+~opts
+* `ち`
+- `さ`
+- `き`
+~why
+`さ` faces the other way.
+=F xjfhira | Hot fire: Hiragana mix
+@W
+Type the romaji for さかな (fish).
+~accept
+sakana
+~why
+さ sa, か ka, な na.
+@W
+Type the romaji for ねこ (cat).
+~accept
+neko
+~why
+ね ne, こ ko.
+@Q
+What does `ぬ` sound like?
+~opts
+* nu
+- me
+- ne
+~why
+It's `め` with a loop added.
+@W
+Type the romaji for ちず (map).
+~accept
+chizu
+~why
+ち chi, ず zu.
+=X kata
+=L xkata | Going deeper: katakana for new sounds
+@T
+Katakana adds small vowels to write sounds Japanese didn't have:
+
+`ティ` ti, as in `パーティー` (party)
+
+`ファ` fa, as in `ファン` (fan)
+
+`ウィ` wi, as in `ウィキ` (wiki)
+
+`ヴ` is sometimes used for v, but most words use b: `ビデオ` (video).
+@Q
+How do you read `ファイル`?
+~opts
+* fairu (file)
+- hairu
+- fuairu
+~why
+Small `ァ` turns `フ` into fa.
+@Q
+Which is `shi` and which is `tsu`?
+~opts
+* `シ` is shi, and `ツ` is tsu
+- `ツ` is shi, and `シ` is tsu
+- They're the same
+~why
+Shi's strokes lean flat, and tsu's point down.
+=F xjfkata | Hot fire: Loanwords
+@W
+Type the romaji for テスト (test).
+~accept
+tesuto
+~why
+Extra u's fill the gaps between consonants.
+@Q
+What is `エンジン`?
+~opts
+* engine
+- engineer
+- energy
+~why
+e-n-ji-n.
+@W
+Type the romaji for パーティー.
+~accept
+paatii
+pātī
+paati
+~why
+The dashes stretch the vowels.
+@Q
+Which word is "Sofia" in katakana?
+~opts
+* `ソフィア`
+- `ンフィア`
+- `ソヒア`
+~why
+`ソ` so, not `ン` n. They look alike.
+=X jsound
+=L xjsound | Going deeper: pitch and silent vowels
+@T
+Japanese uses pitch, not stress. Words go high or low instead of loud. `はし` can be chopsticks or bridge, depending on which part is higher. Context almost always makes it clear.
+
+The `u` in `す` and `i` in `し` often go quiet. `です` sounds like "dess", and `します` like "shimass".
+@Q
+How does `です` usually sound?
+~opts
+* "dess"
+- "deh-soo"
+- "deez"
+~why
+The final u is almost silent.
+@Q
+What makes `はし` (chopsticks) different from `はし` (bridge)?
+~opts
+* Pitch
+- Length
+- Spelling
+~why
+Same sounds, different pitch.
+=F xjfsound1 | Hot fire: Long and short
+@Q
+Which means "aunt"? `おばさん` or `おばあさん`?
+~opts
+* `おばさん`
+- `おばあさん`
+~why
+The long あ makes it "grandmother".
+@W
+Type the romaji for きって (stamp).
+~accept
+kitte
+~why
+Small っ doubles the t.
+@Q
+`ビル` means building. What does `ビール` mean?
+~opts
+* beer
+- bill
+- bell
+~why
+A long vowel changes the word.
+=F xjfsound2 | Hot fire: Sound check
+@W
+Type the romaji for しんぶん (newspaper).
+~accept
+shinbun
+shimbun
+~why
+ん before b often sounds like m.
+@Q
+Which has a long vowel?
+~opts
+* `とうきょう`
+- `ときょ`
+- `とこ`
+~why
+Both おう and ょう stretch the o.
+@W
+Type the romaji for がっこう (school).
+~accept
+gakkou
+gakkoo
+gakkō
+~why
+Small っ, then a long o.
+=X jgreet
+=L xjgreet | Going deeper: politeness levels
+@T
+The same idea can be said at different levels:
+
+**Casual:** `ありがとう` to friends
+
+**Polite:** `ありがとうございます` to most people
+
+**Very polite:** `どうもありがとうございました` for big favors
+
+`すみません` can mean "excuse me", "sorry" or even "thank you" when someone went out of their way.
+@Q
+A stranger picks up your dropped wallet. What fits best?
+~opts
+* `すみません、ありがとうございます`
+- `ありがとう`
+- `おやすみなさい`
+~why
+Polite thanks, plus acknowledging the trouble.
+=F xjfgreet1 | Hot fire: Meeting someone
+@O
+Put the self-introduction in order.
+~lines
+はじめまして。
+テイアです。
+よろしくおねがいします。
+~why
+Nice to meet you, I'm Teir, please treat me well.
+@Q
+A coworker leaves before you. What do you say?
+~opts
+* `おつかれさまです`
+- `いただきます`
+- `おはよう`
+~why
+It thanks them for their hard work.
+@W
+Type the romaji for "excuse me" (すみません).
+~accept
+sumimasen
+~why
+It also works as a light "sorry".
+=F xjfgreet2 | Hot fire: Through the day
+@Q
+It's 8 AM at work. Greet your boss.
+~opts
+* `おはようございます`
+- `こんばんは`
+- `おはよう`
+~why
+Polite good morning. Plain `おはよう` is for friends.
+@Q
+You're about to eat. What do you say?
+~opts
+* `いただきます`
+- `ごちそうさまでした`
+- `ただいま`
+~why
+`ごちそうさまでした` is after eating.
+@Q
+You get home. What do you say?
+~opts
+* `ただいま`
+- `おかえり`
+- `いってきます`
+~why
+The family answers `おかえり`.
+=X jnum
+=L xjnum | Going deeper: counters
+@T
+Japanese counts things with **counters** that depend on the shape or type:
+
+`〜{枚|まい}` flat things (paper, tickets)
+
+`〜{本|ほん}` long things (pens, bottles)
+
+`〜{匹|ひき}` small animals
+
+`〜つ` general things: ひとつ, ふたつ, みっつ
+
+Some sounds change: いっぽん, にほん, さんぼん.
+@Q
+How do you count 2 tickets?
+~opts
+* `{二|に}{枚|まい}`
+- `{二|に}{本|ほん}`
+- `ふたり`
+~why
+Tickets are flat.
+@Q
+How do you say "3 pens"?
+~opts
+* `さんぼん`
+- `さんほん`
+- `さんまい`
+~why
+`本` becomes ぼん after さん.
+=F xjfnum1 | Hot fire: Shopping
+@Q
+How much is `せんごひゃくえん`?
+~opts
+* ¥1,500
+- ¥5,100
+- ¥150
+~why
+せん 1000, ごひゃく 500.
+@W
+Type the romaji for "how much?" (いくら).
+~accept
+ikura
+~why
+`いくらですか` is "how much is it?"
+@Q
+You want one coffee. Which counter is most natural to use?
+~opts
+* `ひとつ`
+- `いちまい`
+- `いっぴき`
+~why
+The general counter works for orders.
+=F xjfnum2 | Hot fire: Time and dates
+@Q
+What time is `{四時半|よじはん}`?
+~opts
+* 4:30
+- 4:15
+- 14:00
+~why
+`はん` is half past.
+@Q
+Which is "the 1st" of the month?
+~opts
+* `ついたち`
+- `いちにち`
+- `ひとつ`
+~why
+`いちにち` means "one day" as a length.
+@W
+Type the romaji for 9 o'clock (くじ).
+~accept
+kuji
+~why
+9 is く for hours, not きゅう.
+=X jbasic
+=L xjbasic | Going deeper: dropping the subject
+@T
+Japanese often leaves out "I" or "you" when it's clear. `{学生|がくせい}です` alone means "I'm a student" if you're talking about yourself.
+
+Using `あなた` (you) a lot can sound cold. Use the person's name plus `さん` instead.
+@Q
+You're asked what you do. Which sounds most natural?
+~opts
+* `エンジニアです`
+- `わたしはわたしのエンジニアです`
+- `あなたはエンジニアです`
+~why
+The subject is clear, so drop it.
+@Q
+How should you say "Are you Tanaka?" politely?
+~opts
+* `{田中|たなか}さんですか`
+- `あなたは{田中|たなか}ですか`
+- `{田中|たなか}か`
+~why
+Use the name instead of あなた.
+=F xjfbasic1 | Hot fire: Who and what
+@B
+Say "This is my book."
+~code
+これは わたし___ {本|ほん}です。
+~opts
+* の
+- は
+- を
+~why
+`の` shows ownership.
+@O
+Put the question in order: "Is that a pen?"
+~lines
+それは
+ペン
+ですか。
+~why
+Topic, noun, です, then か.
+@Q
+What does `じゃありません` do?
+~opts
+* Makes `です` negative
+- Makes it past tense
+- Makes it a question
+~why
+`がくせいじゃありません` is "I'm not a student".
+=F xjfbasic2 | Hot fire: This and that
+@Q
+The thing is far from both of you. Which word?
+~opts
+* `あれ`
+- `それ`
+- `これ`
+~why
+これ is near me, それ near you, あれ over there.
+@B
+Say "Where is the toilet?"
+~code
+トイレは ___ ですか。
+~opts
+* どこ
+- なに
+- だれ
+~why
+`どこ` means where.
+@W
+Type the romaji for "what" (なに).
+~accept
+nani
+~why
+Before です it often becomes なん.
+=X jverb
+=L xjverb | Going deeper: に vs で
+@T
+Both can mean "at", but they're different:
+
+`に` is where something **is** or where you **go**: `{家|いえ}にいます`, `{日本|にほん}に{行|い}きます`.
+
+`で` is where an **action happens**: `{家|いえ}で{食|た}べます`.
+@Q
+"I study at the library." Which particle?
+~opts
+* `{図書館|としょかん}で{勉強|べんきょう}します`
+- `{図書館|としょかん}に{勉強|べんきょう}します`
+~why
+Studying is an action happening there.
+@Q
+"There is a cat in the room." Which particle?
+~opts
+* `{部屋|へや}にねこがいます`
+- `{部屋|へや}でねこがいます`
+~why
+Existence uses に.
+=F xjfverb1 | Hot fire: Daily routine
+@O
+Put it in order: "I eat breakfast at 7."
+~lines
+{七時|しちじ}に
+あさごはんを
+{食|た}べます。
+~why
+Time に, object を, verb last.
+@Q
+Make `{行|い}きます` negative.
+~opts
+* `{行|い}きません`
+- `{行|い}きました`
+- `{行|い}きましょう`
+~why
+ます becomes ません.
+@B
+Say "I drink coffee."
+~code
+コーヒー___ {飲|の}みます。
+~opts
+* を
+- が
+- で
+~why
+`を` marks the object.
+=F xjfverb2 | Hot fire: Yesterday
+@Q
+How do you say "I didn't go"?
+~opts
+* `{行|い}きませんでした`
+- `{行|い}きません`
+- `{行|い}きました`
+~why
+ません plus でした.
+@B
+Say "I went to Tokyo by train."
+~code
+{電車|でんしゃ}___ {東京|とうきょう}___ {行|い}きました。
+~opts
+* で
+* に
+- を
+- は
+~why
+`で` for the means, `に` for the destination.
+@W
+Type the romaji for "let's eat" ({食|た}べましょう).
+~accept
+tabemashou
+tabemashoo
+tabemashō
+~why
+ましょう means "let's".
+=X jadj
+=L xjadj | Going deeper: past adjectives
+@T
+The two adjective types change differently in the past:
+
+**い-adjectives:** `{高|たか}い` becomes `{高|たか}かった` (was expensive). Negative: `{高|たか}くなかった`.
+
+**な-adjectives:** `{静|しず}か` becomes `{静|しず}かでした` (was quiet).
+
+Watch out: `いい` (good) becomes `よかった`.
+@Q
+How do you say "It was good"?
+~opts
+* `よかったです`
+- `いいかったです`
+- `いいでした`
+~why
+`いい` comes from older `よい`.
+@Q
+Which is "wasn't cold"?
+~opts
+* `{寒|さむ}くなかった`
+- `{寒|さむ}いじゃなかった`
+- `{寒|さむ}かったない`
+~why
+い becomes くなかった.
+=F xjfadj1 | Hot fire: Describe it
+@Q
+Which is a な-adjective?
+~opts
+* `きれい`
+- `{大|おお}きい`
+- `{新|あたら}しい`
+~why
+It ends in い, but it's a な-adjective. A common trap.
+@B
+Say "a quiet town."
+~code
+{静|しず}か___ {町|まち}
+~opts
+* な
+- い
+- の
+~why
+な-adjectives need な before a noun.
+@Q
+How do you say "This ramen was delicious"?
+~opts
+* `このラーメンはおいしかったです`
+- `このラーメンはおいしいでした`
+- `このラーメンはおいしだった`
+~why
+い becomes かった.
+=F xjfadj2 | Hot fire: Likes
+@B
+Say "I like sushi."
+~code
+すし___ {好|す}きです。
+~opts
+* が
+- を
+- に
+~why
+`{好|す}き` takes が.
+@Q
+What does `あまり{好|す}きじゃないです` mean?
+~opts
+* I don't really like it
+- I like it a lot
+- I used to like it
+~why
+`あまり` plus a negative softens it.
+@W
+Type the romaji for "very" (とても).
+~accept
+totemo
+~why
+Put it before the adjective.
+=X jjlpt5
+=L xjjlpt5 | Going deeper: asking politely
+@T
+To ask for something politely:
+
+`〜をください` please give me ~
+
+`〜てください` please do ~
+
+`〜てもいいですか` may I ~?
+
+`〜ませんか` won't you ~? (a soft invitation)
+@Q
+Invite a friend gently: "Won't you watch a movie?"
+~opts
+* `{映画|えいが}を{見|み}ませんか`
+- `{映画|えいが}を{見|み}てください`
+- `{映画|えいが}をください`
+~why
+ませんか is an invitation.
+=F xjfn5 | Hot fire: At the shop
+@Q
+Ask "May I try it on?"
+~opts
+* `{着|き}てみてもいいですか`
+- `{着|き}てください`
+- `{着|き}ませんか`
+~why
+てもいいですか asks permission.
+@O
+Order the request: "Please give me this one."
+~lines
+これを
+ください。
+~why
+Object を, then ください.
+@W
+Type the romaji for "a bag, please" (ふくろをください).
+~accept
+fukuro o kudasai
+fukuro wo kudasai
+fukurowokudasai
+fukurookudasai
+~why
+を is pronounced o.
+=X jk1
+=L xjk1 | Going deeper: on and kun readings
+@T
+Most kanji have two kinds of readings:
+
+**Kun** (Japanese): used alone. `{山|やま}` mountain.
+
+**On** (from Chinese): used in compounds. `{富士山|ふじさん}`.
+
+`{日|ひ}` alone is "day/sun", but in `{日本|にほん}` it's に, and in `{日曜日|にちようび}` it's にち and び.
+@Q
+How is `山` read in `{富士山|ふじさん}`?
+~opts
+* さん
+- やま
+- せん
+~why
+In a compound, it uses the on reading.
+=F xjfk1a | Hot fire: Read the kanji
+@Q
+What does `{水|みず}` mean?
+~opts
+* water
+- fire
+- tree
+~why
+`{火|ひ}` is fire, `{木|き}` is tree.
+@Q
+How do you read `{人|ひと}` in `{日本人|にほんじん}`?
+~opts
+* じん
+- ひと
+- にん
+~why
+Nationality uses じん.
+@Q
+What does `{大学|だいがく}` mean?
+~opts
+* university
+- big school
+- teacher
+~why
+大 big plus 学 study.
+=F xjfk1b | Hot fire: Days of the week
+@Q
+What day is `{金曜日|きんようび}`?
+~opts
+* Friday
+- Monday
+- Sunday
+~why
+金 gold or money.
+@Q
+Which kanji is "moon" and also Monday?
+~opts
+* `{月|つき}`
+- `{日|ひ}`
+- `{火|ひ}`
+~why
+`{月曜日|げつようび}` is Monday.
+@W
+Type the romaji for `{今日|きょう}` (today).
+~accept
+kyou
+kyoo
+kyō
+~why
+A special reading, not こんにち.
+=X jte
+=L xjte | Going deeper: ている
+@T
+`〜ている` does two jobs:
+
+**Happening now:** `{食|た}べています` I'm eating.
+
+**A lasting state:** `{結婚|けっこん}しています` I'm married. `{知|し}っています` I know.
+
+With verbs of change, it's the result that lasts, not the action.
+@Q
+What does `{東京|とうきょう}に{住|す}んでいます` mean?
+~opts
+* I live in Tokyo
+- I'm moving to Tokyo now
+- I lived in Tokyo
+~why
+A lasting state.
+=F xjfte1 | Hot fire: Make the て-form
+@Q
+What's the て-form of `{書|か}く`?
+~opts
+* `{書|か}いて`
+- `{書|か}って`
+- `{書|か}んで`
+~why
+く becomes いて.
+@Q
+What's the て-form of `{飲|の}む`?
+~opts
+* `{飲|の}んで`
+- `{飲|の}みて`
+- `{飲|の}って`
+~why
+む becomes んで.
+@Q
+What's the て-form of `{行|い}く`?
+~opts
+* `{行|い}って`
+- `{行|い}いて`
+- `{行|い}んで`
+~why
+The one exception to the く rule.
+=F xjfte2 | Hot fire: Linking actions
+@O
+Put it in order: "I woke up, ate, and went out."
+~lines
+{起|お}きて、
+{食|た}べて、
+{出|で}かけました。
+~why
+て joins steps, and the last verb sets the tense.
+@Q
+"Please wait a moment." Which is it?
+~opts
+* `ちょっと{待|ま}ってください`
+- `ちょっと{待|ま}ちてください`
+- `ちょっと{待|ま}ってます`
+~why
+つ becomes って.
+@Q
+What does `{見|み}てもいいですか` mean?
+~opts
+* May I look?
+- Please look
+- I'm looking
+~why
+てもいい asks permission.
+=X jplain
+=L xjplain | Going deeper: casual questions
+@T
+In casual speech, questions usually drop `か` and just rise in tone:
+
+`{行|い}く？` Are you going?
+
+`{何|なに}{食|た}べる？` What will you eat?
+
+For nouns and な-adjectives, drop `だ`: `{元気|げんき}？` You good?
+
+Adding `の` makes it softer and more curious: `どうしたの？` What's wrong?
+@Q
+How would a friend ask "Are you free tomorrow?"
+~opts
+* `{明日|あした}、ひま？`
+- `{明日|あした}、ひまだか？`
+- `{明日|あした}、ひまですか？`
+~why
+Drop だ and raise the tone.
+=F xjfplain1 | Hot fire: Make it plain
+@Q
+Plain form of `{食|た}べません`?
+~opts
+* `{食|た}べない`
+- `{食|た}べる`
+- `{食|た}べなかった`
+~why
+ません becomes ない.
+@Q
+Plain form of `{行|い}きました`?
+~opts
+* `{行|い}った`
+- `{行|い}きた`
+- `{行|い}いた`
+~why
+It's the て-form with た.
+@Q
+Plain negative of `ある`?
+~opts
+* `ない`
+- `あらない`
+- `あるない`
+~why
+An irregular one.
+=F xjfplain2 | Hot fire: Texting a friend
+@Q
+Your friend texts `{今|いま}{何|なに}してる？` What do they mean?
+~opts
+* What are you doing now?
+- What did you do?
+- What will you do?
+~why
+`してる` is casual `しています`.
+@Q
+Reply casually: "I'm watching TV."
+~opts
+* `テレビ{見|み}てる`
+- `テレビを{見|み}ています`
+- `テレビ{見|み}た`
+~why
+Casual drops を and the い in ている.
+@W
+Type the romaji for casual "yeah" (うん).
+~accept
+un
+~why
+Casual `はい`.
+=X jn4
+=L xjn4 | Going deeper: four ways to say "if"
+@T
+`〜たら` general if or when: `{雨|あめ}が{降|ふ}ったら{行|い}かない`.
+
+`〜ば` if (focus on the condition): `{安|やす}ければ{買|か}う`.
+
+`〜と` whenever, always: `ボタンを{押|お}すと{開|あ}く`.
+
+`〜なら` if that's the case: `{東京|とうきょう}なら{電車|でんしゃ}がいい`.
+
+When in doubt, `たら` works most often.
+@Q
+"Press this and it opens." Which fits?
+~opts
+* `{押|お}すと{開|あ}きます`
+- `{押|お}すなら{開|あ}きます`
+~why
+`と` is for automatic results.
+=F xjfn4a | Hot fire: Conditions
+@Q
+"If I have time, I'll go." Which works?
+~opts
+* `{時間|じかん}があったら{行|い}きます`
+- `{時間|じかん}があるなら{行|い}きました`
+- `{時間|じかん}があって{行|い}きます`
+~why
+たら for a general condition.
+@Q
+What does `{安|やす}ければ{買|か}います` mean?
+~opts
+* If it's cheap, I'll buy it
+- It's cheap, so I bought it
+- I want to buy it cheap
+~why
+い becomes ければ.
+@Q
+Someone says they're going to Kyoto. You reply "If it's Kyoto, see the temples." Which?
+~opts
+* `{京都|きょうと}ならお{寺|てら}を{見|み}て`
+- `{京都|きょうと}とお{寺|てら}を{見|み}て`
+~why
+`なら` picks up what they said.
+=F xjfn4b | Hot fire: Giving and ability
+@Q
+"My friend gave me a book." Which verb?
+~opts
+* `くれました`
+- `あげました`
+- `もらいました`
+~why
+`くれる` is giving toward me.
+@Q
+How do you say "I can swim"?
+~opts
+* `{泳|およ}げます`
+- `{泳|およ}ぎます`
+- `{泳|およ}いでいます`
+~why
+The potential form: ぐ becomes げる.
+@Q
+What does `{日本語|にほんご}を{教|おし}えてもらいました` mean?
+~opts
+* Someone taught me Japanese
+- I taught Japanese
+- I want to learn Japanese
+~why
+てもらう is receiving a favor.
+=X jn3
+=L xjn3 | Going deeper: そう vs よう vs らしい
+@T
+Three ways to say "seems":
+
+`〜そう` based on what you see: `おいしそう` looks tasty.
+
+`〜よう` your judgment from clues: `{誰|だれ}もいないようだ` seems no one's here.
+
+`〜らしい` based on what you heard: `{雨|あめ}らしい` apparently it'll rain.
+
+Also: plain form plus `そうだ` means "I heard that": `{雨|あめ}が{降|ふ}るそうだ`.
+@Q
+You see a cake and want to say it looks delicious.
+~opts
+* `おいしそう`
+- `おいしいらしい`
+- `おいしいそうだ`
+~why
+Based on how it looks.
+=F xjfn3a | Hot fire: Nuance
+@Q
+What does `{彼|かれ}は{来|こ}ないらしい` mean?
+~opts
+* Apparently he isn't coming
+- He looks like he isn't coming
+- He must come
+~why
+らしい reports hearsay.
+@Q
+What does `{行|い}かなければならない` mean?
+~opts
+* I have to go
+- I don't have to go
+- I can't go
+~why
+なければならない is "must".
+@Q
+What does `{食|た}べすぎた` mean?
+~opts
+* I ate too much
+- I almost ate
+- I finished eating
+~why
+すぎる means "too much".
+=F xjfn3b | Hot fire: Natural speech
+@Q
+`{日本|にほん}に{行|い}ったことがあります` means?
+~opts
+* I've been to Japan
+- I'm going to Japan
+- I want to go to Japan
+~why
+たことがある is life experience.
+@Q
+What does `{勉強|べんきょう}しておきます` mean?
+~opts
+* I'll study in advance
+- I've finished studying
+- I'm studying now
+~why
+ておく means doing it ahead of time.
+@Q
+`{雨|あめ}が{降|ふ}りそうです` means?
+~opts
+* It looks like it's going to rain
+- I heard it rained
+- It rained a lot
+~why
+Verb stem plus そう is "about to".
+=X jread
+=L xjread | Going deeper: reading tips
+@T
+When you read real Japanese:
+
+Find the verb at the end first. It tells you what's happening.
+
+Particles split the sentence: は topic, が subject, を object, に or で place and time.
+
+Kanji words are usually the content. Hiragana between them is grammar.
+
+Don't stop at every unknown word. Get the gist, then go back.
+@Q
+Read `{毎朝|まいあさ}、{駅|えき}でコーヒーを{買|か}います。` What's the action?
+~opts
+* Buying coffee
+- Going to the station
+- Waking up
+~why
+The verb is `{買|か}います`.
+=F xjfread | Hot fire: Short story
+@T
+Read this:
+`{昨日|きのう}、{友達|ともだち}と{映画|えいが}を{見|み}に{行|い}きました。とてもおもしろかったです。{来週|らいしゅう}もまた{行|い}きたいです。`
+@Q
+Who did they go with?
+~opts
+* A friend
+- Family
+- Alone
+~why
+`{友達|ともだち}と` with a friend.
+@Q
+How was the movie?
+~opts
+* Very interesting
+- Boring
+- Scary
+~why
+`とてもおもしろかったです`.
+@Q
+What do they want to do next week?
+~opts
+* Go again
+- Stay home
+- Watch TV
+~why
+`また{行|い}きたい` want to go again.

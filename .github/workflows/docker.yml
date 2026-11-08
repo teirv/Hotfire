@@ -12,6 +12,15 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: hotfire
+            context: ./server
+            title: Hotfire
+          - name: hotfire-runner
+            context: ./runner
+            title: Hotfire runner
     steps:
       - uses: actions/checkout@v4
       - uses: docker/login-action@v3
@@ -23,19 +32,35 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
           flavor: latest=false
           tags: |
             type=raw,value=latest
             type=raw,value=1.${{ github.run_number }}
             type=sha,format=short
           labels: |
-            org.opencontainers.image.title=Hotfire
-            org.opencontainers.image.description=Interactive JavaScript and Python lessons with accounts and saved progress
+            org.opencontainers.image.title=${{ matrix.title }}
+            org.opencontainers.image.description=Interactive coding and language lessons with accounts and saved progress
             org.opencontainers.image.version=1.${{ github.run_number }}
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          load: true
+          tags: local/${{ matrix.name }}:test
+      - name: Smoke test the runner
+        if: matrix.name == 'hotfire-runner'
+        run: |
+          docker run -d --name r -p 8100:8100 --read-only --tmpfs /tmp:exec,size=512m --memory 1g --pids-limit 512 \
+            --cap-drop ALL --cap-add CHOWN --cap-add SETUID --cap-add SETGID --cap-add KILL --cap-add DAC_OVERRIDE --cap-add FOWNER \
+            --security-opt no-new-privileges:true local/hotfire-runner:test
+          for i in $(seq 1 30); do curl -sf localhost:8100/healthz && break; sleep 1; done
+          curl -sf -X POST localhost:8100/run -d '{"lang":"csharp","code":"Console.WriteLine(Add(2, 3));\nint Add(int a, int b) => a + b;"}' | tee cs.json
+          curl -sf -X POST localhost:8100/run -d '{"lang":"rust","code":"fn main() { println!(\"{}\", 2 + 3); }"}' | tee rs.json
+          grep -q '"5\\n"' cs.json && grep -q '"5\\n"' rs.json
       - uses: docker/build-push-action@v6
         with:
-          context: ./server
+          context: ${{ matrix.context }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

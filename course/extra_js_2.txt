@@ -1,0 +1,1413 @@
+=X webjs
+=L xwebjs | Going deeper: where scripts go
+@T
+Three ways to load a script, and when each one runs:
+
+`<script>` in the `<head>`: runs right away, **before** the body exists, so it can't find elements.
+
+`<script>` at the end of `<body>`: runs after the page above it is built.
+
+`<script defer src="app.js">`: downloads early, runs after the whole page is read. This is the usual modern choice.
+@Q
+Which choice lets a script in the `<head>` safely use elements in the body?
+~opts
+* `<script defer src="app.js"></script>`
+- `<script async-body src="app.js"></script>`
+- `<script src="app.js" head></script>`
+~why
+`defer` waits for the page. `async` also exists, but runs as soon as it downloads.
+@Q
+Why keep JavaScript in a separate `.js` file?
+~opts
+* The browser can cache it, and many pages can share it
+- Inline scripts are slower to type
+- HTML can't hold JavaScript
+~why
+It also keeps HTML focused on content.
+=F xfirewebjs1 | Hot fire: Fill a heading
+@C
+When the page is ready, put the current year in `#year` and the text `Welcome back` in `#greeting`. Use `getFullYear()`.
+~html
+<h1 id="greeting">Loading</h1>
+<footer>© <span id="year"></span></footer>
+~start
+// Your code here
+
+~sol
+document.getElementById("greeting").textContent = "Welcome back";
+document.getElementById("year").textContent = new Date().getFullYear();
+~hint
+new Date().getFullYear() gives the year.
+~after
+console.log(document.getElementById("greeting").textContent);
+console.log(document.getElementById("year").textContent === String(new Date().getFullYear()));
+~out
+Welcome back
+true
+=F xfirewebjs2 | Hot fire: Wait for the page
+@C
+Set the text of `#status` to `Ready` inside a `DOMContentLoaded` listener on `document`.
+~html
+<p id="status">Waiting</p>
+~start
+// Your code here
+
+~sol
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("status").textContent = "Ready";
+});
+~hint
+document.addEventListener("DOMContentLoaded", () => { ... });
+~after
+console.log(document.getElementById("status").textContent);
+~out
+Ready
+~must
+DOMContentLoaded :: Use a DOMContentLoaded listener.
+=X dom
+=L xdom | Going deeper: walking the tree
+@T
+Every element knows its family. `parentElement` goes up, `children` lists the elements inside, and `firstElementChild`, `lastElementChild` and `nextElementSibling` move around.
+
+`closest(".card")` searches **upward** for the nearest match, which is great inside click handlers.
+~html
+<ul id="list">
+  <li>Valve</li>
+  <li class="hot">Seal</li>
+  <li>Hose</li>
+</ul>
+~code
+let hot = document.querySelector(".hot");
+console.log(hot.parentElement.id);
+console.log(hot.previousElementSibling.textContent);
+console.log(hot.nextElementSibling.textContent);
+console.log(document.getElementById("list").children.length);
+console.log(hot.closest("ul").id);
+@Q
+Refer to the code above. What does `hot.parentElement.id` print?
+~opts
+* list
+- Seal
+- hot
+~why
+The parent of the `li` is the `ul` with the id `list`.
+=F xfiredom1 | Hot fire: Count items
+@C
+Count the `li` items in `#parts` that have the class `low`, and show the result in `#summary` as `2 of 4 low`.
+~html
+<ul id="parts">
+  <li class="low">O-ring</li>
+  <li>Fitting</li>
+  <li class="low">Gasket</li>
+  <li>Hose</li>
+</ul>
+<p id="summary"></p>
+~start
+// Your code here
+
+~sol
+let all = document.querySelectorAll("#parts li");
+let low = document.querySelectorAll("#parts li.low");
+document.getElementById("summary").textContent = `${low.length} of ${all.length} low`;
+~hint
+querySelectorAll gives a list with a length.
+~after
+console.log(document.getElementById("summary").textContent);
+~out
+2 of 4 low
+=F xfiredom2 | Hot fire: Read a table
+@C
+Add up the numbers in the second column of the table body, and put the total in `#total`.
+~html
+<table>
+  <tbody>
+    <tr><td>Valve</td><td>3</td></tr>
+    <tr><td>Seal</td><td>12</td></tr>
+    <tr><td>Hose</td><td>5</td></tr>
+  </tbody>
+</table>
+<p>Total: <span id="total"></span></p>
+~start
+// Your code here
+
+~sol
+let total = 0;
+for (let row of document.querySelectorAll("tbody tr")) {
+  total += Number(row.children[1].textContent);
+}
+document.getElementById("total").textContent = total;
+~hint
+Each row's children[1] is the second cell. Convert its text with Number().
+~after
+console.log(document.getElementById("total").textContent);
+~out
+20
+=X dommod
+=L xdommod | Going deeper: building from data
+@T
+A common pattern: keep data in an array, then build elements from it. If the data changes, clear the container and build again.
+~html
+<ul id="list"></ul>
+~code
+let parts = [
+  { name: "Valve", qty: 3 },
+  { name: "Seal", qty: 0 },
+];
+
+let list = document.getElementById("list");
+list.innerHTML = "";
+for (let p of parts) {
+  let li = document.createElement("li");
+  li.textContent = `${p.name} (${p.qty})`;
+  if (p.qty === 0) li.classList.add("empty");
+  list.appendChild(li);
+}
+console.log(list.children.length);
+@Q
+Refer to the code above. Why use `textContent` instead of `innerHTML` for each name?
+~opts
+* Data shown as text can't be run as HTML
+- It's required for list items
+- `innerHTML` doesn't work on `li`
+~why
+If a name came from a user, `innerHTML` could let them inject code.
+=F xfiredommod1 | Hot fire: Render a list
+@C
+Write `render(names)` that clears `#crew` and adds one `li` per name. Call it with `["Ana", "Leo", "Sam"]`.
+~html
+<ul id="crew"><li>Old</li></ul>
+~start
+function render(names) {
+
+}
+
+~sol
+function render(names) {
+  let ul = document.getElementById("crew");
+  ul.innerHTML = "";
+  for (let n of names) {
+    let li = document.createElement("li");
+    li.textContent = n;
+    ul.appendChild(li);
+  }
+}
+render(["Ana", "Leo", "Sam"]);
+~hint
+Clear with innerHTML = "", then createElement for each name.
+~after
+console.log(document.querySelectorAll("#crew li").length);
+render(["Zoe"]);
+console.log(document.querySelector("#crew").textContent);
+~out
+3
+Zoe
+=F xfiredommod2 | Hot fire: Remove empties
+@C
+Remove every `li` in `#stock` whose `data-qty` attribute is `0`. Read it with `getAttribute("data-qty")` (or `dataset.qty`).
+~html
+<ul id="stock">
+  <li data-qty="3">Valve</li>
+  <li data-qty="0">Seal</li>
+  <li data-qty="0">Hose</li>
+  <li data-qty="7">Pump</li>
+</ul>
+~start
+// Your code here
+
+~sol
+for (let li of document.querySelectorAll("#stock li")) {
+  if (li.getAttribute("data-qty") === "0") {
+    li.remove();
+  }
+}
+~hint
+Attribute values are always strings, so compare with "0".
+~after
+console.log([...document.querySelectorAll("#stock li")].map((li) => li.textContent).join(", "));
+~out
+Valve, Pump
+=X events
+=L xevents | Going deeper: event delegation
+@T
+Instead of adding a listener to every item, add **one** to the parent and check `event.target`. It also works for items added later.
+~html
+<ul id="list"><li>Valve</li><li>Seal</li></ul>
+<p id="out"></p>
+~code
+document.getElementById("list").addEventListener("click", (event) => {
+  let li = event.target.closest("li");
+  if (!li) return;
+  document.getElementById("out").textContent = "Picked " + li.textContent;
+});
+@Q
+Refer to the code above. Why use `event.target.closest("li")` instead of `event.target`?
+~opts
+* The click might land on something inside the `li`
+- `event.target` is always the `ul`
+- `closest` makes the click faster
+~why
+If the `li` held a `<b>` tag, `event.target` would be the `b`.
+=F xfireevents1 | Hot fire: Toggle a switch
+@C
+When `#power` is clicked, switch its text between `ON` and `OFF`, and set `#state` to `Running` or `Stopped` to match. It starts `OFF`.
+~html
+<button id="power">OFF</button>
+<p id="state">Stopped</p>
+~start
+// Your code here
+
+~sol
+let on = false;
+document.getElementById("power").addEventListener("click", () => {
+  on = !on;
+  document.getElementById("power").textContent = on ? "ON" : "OFF";
+  document.getElementById("state").textContent = on ? "Running" : "Stopped";
+});
+~hint
+Keep a true/false variable and flip it with on = !on.
+~after
+__click("#power");
+console.log(document.getElementById("power").textContent, document.getElementById("state").textContent);
+__click("#power");
+console.log(document.getElementById("power").textContent, document.getElementById("state").textContent);
+~out
+ON Running
+OFF Stopped
+=F xfireevents2 | Hot fire: Live character count
+@C
+As the user types in `#msg`, show how many characters are left out of 20 in `#left`, like `15 left`.
+~html
+<input id="msg" maxlength="20">
+<p id="left">20 left</p>
+~start
+// Your code here
+
+~sol
+document.getElementById("msg").addEventListener("input", (event) => {
+  document.getElementById("left").textContent = `${20 - event.target.value.length} left`;
+});
+~hint
+Listen for "input" and use event.target.value.length.
+~after
+__type("#msg", "hello");
+console.log(document.getElementById("left").textContent);
+__type("#msg", "");
+console.log(document.getElementById("left").textContent);
+~out
+15 left
+20 left
+=X timers
+=L xtimers | Going deeper: debouncing
+@T
+Sometimes you want to wait until someone **stops** doing something, like typing in a search box. This is called **debouncing**: each new event cancels the previous timer.
+~code
+let timer;
+function search(text) {
+  clearTimeout(timer);
+  timer = setTimeout(() => console.log("Searching for " + text), 50);
+}
+
+search("v");
+search("va");
+search("valve");
+@Q
+Refer to the code above. Why does it only search once?
+~opts
+* Each call cancels the timer from the call before
+- `setTimeout` only works once
+- The first two calls had errors
+~why
+Only the last timer survives long enough to run.
+=F xfiretimers1 | Hot fire: Stopwatch
+@C
+Make a stopwatch. `#start` begins counting seconds in `#time` with `setInterval` every 1000 ms. `#stop` stops it.
+
+The test speeds time up, so just use a 1000 ms interval.
+~html
+<span id="time">0</span>
+<button id="start">Start</button>
+<button id="stop">Stop</button>
+~start
+// Your code here
+
+~sol
+let seconds = 0;
+let id = null;
+document.getElementById("start").addEventListener("click", () => {
+  if (id) return;
+  id = setInterval(() => {
+    seconds++;
+    document.getElementById("time").textContent = seconds;
+  }, 1000);
+});
+document.getElementById("stop").addEventListener("click", () => {
+  clearInterval(id);
+  id = null;
+});
+~hint
+Save the id from setInterval so stop can clear it.
+~after
+let fast = window.setInterval;
+__click("#start");
+await wait(2150);
+__click("#stop");
+let shown = document.getElementById("time").textContent;
+await wait(1100);
+console.log(shown, shown === document.getElementById("time").textContent);
+~out
+2 true
+~must
+setInterval :: Use setInterval.
+clearInterval :: Use clearInterval.
+=F xfiretimers2 | Hot fire: Delayed message
+@C
+Write `remind(text, ms)` that prints `Reminder: ` plus the text after `ms` milliseconds, using `setTimeout`.
+~start
+function remind(text, ms) {
+
+}
+
+~sol
+function remind(text, ms) {
+  setTimeout(() => console.log("Reminder: " + text), ms);
+}
+~hint
+setTimeout(() => console.log(...), ms);
+~after
+remind("second", 40);
+remind("first", 10);
+console.log("Set");
+~out
+Set
+Reminder: first
+Reminder: second
+=X cssjs
+=L xcssjs | Going deeper: classes over inline styles
+@T
+Setting `el.style` works, but it scatters design choices through your code. A cleaner habit: describe looks in CSS classes, and let JavaScript only add or remove classes.
+
+`dataset` reads `data-*` attributes, which are handy for storing small values on elements.
+~html
+<style>.ok{color:green}.bad{color:crimson}</style>
+<p id="g" data-psi="72">Gauge</p>
+~code
+let g = document.getElementById("g");
+let psi = Number(g.dataset.psi);
+g.classList.add(psi > 60 ? "bad" : "ok");
+console.log(g.className);
+@Q
+Refer to the code above. What does `g.dataset.psi` read?
+~opts
+* The `data-psi` attribute, as a string
+- The CSS color
+- A number automatically
+~why
+`dataset` values are always strings, which is why it's converted with `Number`.
+=F xfirecssjs1 | Hot fire: Status colors
+@C
+For each `.gauge`, read its `data-psi`. Add the class `high` if it's over 60, `low` if it's under 30, and `ok` otherwise.
+~html
+<p class="gauge" data-psi="72">A</p>
+<p class="gauge" data-psi="45">B</p>
+<p class="gauge" data-psi="12">C</p>
+~start
+// Your code here
+
+~sol
+for (let g of document.querySelectorAll(".gauge")) {
+  let psi = Number(g.dataset.psi);
+  g.classList.add(psi > 60 ? "high" : psi < 30 ? "low" : "ok");
+}
+~hint
+Loop through querySelectorAll(".gauge") and convert dataset.psi with Number.
+~after
+console.log([...document.querySelectorAll(".gauge")].map((g) => g.className).join(" | "));
+~out
+gauge high | gauge ok | gauge low
+=F xfirecssjs2 | Hot fire: Dark mode switch
+@C
+When `#theme` is clicked, toggle the class `dark` on `document.body`, and set the button text to `Light mode` when dark is on, or `Dark mode` when it's off.
+~html
+<button id="theme">Dark mode</button>
+~start
+// Your code here
+
+~sol
+document.getElementById("theme").addEventListener("click", () => {
+  let isDark = document.body.classList.toggle("dark");
+  document.getElementById("theme").textContent = isDark ? "Light mode" : "Dark mode";
+});
+~hint
+classList.toggle returns true when the class was added.
+~after
+__click("#theme");
+console.log(document.body.classList.contains("dark"), document.getElementById("theme").textContent);
+__click("#theme");
+console.log(document.body.classList.contains("dark"), document.getElementById("theme").textContent);
+~out
+true Light mode
+false Dark mode
+=X formsjs
+=L xforms | Going deeper: showing errors well
+@T
+Good form checks:
+
+Check every field, and show **all** the problems at once.
+
+Put each message next to its field.
+
+Say how to fix it: "Use at least 8 characters," not "Invalid."
+
+Trim spaces before checking.
+~html
+<form id="f"><input id="user"><button>Join</button></form>
+<ul id="errors"></ul>
+~code
+document.getElementById("f").addEventListener("submit", (e) => {
+  e.preventDefault();
+  let errors = [];
+  let user = document.getElementById("user").value.trim();
+  if (user.length < 3) errors.push("Use at least 3 characters for your username.");
+  if (/\s/.test(user)) errors.push("Usernames can't have spaces.");
+  let ul = document.getElementById("errors");
+  ul.innerHTML = "";
+  errors.forEach((msg) => {
+    let li = document.createElement("li");
+    li.textContent = msg;
+    ul.appendChild(li);
+  });
+});
+@Q
+Refer to the code above. Why collect messages in an array first?
+~opts
+* So all the problems can be shown together
+- Arrays are required by forms
+- To make the form submit faster
+~why
+Showing one problem at a time makes people submit over and over.
+=F xfireforms1 | Hot fire: Password match
+@C
+On submit of `#reset`, stop the reload. If `#pw` has fewer than 8 characters, show `Too short` in `#msg`. Else if `#pw` and `#pw2` don't match, show `Passwords don't match`. Otherwise show `Saved`.
+~html
+<form id="reset"><input id="pw"><input id="pw2"><button type="submit">Save</button></form>
+<p id="msg"></p>
+~start
+// Your code here
+
+~sol
+document.getElementById("reset").addEventListener("submit", (e) => {
+  e.preventDefault();
+  let a = document.getElementById("pw").value;
+  let b = document.getElementById("pw2").value;
+  let msg = document.getElementById("msg");
+  if (a.length < 8) msg.textContent = "Too short";
+  else if (a !== b) msg.textContent = "Passwords don't match";
+  else msg.textContent = "Saved";
+});
+~hint
+Check length first, then compare the two values.
+~after
+const m = () => document.getElementById("msg").textContent;
+__type("#pw", "short"); __click("button"); console.log(m());
+__type("#pw", "longenough"); __type("#pw2", "different"); __click("button"); console.log(m());
+__type("#pw2", "longenough"); __click("button"); console.log(m());
+~out
+Too short
+Passwords don't match
+Saved
+=F xfireforms2 | Hot fire: Order form total
+@C
+When `#qty` or `#size` changes, update `#total`. A small costs `4`, and a large costs `6`. Show it like `$12`.
+
+Listen for the `change` event on both fields.
+~html
+<input id="qty" value="1">
+<select id="size"><option value="small">Small</option><option value="large">Large</option></select>
+<p id="total">$4</p>
+~start
+// Your code here
+
+~sol
+function update() {
+  let qty = Number(document.getElementById("qty").value) || 0;
+  let price = document.getElementById("size").value === "large" ? 6 : 4;
+  document.getElementById("total").textContent = "$" + qty * price;
+}
+document.getElementById("qty").addEventListener("change", update);
+document.getElementById("size").addEventListener("change", update);
+~hint
+Write one update function and attach it to both fields.
+~after
+__type("#qty", "3");
+console.log(document.getElementById("total").textContent);
+__type("#size", "large");
+console.log(document.getElementById("total").textContent);
+~out
+$12
+$18
+=X jsonu
+=L xjson | Going deeper: JSON in practice
+@T
+`JSON.parse` throws an error if the text isn't valid JSON, so wrap it in `try` when the text comes from outside.
+
+`JSON.stringify(value, null, 2)` makes readable, indented JSON. Dates become strings, and functions are left out.
+~code
+let text = '{"name": "valve", "qty": 3}';
+let bad = "{name: valve}";
+
+try {
+  console.log(JSON.parse(text).qty);
+  JSON.parse(bad);
+} catch (e) {
+  console.log("Bad JSON");
+}
+console.log(JSON.stringify({ a: 1, f() {} }));
+@Q
+Refer to the code above. What happens to the method `f` in the last line?
+~opts
+* It's left out, because JSON can't store functions
+- It's stored as text
+- It causes an error
+~why
+JSON only holds data: strings, numbers, booleans, null, arrays and objects.
+=F xfirejson1 | Hot fire: Safe parse
+@C
+Write `safeParse(text, fallback)` that returns the parsed JSON, or `fallback` if the text isn't valid JSON.
+~start
+function safeParse(text, fallback) {
+
+}
+
+~sol
+function safeParse(text, fallback) {
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    return fallback;
+  }
+}
+~hint
+Wrap JSON.parse in try/catch.
+~after
+console.log(safeParse('{"a": 1}', null).a);
+console.log(safeParse("oops", "default"));
+console.log(safeParse("[1,2]", []).length);
+~out
+1
+default
+2
+=F xfirejson2 | Hot fire: Inventory report
+@C
+`data` holds a JSON array of parts. Parse it, keep only parts with `qty` under 5, and print them as JSON text.
+
+Expected output:
+
+```
+[{"name":"O-ring","qty":2}]
+```
+~start
+let data = '[{"name":"O-ring","qty":2},{"name":"Fitting","qty":40}]';
+// Your code here
+
+~sol
+let data = '[{"name":"O-ring","qty":2},{"name":"Fitting","qty":40}]';
+let low = JSON.parse(data).filter((p) => p.qty < 5);
+console.log(JSON.stringify(low));
+~hint
+Parse, filter, then stringify.
+~out
+[{"name":"O-ring","qty":2}]
+=X xhr
+=L xxhr | Going deeper: handling failure
+@T
+Requests can fail in two ways: the server answers with an error status (like 404), or the request never gets an answer (no connection). Handle both.
+
+With XMLHttpRequest, the `error` event covers "no answer", and checking `status` covers the rest.
+~code
+let xhr = new XMLHttpRequest();
+xhr.addEventListener("load", function () {
+  if (this.status === 200) {
+    console.log("Got", JSON.parse(this.responseText).city);
+  } else {
+    console.log("Server said", this.status);
+  }
+});
+xhr.addEventListener("error", () => console.log("No connection"));
+xhr.open("GET", "https://api.example.com/weather?city=Nowhere");
+xhr.send();
+@Q
+Refer to the code above. Which branch runs for an unknown city?
+~opts
+* `Server said 404`
+- `No connection`
+- `Got`
+~why
+The server answered, so `load` runs, but with a 404 status.
+=F xfirexhr1 | Hot fire: Weather lookup
+@C
+Write `getTemp(city, done)` that uses XMLHttpRequest to load `https://api.example.com/weather?city=CITY`. Call `done` with the `tempF` number, or with `null` if the status isn't 200.
+~start
+function getTemp(city, done) {
+
+}
+
+~sol
+function getTemp(city, done) {
+  let xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", function () {
+    if (this.status === 200) done(JSON.parse(this.responseText).tempF);
+    else done(null);
+  });
+  xhr.open("GET", "https://api.example.com/weather?city=" + encodeURIComponent(city));
+  xhr.send();
+}
+~hint
+Inside the load listener, check this.status before parsing.
+~after
+getTemp("Chicago", (t) => console.log(t));
+await wait(60);
+getTemp("Nowhere", (t) => console.log(t));
+await wait(60);
+~out
+41
+null
+=F xfirexhr2 | Hot fire: User list
+@C
+Load `https://api.example.com/users` with XMLHttpRequest and add one `li` per user name to `#users`.
+~html
+<ul id="users"></ul>
+~start
+// Your code here
+
+~sol
+let xhr = new XMLHttpRequest();
+xhr.addEventListener("load", function () {
+  for (let u of JSON.parse(this.responseText)) {
+    let li = document.createElement("li");
+    li.textContent = u.name;
+    document.getElementById("users").appendChild(li);
+  }
+});
+xhr.open("GET", "https://api.example.com/users");
+xhr.send();
+~hint
+The response is a JSON array of objects with a name.
+~after
+await wait(60);
+console.log([...document.querySelectorAll("#users li")].map((li) => li.textContent).join(", "));
+~out
+Ana, Leo
+~must
+XMLHttpRequest :: Use XMLHttpRequest.
+=X ex2
+=F xfireex21 | Hot fire: Lights Out logic
+@C
+Write `press(grid, r, c)` for Lights Out. `grid` is a 2D array of `true`/`false`. It toggles the light at row `r`, column `c`, and its up, down, left and right neighbors, skipping any off the edge. Then write `allOff(grid)`.
+~start
+function press(grid, r, c) {
+
+}
+
+function allOff(grid) {
+
+}
+
+~sol
+function press(grid, r, c) {
+  for (let [dr, dc] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    let row = grid[r + dr];
+    if (row && row[c + dc] !== undefined) {
+      row[c + dc] = !row[c + dc];
+    }
+  }
+}
+
+function allOff(grid) {
+  return grid.every((row) => row.every((lit) => !lit));
+}
+~hint
+Loop over the five offsets, and check the row and column exist before toggling.
+~after
+let g = [[false, false, false], [false, false, false], [false, false, false]];
+press(g, 0, 0);
+console.log(g.map((r) => r.map((x) => (x ? 1 : 0)).join("")).join(" "));
+console.log(allOff(g));
+press(g, 0, 0);
+console.log(allOff(g));
+~out
+110 100 000
+false
+true
+=F xfireex22 | Hot fire: Compare cities
+@C
+Write `warmer(a, b, done)` that loads the weather for both cities (`https://api.example.com/weather?city=...`) and calls `done` with text like `Austin is warmer by 30°`.
+
+You can use XMLHttpRequest twice, or `fetch`.
+~start
+function warmer(a, b, done) {
+
+}
+
+~sol
+async function warmer(a, b, done) {
+  let get = (c) => fetch("https://api.example.com/weather?city=" + c).then((r) => r.json());
+  let [x, y] = await Promise.all([get(a), get(b)]);
+  let hot = x.tempF >= y.tempF ? x : y;
+  let cold = hot === x ? y : x;
+  done(`${hot.city} is warmer by ${hot.tempF - cold.tempF}°`);
+}
+~hint
+Get both temperatures, then compare.
+~after
+warmer("Seattle", "Austin", console.log);
+await wait(80);
+~out
+Austin is warmer by 30°
+=X regex
+=L xregex | Going deeper: more patterns
+@T
+More pattern tools:
+
+`{2,4}` means 2 to 4 times.
+
+`\b` is a word edge.
+
+`(a|b)` means a or b.
+
+`[^0-9]` means any character except a digit.
+
+`replace` with `$1` reuses a captured group.
+~code
+console.log(/^\d{2,4}$/.test("123"));
+console.log("cat category".match(/\bcat\b/g));
+console.log(/^(Mon|Tue)$/.test("Tue"));
+console.log("2026-11-03".replace(/(\d+)-(\d+)-(\d+)/, "$2/$3/$1"));
+console.log("a1b22c".replace(/[^0-9]/g, ""));
+@Q
+Refer to the code above. Why does `\bcat\b` match only once?
+~opts
+* `\b` needs a word edge, and "category" continues past "cat"
+- `g` only finds one match
+- Regex can't find repeats
+~why
+Word edges stop partial matches inside longer words.
+=F xfireregex1 | Hot fire: Part number check
+@C
+Write `isPartNumber(text)` that matches exactly two capital letters, a dash, and 3 to 5 digits.
+
+Examples: `PT-101` and `TC-12345` are valid. `pt-101`, `P-101` and `PT-10` aren't.
+~start
+function isPartNumber(text) {
+
+}
+
+~sol
+function isPartNumber(text) {
+  return /^[A-Z]{2}-\d{3,5}$/.test(text);
+}
+~hint
+/^[A-Z]{2}-\d{3,5}$/
+~after
+for (let t of ["PT-101", "TC-12345", "pt-101", "P-101", "PT-10", "PT-123456"]) console.log(t, isPartNumber(t));
+~out
+PT-101 true
+TC-12345 true
+pt-101 false
+P-101 false
+PT-10 false
+PT-123456 false
+=F xfireregex2 | Hot fire: Extract readings
+@C
+Write `readings(log)` that returns an array of every number followed by ` psi` in the text, as numbers.
+
+Example: `"PT1 450 psi, PT2 12.5 psi, temp 70 F"` returns `[450, 12.5]`.
+~start
+function readings(log) {
+
+}
+
+~sol
+function readings(log) {
+  return [...log.matchAll(/(\d+(?:\.\d+)?) psi/g)].map((m) => Number(m[1]));
+}
+~hint
+Capture the number in a group, use the g flag, and convert each match with Number.
+~after
+console.log(readings("PT1 450 psi, PT2 12.5 psi, temp 70 F"));
+console.log(readings("none here"));
+~out
+[ 450, 12.5 ]
+[]
+=X classes
+=L xclasses | Going deeper: static members and instanceof
+@T
+`static` members belong to the class itself, not each object, which makes them good for counters and helpers.
+
+`instanceof` checks whether an object was made from a class, including parent classes.
+~code
+class Part {
+  static count = 0;
+  constructor(name) {
+    this.name = name;
+    Part.count++;
+  }
+  static fromCode(code) {
+    return new Part(code.toUpperCase());
+  }
+}
+class Valve extends Part {}
+
+let v = new Valve("v1");
+let p = Part.fromCode("pt9");
+console.log(Part.count, p.name);
+console.log(v instanceof Valve, v instanceof Part, p instanceof Valve);
+@Q
+Refer to the code above. Why is `v instanceof Part` true?
+~opts
+* `Valve` extends `Part`, so a Valve is also a Part
+- Every object is a Part
+- `instanceof` only checks the name
+~why
+`p instanceof Valve` is false, because a plain Part isn't a Valve.
+=F xfireclasses1 | Hot fire: Inventory class
+@C
+Write a class `Inventory` with:
+
+`add(name, qty)` adding to the count (starting at 0)
+
+`remove(name, qty)` that throws an Error `Not enough NAME` if there isn't enough
+
+`count(name)` returning the amount (0 if unknown)
+~start
+class Inventory {
+
+}
+
+~sol
+class Inventory {
+  #items = new Map();
+  add(name, qty) {
+    this.#items.set(name, this.count(name) + qty);
+  }
+  remove(name, qty) {
+    if (this.count(name) < qty) throw new Error(`Not enough ${name}`);
+    this.#items.set(name, this.count(name) - qty);
+  }
+  count(name) {
+    return this.#items.get(name) || 0;
+  }
+}
+~hint
+Store counts in a Map inside the class.
+~after
+let inv = new Inventory();
+inv.add("valve", 5);
+inv.remove("valve", 2);
+console.log(inv.count("valve"), inv.count("seal"));
+try { inv.remove("seal", 1); } catch (e) { console.log(e.message); }
+~out
+3 0
+Not enough seal
+=F xfireclasses2 | Hot fire: Shapes
+@C
+Write a class `Shape` with a `name` and a `describe()` method returning `NAME with area X` (area to 1 decimal place). Then write `Circle` and `Rect` that extend it, each with its own `area()`.
+~start
+class Shape {
+
+}
+
+~sol
+class Shape {
+  constructor(name) {
+    this.name = name;
+  }
+  area() {
+    return 0;
+  }
+  describe() {
+    return `${this.name} with area ${this.area().toFixed(1)}`;
+  }
+}
+
+class Circle extends Shape {
+  constructor(r) {
+    super("Circle");
+    this.r = r;
+  }
+  area() {
+    return Math.PI * this.r * this.r;
+  }
+}
+
+class Rect extends Shape {
+  constructor(w, h) {
+    super("Rect");
+    this.w = w;
+    this.h = h;
+  }
+  area() {
+    return this.w * this.h;
+  }
+}
+~hint
+describe() calls this.area(), which each child overrides.
+~after
+console.log(new Circle(1).describe());
+console.log(new Rect(2, 3).describe());
+~out
+Circle with area 3.1
+Rect with area 6.0
+=X closures
+=L xclosures | Going deeper: function factories
+@T
+A function that **returns a function** is a factory. Each function it makes remembers its own settings.
+~code
+function makeLimit(max) {
+  return (value) => Math.min(value, max);
+}
+
+let capPsi = makeLimit(500);
+let capPercent = makeLimit(100);
+
+console.log(capPsi(620));
+console.log(capPercent(150));
+console.log(capPsi(42));
+@Q
+Refer to the code above. Why doesn't `capPercent` use 500?
+~opts
+* Each call to `makeLimit` creates a separate closure with its own `max`
+- 500 was overwritten
+- Arrow functions ignore outer variables
+~why
+Every closure keeps the variables from the call that made it.
+=F xfireclosures1 | Hot fire: Once
+@C
+Write `once(fn)` that returns a new function. The first call runs `fn` and returns its result. Later calls don't run `fn` again, and return that first result.
+~start
+function once(fn) {
+
+}
+
+~sol
+function once(fn) {
+  let done = false;
+  let result;
+  return (...args) => {
+    if (!done) {
+      done = true;
+      result = fn(...args);
+    }
+    return result;
+  };
+}
+~hint
+Keep a done flag and the result in the outer function.
+~after
+let calls = 0;
+let init = once(() => { calls++; return "ready"; });
+console.log(init(), init(), init(), calls);
+~out
+ready ready ready 1
+=F xfireclosures2 | Hot fire: ID maker
+@C
+Write `makeIds(prefix)` that returns a function. Each call returns the next ID, like `PT-1`, `PT-2`. Separate makers count separately.
+~start
+function makeIds(prefix) {
+
+}
+
+~sol
+function makeIds(prefix) {
+  let n = 0;
+  return () => {
+    n++;
+    return `${prefix}-${n}`;
+  };
+}
+~hint
+Keep a counter in the outer function.
+~after
+let pt = makeIds("PT");
+let tc = makeIds("TC");
+console.log(pt(), pt(), tc(), pt());
+~out
+PT-1 PT-2 TC-1 PT-3
+=X modules
+=F xfiremodules1 | Hot fire: Exports quiz
+@Q
+**Hot fire** is a mixed test. A file has `export default function save() {}` and `export const VERSION = 2;`. Which import gets both?
+~opts
+* `import save, { VERSION } from "./store.js";`
+- `import { save, VERSION } from "./store.js";`
+- `import * from "./store.js";`
+~why
+Default export without braces, named exports in braces.
+@Q
+Why do modules help large projects?
+~opts
+* Each file has its own scope, so names don't clash
+- They make code run faster
+- They remove the need for functions
+~why
+Only what's exported is shared.
+@P
+What does this print?
+~code
+"use strict";
+function test() {
+  try {
+    undeclared = 5;
+    return "ok";
+  } catch (e) {
+    return e.name;
+  }
+}
+console.log(test());
+~opts
+* ReferenceError
+- ok
+- 5
+~why
+Strict mode refuses to create accidental globals.
+=F xfiremodules2 | Hot fire: Strict mode fix
+@C
+This code runs in strict mode and crashes. Fix it so it prints `Total: 6`, still using `"use strict"`.
+~start
+"use strict";
+function sum(list) {
+  total = 0;
+  for (item of list) {
+    total += item;
+  }
+  return total;
+}
+console.log("Total: " + sum([1, 2, 3]));
+~sol
+"use strict";
+function sum(list) {
+  let total = 0;
+  for (let item of list) {
+    total += item;
+  }
+  return total;
+}
+console.log("Total: " + sum([1, 2, 3]));
+~hint
+Two variables are used without being declared.
+~out
+Total: 6
+~must
+use strict :: Keep "use strict".
+=X storage
+=L xstorage | Going deeper: storing objects safely
+@T
+Saved data can be missing or broken, for example after you change your app. Read it defensively: parse in a `try`, and fall back to a default.
+~code
+function load(key, fallback) {
+  try {
+    let text = localStorage.getItem(key);
+    return text === null ? fallback : JSON.parse(text);
+  } catch (e) {
+    return fallback;
+  }
+}
+
+localStorage.setItem("prefs", "{broken");
+console.log(load("prefs", { theme: "light" }).theme);
+console.log(load("missing", []).length);
+@Q
+Refer to the code above. Why check for `null` before parsing?
+~opts
+* `getItem` returns `null` for keys that don't exist
+- `JSON.parse` can't read strings
+- `null` means the data is broken
+~why
+`JSON.parse(null)` returns null, which isn't the fallback you want.
+=F xfirestorage1 | Hot fire: Remember a setting
+@C
+Write `getVolume()` and `setVolume(n)`. Store the volume in `localStorage` under `volume`. `getVolume()` returns a number, defaulting to `50` if nothing is saved. `setVolume` keeps values between 0 and 100.
+~start
+function getVolume() {
+
+}
+
+function setVolume(n) {
+
+}
+
+~sol
+function getVolume() {
+  let v = localStorage.getItem("volume");
+  return v === null ? 50 : Number(v);
+}
+
+function setVolume(n) {
+  localStorage.setItem("volume", Math.min(100, Math.max(0, n)));
+}
+~hint
+localStorage stores strings, so convert with Number when reading.
+~after
+console.log(getVolume());
+setVolume(70);
+console.log(getVolume());
+setVolume(150);
+console.log(getVolume());
+~out
+50
+70
+100
+=F xfirestorage2 | Hot fire: Recent searches
+@C
+Write `addSearch(text)` and `recent()`. Keep the last 3 searches in `localStorage` under `recent`, newest first, with no duplicates.
+~start
+function recent() {
+
+}
+
+function addSearch(text) {
+
+}
+
+~sol
+function recent() {
+  return JSON.parse(localStorage.getItem("recent")) || [];
+}
+
+function addSearch(text) {
+  let list = recent().filter((t) => t !== text);
+  list.unshift(text);
+  localStorage.setItem("recent", JSON.stringify(list.slice(0, 3)));
+}
+~hint
+Remove the text if it's already there, unshift it to the front, then keep the first 3.
+~after
+for (let t of ["valve", "seal", "hose", "valve", "pump"]) addSearch(t);
+console.log(recent().join(", "));
+~out
+pump, valve, hose
+=X canvas
+=L xcanvas | Going deeper: drawing text and charts
+@T
+`fillText(text, x, y)` draws text. Loops and data make charts: each bar's height comes from a value.
+
+Remember y grows downward, so a bar of height `h` starts at `bottom - h`.
+~html
+<canvas id="c" width="220" height="120"></canvas>
+~code
+let ctx = document.getElementById("c").getContext("2d");
+let data = [40, 80, 60];
+data.forEach((v, i) => {
+  ctx.fillStyle = "steelblue";
+  ctx.fillRect(20 + i * 60, 110 - v, 40, v);
+  ctx.fillStyle = "black";
+  ctx.fillText(v, 30 + i * 60, 105 - v);
+});
+@Q
+Refer to the code above. Why is the bar's y position `110 - v`?
+~opts
+* So the bar grows up from the bottom, since y counts downward
+- To make the bars thinner
+- Canvas requires subtraction
+~why
+The top of a taller bar needs a smaller y.
+=F xfirecanvas1 | Hot fire: Bar chart
+@C
+On `#c`, draw one filled bar for each value in `values`. Bar `i` is at x = `10 + i * 30`, is 20 wide, and sits on the bottom of a 100-tall canvas: y = `100 - value`, height = `value`.
+~html
+<canvas id="c" width="200" height="100"></canvas>
+~start
+let values = [30, 70, 50];
+// Your code here
+
+~sol
+let values = [30, 70, 50];
+let ctx = document.getElementById("c").getContext("2d");
+values.forEach((v, i) => {
+  ctx.fillRect(10 + i * 30, 100 - v, 20, v);
+});
+~hint
+Loop with forEach((v, i) => ...) and call fillRect once per value.
+~after
+console.log(__calls("fillRect").map((a) => a.slice(1).join(",")).join(" | "));
+~out
+10,70,20,30 | 40,30,20,70 | 70,50,20,50
+=F xfirecanvas2 | Hot fire: Target
+@C
+Draw 3 circles centered at (100, 100) with radius 60, 40 and 20, in that order. Fill them `red`, `white` and `red`.
+~html
+<canvas id="c" width="200" height="200"></canvas>
+~start
+// Your code here
+
+~sol
+let ctx = document.getElementById("c").getContext("2d");
+[[60, "red"], [40, "white"], [20, "red"]].forEach(([r, color]) => {
+  ctx.beginPath();
+  ctx.arc(100, 100, r, 0, 2 * Math.PI);
+  ctx.fillStyle = color;
+  ctx.fill();
+});
+~hint
+Each circle needs beginPath, arc, fillStyle and fill.
+~after
+console.log(__calls("arc").map((a) => a[3]).join(","), __calls("fill").length);
+~out
+60,40,20 3
+=X sockets
+=F xfiresockets1 | Hot fire: Echo chat
+@C
+Connect to `wss://echo.example.com`. When it opens, send `ping`. Print every message you get, and close the connection after the first one.
+~start
+// Your code here
+
+~sol
+let ws = new WebSocket("wss://echo.example.com");
+ws.addEventListener("open", () => ws.send("ping"));
+ws.addEventListener("message", (e) => {
+  console.log(e.data);
+  ws.close();
+});
+~hint
+Wait for open before sending.
+~out
+Server received: ping
+=F xfiresockets2 | Hot fire: Streaming quiz
+@Q
+**Hot fire** is a mixed test. A dashboard shows sensor values that change many times per second. What's the best fit?
+~opts
+* A WebSocket
+- Reloading the page every second
+- One XMLHttpRequest
+~why
+The server can push each new value as it happens.
+@Q
+What does `ws.readyState === 1` mean?
+~opts
+* The connection is open
+- It's closed
+- It failed
+~why
+0 is connecting, 1 is open, 2 is closing, and 3 is closed.
+@Q
+What protocol does a secure WebSocket URL start with?
+~opts
+* `wss://`
+- `https://`
+- `ws+tls://`
+~why
+`ws://` is the unencrypted version.
+=X promises
+=F xfirepromises1 | Hot fire: Retry
+@C
+Write `retry(task, times)`. `task` is a function returning a promise. Try it, and if it rejects, try again, up to `times` attempts in total. Resolve with the first success, or reject with the last error.
+
+Use `async` and `await` with a loop.
+~start
+async function retry(task, times) {
+
+}
+
+~sol
+async function retry(task, times) {
+  let lastError;
+  for (let i = 0; i < times; i++) {
+    try {
+      return await task();
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  throw lastError;
+}
+~hint
+A for loop with try/catch around await task().
+~after
+let n = 0;
+let flaky = () => (++n < 3 ? Promise.reject(new Error("fail " + n)) : Promise.resolve("ok on " + n));
+console.log(await retry(flaky, 5));
+n = 0;
+try { await retry(flaky, 2); } catch (e) { console.log(e.message); }
+~out
+ok on 3
+fail 2
+=F xfirepromises2 | Hot fire: Timeout
+@C
+Write `withTimeout(promise, ms)` that resolves like `promise`, but rejects with an Error `Timed out` if it takes longer than `ms`. Use `Promise.race`.
+~start
+function withTimeout(promise, ms) {
+
+}
+
+~sol
+function withTimeout(promise, ms) {
+  let timer = new Promise((_, reject) => setTimeout(() => reject(new Error("Timed out")), ms));
+  return Promise.race([promise, timer]);
+}
+~hint
+Race the promise against one that rejects after ms.
+~after
+let slow = new Promise((r) => setTimeout(() => r("slow done"), 80));
+let fast = new Promise((r) => setTimeout(() => r("fast done"), 10));
+console.log(await withTimeout(fast, 50));
+try { await withTimeout(slow, 30); } catch (e) { console.log(e.message); }
+await wait(80);
+~out
+fast done
+Timed out
+~must
+Promise\.race :: Use Promise.race.
+=X fetchu
+=F xfirefetch1 | Hot fire: Rates table
+@C
+Write `async function convert(usd)` that fetches `https://api.example.com/rates` and returns an object with the amount in each currency, rounded to 2 decimals as numbers.
+
+Example: `convert(10)` returns `{ EUR: 9, GBP: 8, JPY: 1500 }`.
+~start
+async function convert(usd) {
+
+}
+
+~sol
+async function convert(usd) {
+  let res = await fetch("https://api.example.com/rates");
+  let rates = await res.json();
+  let out = {};
+  for (let code of ["EUR", "GBP", "JPY"]) {
+    out[code] = Number((usd * rates[code]).toFixed(2));
+  }
+  return out;
+}
+~hint
+The rates object has EUR, GBP and JPY.
+~after
+console.log(await convert(10));
+console.log((await convert(1.5)).EUR);
+~out
+{ EUR: 9, GBP: 8, JPY: 1500 }
+1.35
+=F xfirefetch2 | Hot fire: Post a message
+@C
+Write `async function send(text)` that POSTs `{ "message": text }` as JSON to `https://api.example.com/echo`, and returns the `received` field of the response.
+~start
+async function send(text) {
+
+}
+
+~sol
+async function send(text) {
+  let res = await fetch("https://api.example.com/echo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: text }),
+  });
+  let data = await res.json();
+  return data.received;
+}
+~hint
+Pass method, headers and body as the second argument to fetch.
+~after
+console.log(await send("hi"));
+~out
+{"message":"hi"}
+~must
+POST :: Use the POST method.

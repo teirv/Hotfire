@@ -5,7 +5,10 @@ const LANGS={javascript:{name:"JavaScript",short:"JS",file:"script.js",color:"--
              python:{name:"Python",short:"PY",file:"main.py",color:"--py",scratch:'# Try anything here. Nothing is graded.\nname = input("Name? ")\nprint(f"Hello, {name}!")\n'},
              html:{name:"HTML & CSS",short:"WEB",file:"index.html",color:"--web",scratch:'<style>\n  h1 { color: teal; }\n</style>\n<h1>Try anything here</h1>\n<p>Nothing is graded.</p>\n'},
              japanese:{name:"Japanese",short:"JA",file:"",color:"--ja",scratch:""},
-             spanish:{name:"Spanish",short:"ES",file:"",color:"--es",scratch:""}};
+             spanish:{name:"Spanish",short:"ES",file:"",color:"--es",scratch:""},
+             csharp:{name:"C#",short:"C#",file:"Program.cs",color:"--cs",scratch:'// Try anything here. Nothing is graded.\nvar name = "Teir";\nConsole.WriteLine($"Hello, {name}!");\n'},
+             rust:{name:"Rust",short:"RS",file:"main.rs",color:"--rs",scratch:'// Try anything here. Nothing is graded.\nfn main() {\n    let name = "Teir";\n    println!("Hello, {}!", name);\n}\n'}};
+const REMOTE=["csharp","rust"],canRemote=()=>!!(window.__hotfireHost||window.__hotfireRunner);
 const GOAL=30;
 const ICON={check:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M2.5 8.5l4 4 7-8"/></svg>',
  flame:'<svg viewBox="0 0 20 24" fill="currentColor" aria-hidden="true"><path d="M10 0c1 5 8 8 8 15a8 8 0 0 1-16 0c0-3 1.500-5 3-6.500 0 2 1 3.500 2.500 3.500C9 12 8 5 10 0z"/></svg>',
@@ -78,6 +81,8 @@ function inline(s){const h=esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replac
 function md(t){return t.split("```").map((p,i)=>{if(i%2)return "<pre>"+esc(p.replace(/^\n|\n$/g,""))+"</pre>";
   return p.split(/\n\n+/).map(x=>x.trim()).filter(Boolean).map(x=>"<p>"+inline(x).replace(/\n/g,"<br>")+"</p>").join("")}).join("")}
 const HL={python:/(#.*)|("""[\s\S]*?"""|f?"(?:\\.|[^"\\\n])*"|f?'(?:\\.|[^'\\\n])*')|\b(def|class|return|if|elif|else|for|while|in|not|and|or|import|from|as|try|except|finally|raise|with|pass|break|continue|global|True|False|None|lambda)\b|\b(\d+\.?\d*)\b|\b([a-zA-Z_]\w*)(?=\()/g,
+ csharp:/(\/\/.*)|(\$?@?"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])')|\b(using|namespace|class|struct|interface|enum|record|public|private|protected|internal|static|void|int|double|decimal|float|long|string|bool|char|var|new|return|if|else|switch|case|default|for|foreach|in|while|do|break|continue|try|catch|finally|throw|true|false|null|this|base|override|virtual|abstract|readonly|const|get|set|out|ref|params|async|await|is|as|object)\b|\b(\d+(?:\.\d+)?[mMdDfF]?)\b|\b([A-Za-z_]\w*)(?=\s*[(<])/g,
+ rust:/(\/\/.*)|("(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])')|\b(fn|let|mut|const|static|if|else|match|loop|while|for|in|return|break|continue|struct|enum|impl|trait|pub|use|mod|self|Self|true|false|as|ref|where|move|dyn|i32|i64|u32|u64|usize|f64|f32|bool|char|str|String|Vec|Option|Some|None|Result|Ok|Err)\b|\b(\d+(?:\.\d+)?)\b|\b([a-z_]\w*!?)(?=\s*\()|\b(\w+!)/g,
  html:/(<!--[\s\S]*?-->|\/\*[\s\S]*?\*\/)|("[^"\n]*")|(<\/?[a-zA-Z0-9!]+|\/?>)|(\b\d+(?:\.\d+)?(?:px|rem|em|fr|vw|vh|%)?)|([a-z-]+(?=\s*:\s))/g,
  javascript:/(\/\/.*)|("(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`)|\b(let|const|var|function|return|if|else|for|while|of|in|new|try|catch|finally|throw|break|continue|true|false|null|undefined|typeof|this|class|async|await)\b|\b(\d+\.?\d*)\b|\b([a-zA-Z_$][\w$]*)(?=\()/g};
 function hl(code,lang){if(lang==="japanese")return jaMark(esc(code));if(lang==="spanish")return esMark(code);let o="",i=0;const r=new RegExp(HL[lang].source,"g");let m;
@@ -171,7 +176,17 @@ function checkStyles(code,styles){const host=document.createElement("div");host.
     return{ok:true}}finally{host.remove()}}
 function pathOf(el,root){const b=root.querySelector(".b"),p=[];while(el&&el!==b){const q=el.parentElement;if(!q)return null;p.unshift([...q.children].indexOf(el));el=q}return el===b?p:null}
 let runQ=Promise.resolve();
-function run(lang,code,stdin,web){const p=runQ.then(()=>lang==="python"?runPython(code,stdin):runJS(code,web));runQ=p.catch(()=>{});return p}
+async function runRemote(lang,code,stdin,h){
+  if(!canRemote())return{out:"",error:{name:"Server only",msg:"C# and Rust code runs on your Hotfire server. Open this lesson there to run it."}};
+  let r;try{r=await fetch("/api/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,code,stdin:(stdin||[]).map(x=>x+"\n").join(""),prefix:(h&&h.prefix)||"",suffix:(h&&h.suffix)||""})})}
+  catch(e){return{out:"",error:{name:"Offline",msg:"The server couldn't be reached. Check your connection and run again."}}}
+  if(r.status===401){location.href="/login";return{out:""}}
+  if(r.status===501)return{out:"",error:{name:"Runner not set up",msg:"Add the hotfire-runner container on your server to run C# and Rust. The README explains how."}};
+  if(r.status===429)return{out:"",error:{name:"Slow down",msg:"That's a lot of runs in one minute. Wait a moment and try again."}};
+  if(!r.ok)return{out:"",error:{name:"Runner error",msg:"The code runner didn't answer. Try again in a moment."}};
+  return r.json()}
+function harness(lang,after){return !after?null:lang==="csharp"?{prefix:after}:lang==="rust"?{suffix:after}:null}
+function run(lang,code,stdin,web,h){const p=runQ.then(()=>REMOTE.includes(lang)?runRemote(lang,code,stdin,h):lang==="python"?runPython(code,stdin):runJS(code,web));runQ=p.catch(()=>{});return p}
 const EXPLAIN={SyntaxError:"The code isn't written in a shape the language can read. Check this line and the one above for a missing bracket, quote or colon.",
  ReferenceError:"You used a name that doesn't exist. It's usually a typo, or the variable was made later in the code.",
  NameError:"You used a name that doesn't exist. It's usually a typo, or the variable was made later in the code.",
@@ -190,9 +205,10 @@ async function grade(s,lang,code){
   const cases=s.cases;
   for(let i=0;i<cases.length;i++){const c=cases[i];let src=code;
     if(s.replace&&c.with)src=src.replace(new RegExp(s.replace),()=>c.with);
-    if(s.html){src=src+"\n;await __loaded();\n"+(s.after||"")}else if(s.after)src=src+"\n"+s.after;
-    const r=await run(lang,src,c.stdin,s.html?{html:s.html,after:s.after}:undefined);
-    if(r.timedOut)return{ok:false,msg:"Your code ran for more than 3 seconds. A loop probably never ends."};
+    const remote=REMOTE.includes(lang);
+    if(s.html){src=src+"\n;await __loaded();\n"+(s.after||"")}else if(s.after&&!remote)src=src+"\n"+s.after;
+    const r=await run(lang,src,c.stdin,s.html?{html:s.html,after:s.after}:undefined,remote?harness(lang,s.after):null);
+    if(r.timedOut)return{ok:false,msg:`Your code ran for more than ${remote?5:3} seconds. A loop probably never ends.`};
     if(r.error)return{ok:false,msg:`**${r.error.name}**${r.error.line?` on line ${r.error.line}`:""}: ${r.error.msg}`,why:EXPLAIN[r.error.name]};
     if(s.anyout){if(!r.out.trim())return{ok:false,msg:"Your program ran but printed nothing."};continue}
     if(norm(r.out)!==norm(c.out))return{ok:false,msg:cases.length>1?`Test ${i+1} of ${cases.length} didn't match.`:"The output didn't match.",stdin:c.stdin,expected:norm(c.out),got:norm(r.out)}}
@@ -203,7 +219,7 @@ function editorHTML(id,opts={}){return `<div class="ed" id="${id}"><div class="e
 <div class="edwrap"><div class="gut" aria-hidden="true"></div><div class="edscroll"><div class="edstack"><pre aria-hidden="true"></pre><textarea id="${id}-ta" aria-label="Code editor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea></div></div></div>
 <div class="keys" aria-label="Code symbols"></div><div class="con"><span class="label">Console</span><pre class="idle">Press Run to see the output.</pre></div>${opts.html?`<div class="pv"><span class="label">Page preview</span><div class="pvhost"></div></div>`:""}</div>`}
 function htmlPane(html){return `<details class="htmlv"><summary>page.html</summary><pre class="static">${esc(html)}</pre></details>`}
-function mountEditor(id,{code,lang,start,onChange,getStdin,html}){
+function mountEditor(id,{code,lang,start,onChange,getStdin,html,after}){
   const root=document.getElementById(id),ta=$("textarea",root),pre=$("pre",root),gut=$(".gut",root),con=$(".con",root);
   const ind=lang==="python"?"    ":"  ";
   const paint=()=>{const v=ta.value;pre.innerHTML=hl(v,lang)+"\n";gut.textContent=v.split("\n").map((_,i)=>i+1).join("\n");if(onChange)onChange(v)};
@@ -224,10 +240,10 @@ function mountEditor(id,{code,lang,start,onChange,getStdin,html}){
   async function doRun(){if(isDoc){doc();$(".pv",root).scrollIntoView({block:"nearest",behavior:"smooth"});return}const btn=$("[data-ed=run]",root);btn.disabled=true;btn.textContent="Running";
     con.innerHTML=`<span class="label">Console</span><pre class="idle">Running</pre>`;
     const pv=$(".pvhost",root);let webo;if(html){webo={html,live:true,onDom:(d,w)=>{try{renderPreview(pv,d,w)}catch(e){}},onOut:o=>{const q=$("pre",con);if(q&&done2){q.classList.remove("idle");q.textContent=o}},onErr:er=>{con.insertAdjacentHTML("beforeend",`<pre class="err">${esc(er.name)}: ${esc(er.msg)}</pre>`)}}}
-    let done2=false;const r=await run(lang,ta.value,getStdin?getStdin():[],webo);done2=true;btn.disabled=false;btn.textContent="Run";
+    let done2=false;const remote=REMOTE.includes(lang),src=after&&!html&&!remote?ta.value+"\n"+after:ta.value;const r=await run(lang,src,getStdin?getStdin():[],webo,remote?harness(lang,after):null);done2=true;btn.disabled=false;btn.textContent="Run";
     let h=`<span class="label">Console</span><pre>${esc(r.out||"")}</pre>`;
     if(!r.out&&!r.error&&!r.timedOut)h=html?`<span class="label">Console</span><pre class="idle">Nothing printed. See the page preview.</pre>`:`<span class="label">Console</span><pre class="idle">Your program ran but printed nothing.</pre>`;
-    if(r.timedOut)h+=`<pre class="err">Stopped after 3 seconds</pre><div class="why">A loop may never be ending. Check that something inside it changes.</div>`;
+    if(r.timedOut)h+=`<pre class="err">Stopped after ${REMOTE.includes(lang)?5:3} seconds</pre><div class="why">A loop may never be ending. Check that something inside it changes.</div>`;
     if(r.error){h+=`<pre class="err">${esc(r.error.name)}${r.error.line?` (line ${r.error.line})`:""}: ${esc(r.error.msg)}</pre>`;if(EXPLAIN[r.error.name])h+=`<div class="why">${esc(EXPLAIN[r.error.name])}</div>`}
     con.innerHTML=h;if(pv)pv.parentElement.scrollIntoView({block:"nearest",behavior:"smooth"})}
   root.addEventListener("click",e=>{const a=e.target.dataset.ed;if(a==="run")doRun();if(a==="reset"){ta.value=start;paint();if(isDoc)doc()}});
@@ -388,8 +404,8 @@ function showCard(){const c=L.queue[L.i];if(!c)return finish();
   else if(s.k==="B"){L.toks=shuffle([...s.ans,...s.extra].map((t,i)=>({t,i})));renderBlank(crumb)}
   else if(s.k==="O"){L.toks=shuffle(s.lines.map((t,i)=>({t,i})));while(L.toks.length>1&&L.toks.every((x,i)=>x.i===i))L.toks=shuffle(L.toks);renderOrder(crumb)}
   else if(s.k==="C"){L.code=null;const first=s.cases[0]||{},stdin=first.stdin||[];
-    a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+(stdin.length?`<div class="stdin">Run uses this input: ${esc(stdin.join(" / "))}</div>`:"")+`<div id="hintslot"></div>`,codeFoot());
-    const dk=c.key;let dt;ed=mountEditor("ed",{code:S.drafts[dk]??s.start,start:s.start,lang,html:s.html,getStdin:()=>stdin,onChange:v=>{clearTimeout(dt);dt=setTimeout(()=>{if(L&&L.queue[L.i]&&L.queue[L.i].key===dk&&v!==s.start&&v.length<8000){S.drafts[dk]=v;save()}},900)}})}
+    a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+(stdin.length?`<div class="stdin">Run uses this input: ${esc(stdin.join(" / "))}</div>`:"")+testsHTML(s,lang)+`<div id="hintslot"></div>`,REMOTE.includes(lang)&&!canRemote()?`<div class="row"><p class="muted remote-note">C# and Rust code runs on your Hotfire server.</p><button class="btn ghost" id="primary" data-next="1">Skip for now</button></div>`:codeFoot());
+    const dk=c.key;let dt;ed=mountEditor("ed",{code:S.drafts[dk]??s.start,start:s.start,lang,html:s.html,after:s.replace?null:s.after,getStdin:()=>stdin,onChange:v=>{clearTimeout(dt);dt=setTimeout(()=>{if(L&&L.queue[L.i]&&L.queue[L.i].key===dk&&v!==s.start&&v.length<8000){S.drafts[dk]=v;save()}},900)}})}
   window.scrollTo(0,0)}
 /* Looking back is read-only: it never scores, and never touches XP, saved place or missed cards */
 function showPeek(){const c=L.queue[L.peek],s=c.s,lang=L.lang,last=L.peek+1>=L.i;ed=null;
@@ -403,6 +419,16 @@ function showPeek(){const c=L.queue[L.peek],s=c.s,lang=L.lang,last=L.peek+1>=L.i
   $("#app").innerHTML=shell(top+body,`<button class="btn" id="primary" data-peeknext="1">${last?"Back to where I was":"Next card"}</button>`);
   if(s.k==="T"&&s.code)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]});
   window.scrollTo(0,0)}
+/* What Check tests, shown up front so a challenge is never a guessing game */
+function testCode(t){return String(t).replace(/__click\("([^"]+)"\);?/g,'click $1').replace(/__type\("([^"]+)",\s*"([^"]*)"\);?/g,'type "$2" into $1').replace(/__key\("([^"]+)",\s*"([^"]*)"\);?/g,'press $2 in $1').replace(/__calls\("(\w+)"\)/g,'canvas $1 calls')}
+function testsHTML(s,lang){if(!s.cases)return "";const parts=[],remote=REMOTE.includes(lang);const out=x=>`<pre class="tout">${esc(x||"(nothing)")}</pre>`;
+  if(s.after&&!s.replace)parts.push(`<p>${lang==="html"?"Check builds your page, then runs":remote&&lang==="csharp"?"Check runs this with your code":"After your code, Check runs"}:</p><pre class="static tcode">${hl(testCode(s.after),lang==="html"?"javascript":lang)}</pre><p>Expected output:</p>${out(s.cases[0].out)}`);
+  else if(!s.anyout)s.cases.forEach((c,i)=>parts.push(`<p>${s.cases.length>1?`Test ${i+1}: `:""}${c.with?`With <code>${esc(c.with)}</code>`:c.stdin&&c.stdin.length?`Input <code>${esc(c.stdin.join(" / "))}</code>`:"Expected output"}${c.with||(c.stdin&&c.stdin.length)?", expected output:":":"}</p>${out(c.out)}`));
+  if(s.anyout)parts.push(`<p>Your program must print something.</p>`);
+  if(s.styles)parts.push(`<p>The page must have:</p><ul>${s.styles.map(x=>`<li><code>${esc(x.sel)}</code> ${esc(x.prop.replace(/[A-Z]/g,m=>"-"+m.toLowerCase()))}: <code>${esc(x.val)}</code></li>`).join("")}</ul>`);
+  if(s.must&&s.must.length)parts.push(`<p>Also required:</p><ul>${s.must.map(m=>`<li>${inline(m.msg)}</li>`).join("")}</ul>`);
+  if(!parts.length)return "";
+  return `<details class="tests" open><summary>What Check tests</summary>${parts.join("")}${s.after&&!s.replace&&lang!=="html"&&!s.html?`<p class="muted">Run also runs these tests, so you can see your results before you press Check.</p>`:""}</details>`}
 function codeFoot(){return `<div class="row"><button class="btn ghost" data-hint="1">Hint</button><button class="btn" id="primary" data-grade="1">Check</button></div>`}
 function renderBlank(crumb){const s=L.queue[L.i].s,parts=s.code.split("___");
   const body=parts.map((p,i)=>hl(p,L.lang)+(i<parts.length-1?`<button class="blank" data-unfill="${i}" aria-label="Blank ${i+1}">${L.fills[i]?tx(L.fills[i].t):" "}</button>`:"")).join("");

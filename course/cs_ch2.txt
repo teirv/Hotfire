@@ -1,0 +1,747 @@
+=U cscoll | Lists, Dictionaries and LINQ | Working with groups of data.
+=L cs5a | List and Dictionary
+@T
+A `List<T>` is like an array that can grow. `T` is the type it holds: `List<string>` holds text.
+
+`Add`, `Remove`, `Contains`, and `Count` are the everyday tools.
+~code
+var parts = new List<string> { "valve", "seal" };
+parts.Add("hose");
+parts.Remove("seal");
+
+Console.WriteLine(parts.Count);
+Console.WriteLine(parts.Contains("hose"));
+Console.WriteLine(string.Join(", ", parts));
+@T
+A `Dictionary<TKey, TValue>` maps keys to values. Reading a missing key throws an error, so check with `ContainsKey` or use `TryGetValue`.
+~code
+var stock = new Dictionary<string, int>
+{
+    ["valve"] = 3,
+    ["seal"] = 12,
+};
+stock["hose"] = 5;
+stock["valve"] += 1;
+
+foreach (var pair in stock)
+{
+    Console.WriteLine($"{pair.Key}: {pair.Value}");
+}
+Console.WriteLine(stock.ContainsKey("pump"));
+@P
+What does this print?
+~code
+var list = new List<int> { 4, 8 };
+list.Add(15);
+list.RemoveAt(0);
+Console.WriteLine(list.Count + " " + list[0]);
+~opts
+* 2 8
+- 3 4
+- 2 4
+~why
+`RemoveAt(0)` removes by position, so 8 moves to the front.
+@Q
+What does `new Dictionary<string, int>()["missing"]` do?
+~opts
+* Throws a `KeyNotFoundException`
+- Returns 0
+- Returns null
+~why
+Use `TryGetValue` or `ContainsKey` first.
+=L cs5b | LINQ
+@T
+**LINQ** gives lists query tools. `Where` keeps matching items, `Select` changes each item, and `OrderBy` sorts. `Sum`, `Average`, `Max`, `Count` and `Any` summarize.
+
+`x => x > 10` is a **lambda**: a tiny function. Read it as "for each x, is x over 10?"
+~code
+var readings = new List<int> { 5, 12, 8, 30 };
+
+var high = readings.Where(x => x > 10).ToList();
+var doubled = readings.Select(x => x * 2);
+
+Console.WriteLine(string.Join(",", high));
+Console.WriteLine(string.Join(",", doubled));
+Console.WriteLine(readings.Sum());
+Console.WriteLine(readings.Max());
+Console.WriteLine(readings.Any(x => x > 25));
+@P
+What does this print?
+~code
+var a = new List<int> { 1, 2, 3, 4 };
+Console.WriteLine(a.Where(x => x % 2 == 0).Sum());
+~opts
+* 6
+- 10
+- 4
+~why
+It keeps 2 and 4, then adds them.
+@B
+Get the names of parts in order.
+~code
+var names = parts.___(p => p.Name).___(n => n).ToList();
+~opts
+* Select
+* OrderBy
+- Where
+- Sum
+~why
+`Select` picks the names, and `OrderBy` sorts them.
+=F csfire5a | Hot fire: Low stock
+@C
+Write `List<string> LowStock(Dictionary<string, int> stock)`. Return the names of items with a count **under 5**, sorted A to Z.
+
+Example: with `valve: 2`, `seal: 12`, `hose: 4`, it returns `hose, valve`.
+~start
+List<string> LowStock(Dictionary<string, int> stock)
+{
+    return new List<string>();
+}
+~sol
+List<string> LowStock(Dictionary<string, int> stock)
+{
+    return stock.Where(p => p.Value < 5).Select(p => p.Key).OrderBy(k => k).ToList();
+}
+~hint
+Each item is a pair with .Key and .Value. Where, then Select, then OrderBy.
+~after
+var s = new Dictionary<string, int> { ["valve"] = 2, ["seal"] = 12, ["hose"] = 4 };
+Console.WriteLine(string.Join(", ", LowStock(s)));
+Console.WriteLine(LowStock(new Dictionary<string, int> { ["pump"] = 5 }).Count);
+~out
+hose, valve
+0
+=F csfire5b | Hot fire: Word count
+@C
+Write `Dictionary<string, int> CountWords(string text)`. Split on spaces, lowercase each word, and count how many times each appears.
+
+Example: `"Go stop go"` gives `go: 2` and `stop: 1`.
+~start
+Dictionary<string, int> CountWords(string text)
+{
+    return new Dictionary<string, int>();
+}
+~sol
+Dictionary<string, int> CountWords(string text)
+{
+    var counts = new Dictionary<string, int>();
+    foreach (string raw in text.Split(' '))
+    {
+        string w = raw.ToLower();
+        counts[w] = counts.GetValueOrDefault(w) + 1;
+    }
+    return counts;
+}
+~hint
+counts[w] = counts.GetValueOrDefault(w) + 1;
+~after
+var c = CountWords("Go stop go GO");
+Console.WriteLine(c["go"]);
+Console.WriteLine(c["stop"]);
+Console.WriteLine(c.Count);
+~out
+3
+1
+2
+=F csfire5c | Hot fire: Sensor summary
+@C
+Write `string Summarize(List<double> readings)` that returns the count, the max, and the average with 1 decimal place, like this:
+
+`3 readings, max 30, average 20.0`
+~start
+string Summarize(List<double> readings)
+{
+    return "";
+}
+~sol
+string Summarize(List<double> readings)
+{
+    return $"{readings.Count} readings, max {readings.Max()}, average {readings.Average():F1}";
+}
+~hint
+LINQ has Max() and Average().
+~after
+Console.WriteLine(Summarize(new List<double> { 10, 20, 30 }));
+Console.WriteLine(Summarize(new List<double> { 4, 9.5 }));
+~out
+3 readings, max 30, average 20.0
+2 readings, max 9.5, average 6.8
+=U csclass | Classes and Objects | Your own types.
+=L cs6a | Classes, fields and constructors
+@T
+A **class** is a blueprint. Each object made from it has its own data.
+
+A **constructor** has the same name as the class and runs when you use `new`. `public` means other code can use it.
+
+Classes go below your other code.
+~code
+var t = new Tank("T-1", 500);
+t.Fill(120);
+Console.WriteLine(t.Describe());
+
+class Tank
+{
+    public string Name;
+    public int Capacity;
+    public int Level;
+
+    public Tank(string name, int capacity)
+    {
+        Name = name;
+        Capacity = capacity;
+    }
+
+    public void Fill(int liters)
+    {
+        Level = Math.Min(Capacity, Level + liters);
+    }
+
+    public string Describe() => $"{Name}: {Level}/{Capacity} L";
+}
+@T
+**Properties** are the C# way to expose data. `{ get; set; }` makes a property you can read and change. `{ get; }` makes it read-only after construction.
+
+A property can also compute its value with `=>`.
+~code
+var r = new Rect(3, 4);
+Console.WriteLine(r.Area);
+r.Width = 10;
+Console.WriteLine(r.Area);
+
+class Rect
+{
+    public int Width { get; set; }
+    public int Height { get; }
+    public int Area => Width * Height;
+
+    public Rect(int w, int h)
+    {
+        Width = w;
+        Height = h;
+    }
+}
+@Q
+When does a constructor run?
+~opts
+* When you create an object with `new`
+- Every time a method is called
+- When the program ends
+~why
+It sets the object up.
+@P
+What does this print?
+~code
+var a = new Box();
+var b = a;
+b.Size = 9;
+Console.WriteLine(a.Size);
+
+class Box { public int Size { get; set; } }
+~opts
+* 9
+- 0
+- An error
+~why
+Classes are **reference types**. `a` and `b` point to the same object.
+@B
+Make a property you can read but only set in the constructor.
+~code
+public string Id { ___; }
+~opts
+* get
+- set
+- readonly
+~why
+Without `set`, outside code can't change it.
+=L cs6b | ToString, static and records
+@T
+Every class has `ToString()`, which is used when you print an object. **Override** it to print something useful.
+
+`static` members belong to the class, not to each object. They're shared by all objects.
+~code
+var a = new Part("valve");
+var b = new Part("seal");
+Console.WriteLine(a);
+Console.WriteLine(Part.Made);
+
+class Part
+{
+    public static int Made = 0;
+    public string Name { get; }
+
+    public Part(string name)
+    {
+        Name = name;
+        Made++;
+    }
+
+    public override string ToString() => $"Part({Name})";
+}
+@T
+A **record** is a short way to make a class mostly for holding data. It prints nicely, and two records with the same values are equal.
+~code
+var p1 = new Point(1, 2);
+var p2 = new Point(1, 2);
+Console.WriteLine(p1);
+Console.WriteLine(p1 == p2);
+
+record Point(int X, int Y);
+@Q
+What's a good use for `static`?
+~opts
+* A counter shared by every object of a class
+- A value that's different for each object
+- A method that must be overridden
+~why
+There's only one copy of a static member.
+=F csfire6a | Hot fire: Bank account
+@C
+Write a class `Account` with:
+
+A constructor taking an `owner` name
+
+A read-only `Balance` property starting at 0
+
+`Deposit(decimal amount)` that adds money
+
+`bool Withdraw(decimal amount)` that takes money out only if there's enough, returning whether it worked
+
+Example: deposit 50, withdraw 80 returns `False`, and the balance stays 50.
+~start
+class Account
+{
+
+}
+~sol
+class Account
+{
+    public string Owner { get; }
+    public decimal Balance { get; private set; }
+
+    public Account(string owner)
+    {
+        Owner = owner;
+    }
+
+    public void Deposit(decimal amount) => Balance += amount;
+
+    public bool Withdraw(decimal amount)
+    {
+        if (amount > Balance) return false;
+        Balance -= amount;
+        return true;
+    }
+}
+~hint
+Use { get; private set; } so only the class can change Balance.
+~after
+var a = new Account("Ada");
+a.Deposit(50);
+Console.WriteLine(a.Withdraw(80));
+Console.WriteLine(a.Balance);
+Console.WriteLine(a.Withdraw(20));
+Console.WriteLine(a.Balance);
+~out
+False
+50
+True
+30
+=F csfire6b | Hot fire: Temperature log
+@C
+Write a class `TempLog` with:
+
+`Add(double c)` to record a Celsius reading
+
+A `Count` property
+
+A `Highest` property (0 if there are no readings)
+
+`ToString()` that returns `3 readings, high 31.5`
+~start
+class TempLog
+{
+
+}
+~sol
+class TempLog
+{
+    private readonly List<double> readings = new List<double>();
+
+    public void Add(double c) => readings.Add(c);
+    public int Count => readings.Count;
+    public double Highest => readings.Count == 0 ? 0 : readings.Max();
+
+    public override string ToString() => $"{Count} readings, high {Highest}";
+}
+~hint
+Keep a private List<double> inside the class.
+~after
+var log = new TempLog();
+Console.WriteLine(log.Highest);
+log.Add(20); log.Add(31.5); log.Add(28);
+Console.WriteLine(log.Count);
+Console.WriteLine(log);
+~out
+0
+3
+3 readings, high 31.5
+=U csoop | Inheritance and Interfaces | Sharing and promising behavior.
+=L cs7a | Inheritance
+@T
+A class can **inherit** from another with `:`. It gets the parent's members.
+
+Mark a method `virtual` to allow children to replace it, and `override` in the child. `base(...)` calls the parent's constructor.
+~code
+Animal[] pets = { new Dog("Rex"), new Cat("Tom") };
+foreach (var p in pets)
+{
+    Console.WriteLine(p.Speak());
+}
+
+class Animal
+{
+    public string Name { get; }
+    public Animal(string name) { Name = name; }
+    public virtual string Speak() => $"{Name} makes a sound";
+}
+
+class Dog : Animal
+{
+    public Dog(string name) : base(name) { }
+    public override string Speak() => $"{Name} barks";
+}
+
+class Cat : Animal
+{
+    public Cat(string name) : base(name) { }
+}
+@Q
+`Cat` doesn't override `Speak`. What does `new Cat("Tom").Speak()` return?
+~opts
+* Tom makes a sound
+- Tom barks
+- An error
+~why
+It uses the parent's version.
+@Q
+What do you need on a parent method so a child can override it?
+~opts
+* `virtual` (or `abstract`)
+- `static`
+- `private`
+~why
+C# makes overriding something you opt into.
+=L cs7b | Interfaces and abstract classes
+@T
+An **interface** is a promise: any class that implements it must have these members. Interface names start with `I` by convention.
+
+An **abstract** class can't be created directly. Its abstract methods must be filled in by children.
+~code
+IShape[] shapes = { new Square(3), new Circle(1) };
+foreach (var s in shapes)
+{
+    Console.WriteLine($"{s.Name}: {s.Area():F2}");
+}
+
+interface IShape
+{
+    string Name { get; }
+    double Area();
+}
+
+class Square : IShape
+{
+    private double side;
+    public Square(double s) { side = s; }
+    public string Name => "Square";
+    public double Area() => side * side;
+}
+
+class Circle : IShape
+{
+    private double r;
+    public Circle(double radius) { r = radius; }
+    public string Name => "Circle";
+    public double Area() => Math.PI * r * r;
+}
+@Q
+How many interfaces can one class implement?
+~opts
+* As many as it needs
+- Only one
+- None, only abstract classes
+~why
+A class can inherit from only one class, but implement many interfaces.
+@Q
+What happens with `new IShape()`?
+~opts
+* It won't compile
+- It makes an empty shape
+- It returns null
+~why
+Interfaces can't be created directly. Only classes that implement them can.
+=F csfire7a | Hot fire: Payroll
+@C
+Write an abstract class `Worker` with a `Name` property, a constructor taking the name, and an abstract method `decimal Pay()`.
+
+Then write:
+
+`Hourly : Worker`, taking `name, hours, rate`, which pays `hours * rate`
+
+`Salaried : Worker`, taking `name, yearly`, which pays `yearly / 26` rounded to 2 decimals with `Math.Round`
+~start
+// Your classes here
+
+~sol
+abstract class Worker
+{
+    public string Name { get; }
+    protected Worker(string name) { Name = name; }
+    public abstract decimal Pay();
+}
+
+class Hourly : Worker
+{
+    private decimal hours, rate;
+    public Hourly(string name, decimal hours, decimal rate) : base(name)
+    {
+        this.hours = hours;
+        this.rate = rate;
+    }
+    public override decimal Pay() => hours * rate;
+}
+
+class Salaried : Worker
+{
+    private decimal yearly;
+    public Salaried(string name, decimal yearly) : base(name) { this.yearly = yearly; }
+    public override decimal Pay() => Math.Round(yearly / 26, 2);
+}
+~hint
+Children call : base(name) and override Pay().
+~after
+Worker[] team = { new Hourly("Ana", 80m, 25m), new Salaried("Leo", 65000m) };
+foreach (var w in team) Console.WriteLine($"{w.Name}: {w.Pay()}");
+~out
+Ana: 2000
+Leo: 2500
+=F csfire7b | Hot fire: Devices
+@C
+Write an interface `IDevice` with `string Name { get; }` and `string Status()`.
+
+Then write `Valve` (with a `bool Open` property) and `Gauge` (with a `double Psi` property), so this prints:
+
+```
+V-1: open
+V-2: closed
+PT-1: 450.0 psi
+```
+~start
+// Your interface and classes here
+
+~sol
+interface IDevice
+{
+    string Name { get; }
+    string Status();
+}
+
+class Valve : IDevice
+{
+    public string Name { get; }
+    public bool Open { get; set; }
+    public Valve(string name, bool open) { Name = name; Open = open; }
+    public string Status() => Open ? "open" : "closed";
+}
+
+class Gauge : IDevice
+{
+    public string Name { get; }
+    public double Psi { get; set; }
+    public Gauge(string name, double psi) { Name = name; Psi = psi; }
+    public string Status() => $"{Psi:F1} psi";
+}
+~hint
+Both classes implement IDevice with : IDevice.
+~after
+IDevice[] all = { new Valve("V-1", true), new Valve("V-2", false), new Gauge("PT-1", 450) };
+foreach (var d in all) Console.WriteLine($"{d.Name}: {d.Status()}");
+~out
+V-1: open
+V-2: closed
+PT-1: 450.0 psi
+=U cserr | Errors and Null | Handling the unexpected.
+=L cs8a | Exceptions
+@T
+When something goes wrong, C# **throws** an exception. `try` and `catch` handle it. Catch specific types first. `finally` always runs.
+~code
+string[] inputs = { "12", "abc" };
+foreach (var text in inputs)
+{
+    try
+    {
+        int n = int.Parse(text);
+        Console.WriteLine(100 / (n - 12));
+    }
+    catch (FormatException)
+    {
+        Console.WriteLine($"'{text}' isn't a number");
+    }
+    catch (DivideByZeroException)
+    {
+        Console.WriteLine("Can't divide by zero");
+    }
+    finally
+    {
+        Console.WriteLine("Checked");
+    }
+}
+@T
+Throw your own with `throw new ExceptionType("message")`. `ArgumentException` is the usual one for bad input. `e.Message` holds the text.
+~code
+try
+{
+    SetValve(150);
+}
+catch (ArgumentException e)
+{
+    Console.WriteLine(e.Message);
+}
+
+void SetValve(int percent)
+{
+    if (percent < 0 || percent > 100)
+        throw new ArgumentException("Percent must be 0 to 100");
+}
+@P
+What does this print?
+~code
+try
+{
+    Console.WriteLine("A");
+    throw new Exception("x");
+}
+catch (Exception)
+{
+    Console.WriteLine("B");
+}
+finally
+{
+    Console.WriteLine("C");
+}
+~opts
+* A
+B
+C
+- A
+C
+- B
+C
+~why
+The throw jumps to catch, and finally always runs.
+=L cs8b | Null
+@T
+A **null** reference points to nothing. Using a member of null throws a `NullReferenceException`.
+
+`?.` only continues if the value isn't null. `??` gives a fallback when it is.
+~code
+string name = null;
+Console.WriteLine(name?.Length);
+Console.WriteLine(name ?? "Unknown");
+
+name = "Ada";
+Console.WriteLine(name?.Length);
+@P
+What does this print?
+~code
+string city = null;
+Console.WriteLine((city ?? "none").ToUpper());
+~opts
+* NONE
+- null
+- An error
+~why
+`??` swaps in "none" before `ToUpper` runs.
+=F csfire8a | Hot fire: Safe divide
+@C
+Write `double SafeDivide(double a, double b)`. If `b` is 0, throw an `ArgumentException` with the message `Cannot divide by zero`. Otherwise return `a / b`.
+~start
+double SafeDivide(double a, double b)
+{
+    return 0;
+}
+~sol
+double SafeDivide(double a, double b)
+{
+    if (b == 0) throw new ArgumentException("Cannot divide by zero");
+    return a / b;
+}
+~hint
+if (b == 0) throw new ArgumentException("...");
+~after
+Console.WriteLine(SafeDivide(10, 4));
+try { SafeDivide(1, 0); } catch (ArgumentException e) { Console.WriteLine(e.Message); }
+~out
+2.5
+Cannot divide by zero
+=F csfire8b | Hot fire: Readings file
+@C
+Write `string Check(string[] lines)`. Each line should be a number. Add up the valid ones and count the bad ones, and return text like:
+
+`Total 30, skipped 1`
+
+Use `try`/`catch` around `double.Parse`, or `double.TryParse`.
+~start
+string Check(string[] lines)
+{
+    return "";
+}
+~sol
+string Check(string[] lines)
+{
+    double total = 0;
+    int skipped = 0;
+    foreach (var line in lines)
+    {
+        if (double.TryParse(line, out double v)) total += v;
+        else skipped++;
+    }
+    return $"Total {total}, skipped {skipped}";
+}
+~hint
+Loop through the lines, and count the ones that don't parse.
+~after
+Console.WriteLine(Check(new[] { "10", "bad", "20" }));
+Console.WriteLine(Check(new string[0]));
+Console.WriteLine(Check(new[] { "1.5", "x", "y" }));
+~out
+Total 30, skipped 1
+Total 0, skipped 0
+Total 1.5, skipped 2
+=F csfire8c | Hot fire: Find a part
+@C
+Write `string Describe(Dictionary<string, string> owners, string part)`. Return `part is owned by NAME`, or `part has no owner` when the part isn't in the dictionary or its owner is `null`.
+
+Use `TryGetValue`.
+~start
+string Describe(Dictionary<string, string> owners, string part)
+{
+    return "";
+}
+~sol
+string Describe(Dictionary<string, string> owners, string part)
+{
+    owners.TryGetValue(part, out string owner);
+    return owner == null ? $"{part} has no owner" : $"{part} is owned by {owner}";
+}
+~hint
+TryGetValue leaves owner as null when the key is missing.
+~after
+var o = new Dictionary<string, string> { ["valve"] = "Ana", ["seal"] = null };
+Console.WriteLine(Describe(o, "valve"));
+Console.WriteLine(Describe(o, "seal"));
+Console.WriteLine(Describe(o, "pump"));
+~out
+valve is owned by Ana
+seal has no owner
+pump has no owner

@@ -325,3 +325,8 @@ button.segb:disabled{cursor:default}
 [hidden]{display:none!important}
 .revback svg{width:16px;height:16px;flex:none}
 .revback{white-space:nowrap}
+/* Autocomplete list, placed beside the caret */
+.acbox{position:fixed;z-index:50;min-width:150px;max-width:min(320px,calc(100vw - 16px));background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.28);padding:4px;font:400 14px/1.3 var(--mono);color:var(--ink)}
+.aci{padding:7px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aci b{font-weight:600;color:var(--track)}
+.aci.on{background:var(--sunk);box-shadow:inset 2px 0 0 var(--track)}

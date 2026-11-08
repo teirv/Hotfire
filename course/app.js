@@ -100,22 +100,88 @@ function pyError(e,out){const raw=e&&e.toString?e.toString():String(e);
   const m=raw.match(/^(\w+):?\s*([\s\S]*?)(?: on line \d+)?$/);
   if(/TimeLimitError/.test(raw))return{out,timedOut:true};
   return{out,error:{name:m?m[1]:"Error",msg:m?m[2]:raw,line}}}
+// Skulpt 1.2 ships a placeholder for csv. Supply the default reader for the CSV exercise.
+function practiceCsv(){
+  const reader=new Sk.builtin.func(lines=>{
+    const rows=[];
+    let row=[],field="",quoted=false,started=false;
+    const endField=()=>{row.push(new Sk.builtin.str(field));field="";started=false};
+    const endRow=()=>{if(started||row.length)endField();rows.push(new Sk.builtin.list(row));row=[]};
+    for(const line of Sk.misceval.arrayFromIterable(lines)){
+      if(!(line instanceof Sk.builtin.str))throw new Sk.builtin.TypeError("CSV rows must be strings");
+      const text=line.v;
+      let ended=false;
+      for(let i=0;i<text.length;i++){
+        const ch=text[i];
+        if(quoted){
+          if(ch!=='"')field+=ch;
+          else if(text[i+1]==='"'){field+='"';i++}
+          else quoted=false;
+        }else if(ch==='"'&&!started){quoted=true;started=true}
+        else if(ch===',')endField();
+        else if(ch==='\n'||ch==='\r'){
+          endRow();ended=true;
+          if(ch==='\r'&&text[i+1]==='\n')i++;
+        }else{field+=ch;started=true}
+      }
+      if(!quoted&&!ended)endRow();
+    }
+    if(started||row.length)endRow();
+    return new Sk.builtin.list(rows).tp$iter();
+  });
+  return {reader};
+}
+function practicePigAge(){
+  return {pigAge_converter:new Sk.builtin.func(age=>
+    Sk.abstr.numberBinOp(age,new Sk.builtin.int_(5),"Mult"))};
+}
+const PY_PRACTICE_MODULES={csv:practiceCsv,pigAge:practicePigAge};
+function practiceModuleSources(python){
+  const mod=python&&PY_PRACTICE_MODULES[python.module];
+  return mod?{["src/lib/"+python.module+".js"]:"var $builtinmodule = "+mod.toString()+";"}:{};
+}
+// Each execution gets its own copies. Only the exercise's supplied files are writable.
+function configurePython(stdin,python,modules,output){
+  const q=[...(stdin||[])];
+  const files=python?.files?new Map(Object.entries(python.files)):null;
+  const options={output,read:name=>{
+    if(files?.has(name))return files.get(name);
+    const source=modules[name]??Sk.builtinFiles?.files[name];
+    if(source===undefined)throw "File not found: "+name;
+    return source;
+  },inputfun:prompt=>{
+    if(prompt)output(prompt);
+    if(!q.length)throw new Sk.builtin.EOFError("the program asked for more input than was provided");
+    return q.shift();
+  },inputfunTakesPrompt:true,__future__:Sk.python3,execLimit:3000};
+  if(files){
+    options.nonreadopen=true;
+    options.fileopen=file=>{
+      if(!files.has(file.name))throw new Sk.builtin.IOError("No such practice file: "+file.name);
+      if(file.mode.v.startsWith("w")){files.set(file.name,"");file.data$=""}
+      file.lineList=file.data$.match(/[^\n]*\n|[^\n]+$/g)||[];
+    };
+    options.filewrite=(file,value)=>files.set(file.name,files.get(file.name)+value.v);
+  }
+  Sk.configure(options);
+}
 /* Frames that forbid eval: compile on the page, then run the generated JS as a blob worker's own script. */
 function compilePy(code){const STOP={};let got=null;const real=Sk.global.eval;
   Sk.configure({output:()=>{},read:n=>{if(!Sk.builtinFiles||Sk.builtinFiles.files[n]===undefined)throw "File not found: "+n;return Sk.builtinFiles.files[n]},__future__:Sk.python3,execLimit:3000});
   Sk.global.eval=s=>{got=s;throw STOP};
   try{Sk.importMainWithBody("<stdin>",false,code,true)}catch(e){if(e!==STOP){Sk.global.eval=real;throw e}}
   Sk.global.eval=real;return got}
-function runPythonWorker(code,stdin){return new Promise(res=>{let main;
+function runPythonWorker(code,stdin,python,modules){return new Promise(res=>{let main;
   try{main=compilePy(code)}catch(e){return res(pyError(e,""))}
   const lines=main.trimEnd().split("\n"),fn=lines.pop().replace(";","");
-  const mods=[...new Set([...code.matchAll(/^\s*(?:import|from)\s+([a-zA-Z_]\w*)/gm)].map(m=>m[1]))].map(n=>Sk.builtinFiles.files["src/lib/"+n+".js"]).concat(Sk.builtinFiles.files["src/builtin/sys.js"]).filter(Boolean);
+  const mods=[...new Set([...code.matchAll(/^\s*(?:import|from)\s+([a-zA-Z_]\w*)/gm)].map(m=>m[1]))].map(n=>Sk.builtinFiles.files["src/lib/"+n+".js"]).concat(Sk.builtinFiles.files["src/builtin/sys.js"],Object.values(modules)).filter(Boolean);
   const entries=[`{key:${JSON.stringify(lines.join("\n").slice(0,400))},fn:function(){${lines.join("\n")}\nreturn ${fn}}}`,
     ...mods.map(m=>`{key:${JSON.stringify(m.slice(0,400))},fn:function(){${m}\nreturn $builtinmodule}}`)];
-  const src=`importScripts(${JSON.stringify(SK_BASE+"skulpt.min.js")},${JSON.stringify(SK_BASE+"skulpt-stdlib.js")});
-const T=[${entries.join(",")}],Q=${JSON.stringify(stdin||[])},CODE=${JSON.stringify(code)};let out="";
+  const scripts=["skulpt.min.js","skulpt-stdlib.js"].map(file=>JSON.stringify(new URL(SK_BASE+file,document.baseURI).href));
+  const src=`importScripts(${scripts.join(",")});
+const T=[${entries.join(",")}],CODE=${JSON.stringify(code)};let out="";
 Sk.global.eval=s=>{for(const t of T)if(s.includes(t.key))return t.fn();throw new Error("Module not available here")};
-Sk.configure({output:s=>{out+=s},read:n=>{if(Sk.builtinFiles.files[n]===undefined)throw "File not found: "+n;return Sk.builtinFiles.files[n]},inputfun:p=>{if(p)out+=p;if(!Q.length)throw new Sk.builtin.EOFError("the program asked for more input than was provided");return Q.shift()},inputfunTakesPrompt:true,__future__:Sk.python3,execLimit:3000});
+(${configurePython.toString()})(${JSON.stringify(stdin)},${JSON.stringify(python)},${JSON.stringify(modules)},s=>{out+=s});
 Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,CODE,true)).then(()=>postMessage({out}),e=>postMessage({out,raw:e&&e.toString?e.toString():String(e),line:e&&e.traceback&&e.traceback[0]?e.traceback[0].lineno:null}));`;
   const url=URL.createObjectURL(new Blob([src],{type:"text/javascript"}));let w;
   const fin=r=>{clearTimeout(t);try{w.terminate()}catch(e){}URL.revokeObjectURL(url);res(r)};
@@ -123,14 +189,19 @@ Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,CODE,true))
   w=new Worker(url);
   w.onmessage=e=>{const d=e.data;if(!d.raw)return fin({out:d.out});fin(pyError({toString:()=>d.raw,traceback:d.line?[{lineno:d.line}]:null},d.out))};
   w.onerror=e=>{e.preventDefault();fin({out:"",error:{name:"Engine",msg:String(e.message||"Python couldn't start in this view.")}})}})}
-async function runPython(code,stdin){
+async function runPython(code,stdin,python){
   try{await ensureSkulpt()}catch(e){return{out:"",error:{name:"Offline",msg:"The Python engine couldn't load. Check your connection and run again."}}}
-  if(!evalOK||window.__forceWorker)return runPythonWorker(code,stdin);
-  let out="";const q=[...(stdin||[])];
-  Sk.configure({output:s=>{out+=s},read:n=>{if(!Sk.builtinFiles||Sk.builtinFiles.files[n]===undefined)throw "File not found: "+n;return Sk.builtinFiles.files[n]},
-    inputfun:p=>{if(p)out+=p;if(!q.length)throw new Sk.builtin.EOFError("the program asked for more input than was provided");return q.shift()},inputfunTakesPrompt:true,__future__:Sk.python3,execLimit:3000});
-  try{await Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true));return{out}}
-  catch(e){return pyError(e,out)}}
+  const modules=practiceModuleSources(python);
+  if(!evalOK||window.__forceWorker)return runPythonWorker(code,stdin,python,modules);
+  let out="";const inBrowser=Sk.inBrowser;
+  try{
+    // Use Skulpt's read callback for fixture files instead of looking up DOM elements.
+    if(python?.files)Sk.inBrowser=false;
+    configurePython(stdin,python,modules,s=>{out+=s});
+    await Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true));
+    return{out};
+  }catch(e){return pyError(e,out)}
+  finally{Sk.inBrowser=inBrowser}}
 let live=null; /* a page left running so its preview stays interactive */
 function stopLive(){if(live){try{live.terminate()}catch(e){}live=null}}
 function runJS(code,web){return new Promise(res=>{
@@ -186,7 +257,7 @@ async function runRemote(lang,code,stdin,h){
   if(!r.ok)return{out:"",error:{name:"Runner error",msg:"The code runner didn't answer. Try again in a moment."}};
   return r.json()}
 function harness(lang,after){return !after?null:lang==="csharp"?{prefix:after}:lang==="rust"?{suffix:after}:null}
-function run(lang,code,stdin,web,h){const p=runQ.then(()=>REMOTE.includes(lang)?runRemote(lang,code,stdin,h):lang==="python"?runPython(code,stdin):runJS(code,web));runQ=p.catch(()=>{});return p}
+function run(lang,code,stdin,web,runtime){const p=runQ.then(()=>REMOTE.includes(lang)?runRemote(lang,code,stdin,runtime):lang==="python"?runPython(code,stdin,runtime):runJS(code,web));runQ=p.catch(()=>{});return p}
 const EXPLAIN={SyntaxError:"The code isn't written in a shape the language can read. Check this line and the one above for a missing bracket, quote or colon.",
  ReferenceError:"You used a name that doesn't exist. It's usually a typo, or the variable was made later in the code.",
  NameError:"You used a name that doesn't exist. It's usually a typo, or the variable was made later in the code.",
@@ -207,11 +278,12 @@ async function grade(s,lang,code){
     if(s.replace&&c.with)src=src.replace(new RegExp(s.replace),()=>c.with);
     const remote=REMOTE.includes(lang);
     if(s.html){src=src+"\n;await __loaded();\n"+(s.after||"")}else if(s.after&&!remote)src=src+"\n"+s.after;
-    const r=await run(lang,src,c.stdin,s.html?{html:s.html,after:s.after}:undefined,remote?harness(lang,s.after):null);
+    const r=await run(lang,src,c.stdin,s.html?{html:s.html,after:s.after}:undefined,remote?harness(lang,s.after):s.python);
     if(r.timedOut)return{ok:false,msg:`Your code ran for more than ${remote?5:3} seconds. A loop probably never ends.`};
     if(r.error)return{ok:false,msg:`**${r.error.name}**${r.error.line?` on line ${r.error.line}`:""}: ${r.error.msg}`,why:EXPLAIN[r.error.name]};
     if(s.anyout){if(!r.out.trim())return{ok:false,msg:"Your program ran but printed nothing."};continue}
-    if(norm(r.out)!==norm(c.out))return{ok:false,msg:cases.length>1?`Test ${i+1} of ${cases.length} didn't match.`:"The output didn't match.",stdin:c.stdin,expected:norm(c.out),got:norm(r.out)}}
+    const expected=s.exact?c.out:norm(c.out),got=s.exact?r.out.replace(/\r\n/g,"\n").replace(/\n$/,""):norm(r.out);
+    if(got!==expected)return{ok:false,msg:cases.length>1?`Test ${i+1} of ${cases.length} didn't match.`:"The output didn't match.",stdin:c.stdin,expected,got}}
   return{ok:true}}
 
 /* ---------- editor ---------- */
@@ -219,7 +291,7 @@ function editorHTML(id,opts={}){return `<div class="ed" id="${id}"><div class="e
 <div class="edwrap"><div class="gut" aria-hidden="true"></div><div class="edscroll"><div class="edstack"><pre aria-hidden="true"></pre><textarea id="${id}-ta" aria-label="Code editor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea></div></div></div>
 <div class="keys" aria-label="Code symbols"></div><div class="con"><span class="label">Console</span><pre class="idle">Press Run to see the output.</pre></div>${opts.html?`<div class="pv"><span class="label">Page preview</span><div class="pvhost"></div></div>`:""}</div>`}
 function htmlPane(html){return `<details class="htmlv"><summary>page.html</summary><pre class="static">${esc(html)}</pre></details>`}
-function mountEditor(id,{code,lang,start,onChange,getStdin,html,after}){
+function mountEditor(id,{code,lang,start,onChange,getStdin,html,after,python}){
   const root=document.getElementById(id),ta=$("textarea",root),pre=$("pre",root),gut=$(".gut",root),con=$(".con",root);
   const ind=lang==="python"?"    ":"  ";
   const paint=()=>{const v=ta.value;pre.innerHTML=hl(v,lang)+"\n";gut.textContent=v.split("\n").map((_,i)=>i+1).join("\n");if(onChange)onChange(v)};
@@ -240,7 +312,7 @@ function mountEditor(id,{code,lang,start,onChange,getStdin,html,after}){
   async function doRun(){if(isDoc){doc();$(".pv",root).scrollIntoView({block:"nearest",behavior:"smooth"});return}const btn=$("[data-ed=run]",root);btn.disabled=true;btn.textContent="Running";
     con.innerHTML=`<span class="label">Console</span><pre class="idle">Running</pre>`;
     const pv=$(".pvhost",root);let webo;if(html){webo={html,live:true,onDom:(d,w)=>{try{renderPreview(pv,d,w)}catch(e){}},onOut:o=>{const q=$("pre",con);if(q&&done2){q.classList.remove("idle");q.textContent=o}},onErr:er=>{con.insertAdjacentHTML("beforeend",`<pre class="err">${esc(er.name)}: ${esc(er.msg)}</pre>`)}}}
-    let done2=false;const remote=REMOTE.includes(lang),src=after&&!html&&!remote?ta.value+"\n"+after:ta.value;const r=await run(lang,src,getStdin?getStdin():[],webo,remote?harness(lang,after):null);done2=true;btn.disabled=false;btn.textContent="Run";
+    let done2=false;const remote=REMOTE.includes(lang),src=after&&!html&&!remote?ta.value+"\n"+after:ta.value;const r=await run(lang,src,getStdin?getStdin():[],webo,remote?harness(lang,after):python);done2=true;btn.disabled=false;btn.textContent="Run";
     let h=`<span class="label">Console</span><pre>${esc(r.out||"")}</pre>`;
     if(!r.out&&!r.error&&!r.timedOut)h=html?`<span class="label">Console</span><pre class="idle">Nothing printed. See the page preview.</pre>`:`<span class="label">Console</span><pre class="idle">Your program ran but printed nothing.</pre>`;
     if(r.timedOut)h+=`<pre class="err">Stopped after ${REMOTE.includes(lang)?5:3} seconds</pre><div class="why">A loop may never be ending. Check that something inside it changes.</div>`;
@@ -389,14 +461,44 @@ function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Ma
 function startDrill(){const ls=allLessons(S.lang),done=ls.filter(l=>S.done[l.id]),pool=(done.length>=3?done:ls).flatMap(l=>l.s.map((s,i)=>({s,key:l.id+":"+i})));
   const q=shuffle(pool.filter(x=>"QPBOW".includes(x.s.k))).slice(0,9),c=shuffle(pool.filter(x=>x.s.k==="C")).slice(0,1);
   L={mode:"drill",title:"Mixed drill",lang:S.lang,queue:[...q,...c],i:0,right:0,asked:0,miss:new Set(),fails:0};showCard()}
+function conceptPanel(card){
+  if(!card.concepts)return "";
+  const lessons=new Map(allLessons(L.lang).map(l=>[l.id,l.title]));
+  return `<aside class="concepts" aria-label="Review concepts"><h2 class="label">Review concepts</h2><div class="concept-links">${card.concepts.map(id=>
+    `<button data-concept="${esc(id)}" aria-haspopup="dialog">${esc(lessons.get(id))}</button>`).join("")}</div></aside>`;
+}
+function openConcept(id){
+  const lang=L.lang,lesson=allLessons(lang).find(l=>l.id===id);
+  if(!lesson)return;
+  const examples=lesson.s.filter(s=>s.k==="T");
+  const dialog=document.createElement("dialog");
+  dialog.className="concept-dialog";
+  dialog.setAttribute("aria-labelledby","concept-title");
+  dialog.innerHTML=`<div class="concept-head"><div><div class="crumb">${esc(lesson.unit.title)}</div><h2 id="concept-title">${esc(lesson.title)}</h2></div>
+    <form method="dialog"><button class="btn ghost" autofocus>Back to card</button></form></div>
+    <div class="concept-examples">${examples.map((s,i)=>teachingBody(s,lang,"concept-example-"+i)).join("")}</div>`;
+  dialog.addEventListener("close",()=>dialog.remove(),{once:true});
+  $(".lesson").append(dialog);
+  examples.forEach((s,i)=>mountTeachingExample(s,lang,"concept-example-"+i));
+  dialog.showModal();
+}
+function teachingBody(s,lang,id){
+  return `<div class="prose">${md(s.text)}</div>`+(s.code?
+    (s.html?htmlPane(s.html):"")+editorHTML(id,{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+
+    (s.stdin?`<div class="stdin">Input for this example: ${esc(s.stdin.join(" / "))}</div>`:""):"");
+}
+function mountTeachingExample(s,lang,id){
+  if(s.code)return mountEditor(id,{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]});
+}
 function shell(inner,foot){const q=L.queue;
-  return `<div class="lesson"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button>${(L.peek??L.i)>0?`<button class="x" data-prevcard="1" aria-label="Previous card">${ICON.left}</button>`:""}<div class="seg" role="group" aria-label="Lesson cards">${q.map((_,i)=>{const c=i===L.peek?"look":i<L.i?"on":i===L.i?"now":"";return i<=L.i?`<button class="segb" data-seg="${i}" aria-label="Go to card ${i+1}"><i class="${c}"></i></button>`:`<span class="segb"><i></i></span>`}).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
-  <div class="lbody">${inner}</div><div class="lfoot" id="foot">${foot}</div></div>`}
+  const panel=conceptPanel(q[L.peek??L.i].s);
+  return `<div class="lesson${panel?" with-concepts":""}"><div class="ltop"><button class="x" data-quit="1" aria-label="Leave lesson">${ICON.x}</button>${(L.peek??L.i)>0?`<button class="x" data-prevcard="1" aria-label="Previous card">${ICON.left}</button>`:""}<div class="seg" role="group" aria-label="Lesson cards">${q.map((_,i)=>{const c=i===L.peek?"look":i<L.i?"on":i===L.i?"now":"";return i<=L.i?`<button class="segb" data-seg="${i}" aria-label="Go to card ${i+1}"><i class="${c}"></i></button>`:`<span class="segb"><i></i></span>`}).join("")}</div>${canSpeak?`<button class="x" data-mute="1" aria-label="${S.voice?"Turn voice off":"Turn voice on"}">${S.voice?ICON.sound:ICON.mute}</button>`:""}</div>
+  ${panel}<div class="lbody">${inner}</div><div class="lfoot" id="foot">${foot}</div></div>`}
 function showCard(){const c=L.queue[L.i];if(!c)return finish();
   const s=c.s,lang=L.lang,crumb=`<div class="crumb">${esc(L.title)}</div>`+(s.ctx?`<div class="ctx prose">${md(s.ctx)}</div>`:"");L.sel=null;L.fills=[];L.locked=false;L.fails=0;ed=null;
   const a=$("#app");
-  if(s.k==="T"){const has=!!s.code;a.innerHTML=shell(crumb+`<div class="prose">${md(s.text)}</div>`+(has?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+(s.stdin?`<div class="stdin">Input for this example: ${esc(s.stdin.join(" / "))}</div>`:""):""),`<button class="btn" id="primary" data-next="1">Continue</button>`);
-    if(has)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]})}
+  if(s.k==="T"){a.innerHTML=shell(crumb+teachingBody(s,lang,"ed"),`<button class="btn" id="primary" data-next="1">Continue</button>`);
+    ed=mountTeachingExample(s,lang,"ed")}
   else if(s.k==="Q"||s.k==="P"){const opts=L.optOrder=shuffle(s.opts);
     a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.code?`<pre class="static" tabindex="0">${hl(s.code,lang)}</pre>`:"")+`<div class="opts" role="group" aria-label="Answers">${opts.map((o,i)=>`<button class="opt" data-opt="${i}" aria-pressed="false"><span class="k">${"ABCD"[i]}</span><span class="v">${s.k==="P"?`<pre>${esc(o.t)}</pre>`:inline(o.t)}</span></button>`).join("")}</div>`,`<button class="btn" id="primary" data-check="1" disabled>Check</button>`)}
   else if(s.k==="W"){a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.big?`<div class="bigja">${tx(s.big)}</div>`:"")+`<input id="wans" class="wans" aria-label="Your answer" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type your answer">`+(lang==="spanish"?`<div class="tokens akeys" aria-label="Spanish letters">${["á","é","í","ó","ú","ñ","ü","¿","¡"].map(k=>`<button class="tok" data-acc="${k}">${k}</button>`).join("")}</div>`:""),`<button class="btn" id="primary" data-check="1" disabled>Check</button>`);
@@ -405,19 +507,19 @@ function showCard(){const c=L.queue[L.i];if(!c)return finish();
   else if(s.k==="O"){L.toks=shuffle(s.lines.map((t,i)=>({t,i})));while(L.toks.length>1&&L.toks.every((x,i)=>x.i===i))L.toks=shuffle(L.toks);renderOrder(crumb)}
   else if(s.k==="C"){L.code=null;const first=s.cases[0]||{},stdin=first.stdin||[];
     a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+(stdin.length?`<div class="stdin">Run uses this input: ${esc(stdin.join(" / "))}</div>`:"")+testsHTML(s,lang)+`<div id="hintslot"></div>`,REMOTE.includes(lang)&&!canRemote()?`<div class="row"><p class="muted remote-note">C# and Rust code runs on your Hotfire server.</p><button class="btn ghost" id="primary" data-next="1">Skip for now</button></div>`:codeFoot());
-    const dk=c.key;let dt;ed=mountEditor("ed",{code:S.drafts[dk]??s.start,start:s.start,lang,html:s.html,after:s.replace?null:s.after,getStdin:()=>stdin,onChange:v=>{clearTimeout(dt);dt=setTimeout(()=>{if(L&&L.queue[L.i]&&L.queue[L.i].key===dk&&v!==s.start&&v.length<8000){S.drafts[dk]=v;save()}},900)}})}
+    const dk=c.key;let dt;ed=mountEditor("ed",{code:S.drafts[dk]??s.start,start:s.start,lang,html:s.html,after:s.replace?null:s.after,python:s.python,getStdin:()=>stdin,onChange:v=>{clearTimeout(dt);dt=setTimeout(()=>{if(L&&L.queue[L.i]&&L.queue[L.i].key===dk&&v!==s.start&&v.length<8000){S.drafts[dk]=v;save()}},900)}})}
   window.scrollTo(0,0)}
 /* Looking back is read-only: it never scores, and never touches XP, saved place or missed cards */
 function showPeek(){const c=L.queue[L.peek],s=c.s,lang=L.lang,last=L.peek+1>=L.i;ed=null;
   const top=`<div class="crumb">${esc(L.title)}</div><p class="peeknote">Looking back. Your progress is safe.</p>`+(s.ctx?`<div class="ctx prose">${md(s.ctx)}</div>`:""),why=s.why?`<div class="peekwhy">${inline(s.why)}</div>`:"";let body="";
-  if(s.k==="T")body=`<div class="prose">${md(s.text)}</div>`+(s.code?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"}):"");
+  if(s.k==="T")body=teachingBody(s,lang,"ed");
   if(s.k==="Q"||s.k==="P")body=`<div class="prose">${md(s.prompt)}</div>`+(s.code?`<pre class="static" tabindex="0">${hl(s.code,lang)}</pre>`:"")+`<div class="opts">${s.opts.map(o=>`<div class="opt ${o.ok?"right":""}"><span class="v">${s.k==="P"?`<pre>${esc(o.t)}</pre>`:inline(o.t)}</span></div>`).join("")}</div>`+why;
   if(s.k==="B"){const parts=s.code.split("___");body=`<div class="prose">${md(s.prompt)}</div><pre class="static">${parts.map((p,i)=>hl(p,lang)+(i<parts.length-1?`<span class="blank">${tx(s.ans[i])}</span>`:"")).join("")}</pre>`+why}
   if(s.k==="O")body=`<div class="prose">${md(s.prompt)}</div><pre class="static">${s.lines.map(l=>hl(l,lang)).join("\n")}</pre>`+why;
   if(s.k==="W")body=`<div class="prose">${md(s.prompt)}</div>`+(s.big?`<div class="bigja">${tx(s.big)}</div>`:"")+`<div class="opt right"><span class="v">${esc(s.accept[0])}</span></div>`+why;
   if(s.k==="C")body=`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+`<span class="label">Example solution</span><pre class="static" tabindex="0">${hl(s.sol,lang)}</pre>`;
   $("#app").innerHTML=shell(top+body,`<button class="btn" id="primary" data-peeknext="1">${last?"Back to where I was":"Next card"}</button>`);
-  if(s.k==="T"&&s.code)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]});
+  if(s.k==="T")ed=mountTeachingExample(s,lang,"ed");
   window.scrollTo(0,0)}
 /* What Check tests, shown up front so a challenge is never a guessing game */
 function testCode(t){return String(t).replace(/__click\("([^"]+)"\);?/g,'click $1').replace(/__type\("([^"]+)",\s*"([^"]*)"\);?/g,'type "$2" into $1').replace(/__key\("([^"]+)",\s*"([^"]*)"\);?/g,'press $2 in $1').replace(/__calls\("(\w+)"\)/g,'canvas $1 calls')}
@@ -495,6 +597,7 @@ document.addEventListener("click",e=>{const j=e.target.closest&&e.target.closest
   else if(d.fileb){downloadsCap&&downloadsCap.save({filename:"hotfire-backup.txt",data:backupCode()}).then(()=>{$("#backupmsg").textContent="Backup file saved."},()=>{$("#backupmsg").textContent="The backup file wasn't saved. You can copy the code instead."})}
   else if(d.restore){const ok=restoreCode($("#restorebox").value);if(ok){render();$("#backupmsg").textContent="Backup restored and combined with your current progress."}else $("#backupmsg").textContent="That code didn't work. Paste the whole code, starting with HOTFIRE1."}
   else if(d.start)startLesson(d.start);
+  else if(d.concept)openConcept(d.concept);
   else if(d.drill)startDrill();
   else if(d.review)startReview();
   else if(d.home){view="home";render()}
@@ -521,7 +624,7 @@ document.addEventListener("click",e=>{const j=e.target.closest&&e.target.closest
   else if(d.show){cancelCoach();const c=L.queue[L.i];ed.value=c.s.sol;L.showed=true;if(!S.missed[c.key]){S.missed[c.key]=Date.now();save()}$("#foot").innerHTML=codeFoot()}
 });
 document.addEventListener("change",e=>{if(e.target.id==="prefVoice"){S.voice=e.target.checked;if(S.voice)unlockVoice();else stopVoice();save()}if(e.target.id==="prefCoach"){S.coach=e.target.checked;save()}if(e.target.id==="prefVoiceName"){S.voiceName=e.target.value;save();unlockVoice();speak(PREVIEW)}});
-document.addEventListener("keydown",e=>{if(!L||/TEXTAREA|INPUT/.test(document.activeElement.tagName)||document.querySelector(".sheet"))return;
+document.addEventListener("keydown",e=>{if(!L||/TEXTAREA|INPUT/.test(document.activeElement.tagName)||document.querySelector(".sheet, .concept-dialog[open]"))return;
   if(/^[1-4]$/.test(e.key)){const b=document.querySelectorAll(".opt")[+e.key-1];if(b&&!b.disabled)b.click()}
   if(e.key==="Enter"&&document.activeElement.tagName!=="BUTTON"){const p=$("#primary");if(p&&!p.disabled)p.click()}});
 

@@ -16,10 +16,12 @@ function parse(txt,lang){
     if('BO'.includes(c.k)&&c.outs.length)o.vout=c.outs[0];
     if(c.k==='C'){o.start=_.start||'';if(!o.start.endsWith('\n'))o.start+='\n';o.sol=_.sol;o.hint=_.hint;if(_.after)o.after=_.after;if(_.replace)o.replace=_.replace;
       o.cases=c.outs.length?c.outs:[{stdin:[],out:''}];if(c.anyout)o.anyout=true;
+      if(_.exact!==undefined)o.exact=true;
+      if(_.files||_.module)o.python={files:_.files?JSON.parse(_.files):undefined,module:_.module};
       if(_.style)o.styles=_.style.split('\n').filter(Boolean).map(l=>{const [sel,prop,val]=l.split(' :: ');return{sel,prop,val}});
       if(_.must)o.must=_.must.split('\n').filter(Boolean).map(l=>{const [re,msg]=l.split(' :: ');return{re,msg}})}
     c._out=o}
-  for(const raw of txt.split('\n')){
+  for(const raw of txt.split(/\r?\n/)){
     let m;
     if((m=raw.match(/^=X (\S+)$/))){close();unit={extend:m[1],lessons:[]};units.push(unit);continue}
     if((m=raw.match(/^=U (\S+) \| ([^|]+?)(?: \| (.*))?$/))){close();unit={id:m[1],title:m[2],blurb:m[3]||'',lessons:[]};units.push(unit);continue}
@@ -80,6 +82,23 @@ for(const [lang,base] of Object.entries(EXTRA)){const files=fs.readdirSync('cour
   for(const l of x.lessons){if(l.fire)u.lessons.push(l);else{let i=u.lessons.findIndex(y=>y.fire);if(i<0)i=u.lessons.length;u.lessons.splice(i,0,l)}}}}
 for(const l of Object.keys(COURSES))COURSES[l].units=COURSES[l].units.filter(u=>!u.extend);
 {const seen=new Set();for(const l of Object.values(COURSES))for(const u of l.units)for(const x of u.lessons){if(seen.has(x.id))throw new Error('Duplicate lesson id '+x.id);seen.add(x.id);if(!x.s.length)throw new Error('Empty lesson '+x.id)}}
+// Concept links are listed in card order, including teaching cards in a Hot fire.
+const concepts=JSON.parse(fs.readFileSync('course/concepts.json','utf8'));
+for(const {units} of Object.values(COURSES)){
+  const earlier=new Map();
+  for(const lesson of units.flatMap(u=>u.lessons)){
+    if(!lesson.fire){earlier.set(lesson.id,lesson);continue}
+    const cards=concepts[lesson.id];
+    if(!cards||cards.length!==lesson.s.length)throw new Error('Expected one concept list per card in course/concepts.json for '+lesson.id);
+    cards.forEach((ids,i)=>{
+      if(!ids.length||new Set(ids).size!==ids.length||ids.some(id=>!earlier.get(id)?.s.some(s=>s.k==='T')))
+        throw new Error('Invalid concept links for '+lesson.id+', card '+(i+1));
+      lesson.s[i].concepts=ids;
+    });
+    delete concepts[lesson.id];
+  }
+}
+if(Object.keys(concepts).length)throw new Error('Unknown Hot fires in concepts.json: '+Object.keys(concepts).join(', '));
 /* Cards never point at something they don't show. "Refer to the code above" copies in the nearest
    earlier code from the same lesson, and a teach card marked ~keep stays on screen for the questions after it. */
 {const REF=/\b(the )?code (above|below)\b|above code|example above|\b(the )?same (code|component|function|class|object|loop|program)\b/i;

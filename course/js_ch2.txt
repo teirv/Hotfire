@@ -587,7 +587,7 @@ function render() {
 
 render();
 @Q
-Why does `toggle` check `on[r]` first?
+Refer to the code above. Why does `toggle` check `on[r]` first?
 ~opts
 * Neighbors can fall off the edge of the grid
 - To make it run faster
@@ -626,7 +626,7 @@ document.getElementById("go").addEventListener("click", () => {
   xhr.send();
 });
 @Q
-Why use `encodeURIComponent(city)`?
+Refer to the code above. Why use `encodeURIComponent(city)`?
 ~opts
 * Spaces and symbols must be made safe for a URL
 - It translates the city name

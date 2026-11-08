@@ -416,7 +416,7 @@ class Cat : Animal
     public Cat(string name) : base(name) { }
 }
 @Q
-`Cat` doesn't override `Speak`. What does `new Cat("Tom").Speak()` return?
+Refer to the code above. `Cat` doesn't override `Speak`. What does `new Cat("Tom").Speak()` return?
 ~opts
 * Tom makes a sound
 - Tom barks

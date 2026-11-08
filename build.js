@@ -4,7 +4,7 @@ function parse(txt,lang){
   const close=()=>{if(card){for(const k in card._){card._[k]=card._[k].join('\n').replace(/\n+$/,'')}finishCard(card);lesson.s.push(card._out);card=null}sec=null};
   function finishCard(c){const _=c._,o={k:c.k};
     if(_.html)o.html=_.html;
-    if(c.k==='T'){o.text=_.body;if(_.code)o.code=_.code;if(_.stdin!==undefined)o.stdin=_.stdin.split('\n')}
+    if(c.k==='T'){o.text=_.body;if(_.keep!==undefined)o.keep=true;if(_.code)o.code=_.code;if(_.stdin!==undefined)o.stdin=_.stdin.split('\n')}
     else o.prompt=_.body;
     if('QPB'.includes(c.k)){const list=[];for(const l of (_.opts||'').split('\n')){if(/^\* /.test(l))list.push({t:l.slice(2),ok:true});else if(/^- /.test(l))list.push({t:l.slice(2),ok:false});else if(list.length)list[list.length-1].t+='\n'+l}
       if(c.k==='B'){o.ans=list.filter(x=>x.ok).map(x=>x.t);o.extra=list.filter(x=>!x.ok).map(x=>x.t)}else o.opts=list}
@@ -80,6 +80,20 @@ for(const [lang,base] of Object.entries(EXTRA)){const files=fs.readdirSync('cour
   for(const l of x.lessons){if(l.fire)u.lessons.push(l);else{let i=u.lessons.findIndex(y=>y.fire);if(i<0)i=u.lessons.length;u.lessons.splice(i,0,l)}}}}
 for(const l of Object.keys(COURSES))COURSES[l].units=COURSES[l].units.filter(u=>!u.extend);
 {const seen=new Set();for(const l of Object.values(COURSES))for(const u of l.units)for(const x of u.lessons){if(seen.has(x.id))throw new Error('Duplicate lesson id '+x.id);seen.add(x.id);if(!x.s.length)throw new Error('Empty lesson '+x.id)}}
+/* Cards never point at something they don't show. "Refer to the code above" copies in the nearest
+   earlier code from the same lesson, and a teach card marked ~keep stays on screen for the questions after it. */
+{const REF=/\b(the )?code (above|below)\b|above code|example above|\b(the )?same (code|component|function|class|object|loop|program)\b/i;
+ for(const [ln,l] of Object.entries(COURSES))for(const u of l.units)for(const x of u.lessons){let code=null,html=null,ctx=null;
+  for(const c of x.s){
+   if(c.k==='T'){if(c.keep){ctx=c.text.replace(/^Read this[^\n]*\n+/i,'').replace(/^Tap the text[^\n]*\n+/i,'');delete c.keep}else ctx=null}
+   else if(ctx&&!c.code)c.ctx=ctx;
+   const t=c.prompt||'';
+   if('QP'.includes(c.k)&&!c.code&&!t.includes('```')&&REF.test(t)){if(!code)throw new Error(`${ln}/${x.id}: "${t.slice(0,50)}" refers to code, but the lesson has none before it`);c.code=code;if(html&&!c.html)c.html=html}
+   if('QP'.includes(c.k)&&c.code)c.prompt=t.replace(/Refer to the code above\./,'Refer to the code below.').replace(/\bthe code above\b/,'the code below');
+   if(c.k!=='B'&&c.k!=='O'&&c.code){code=c.code;html=c.html||null}
+   {const m=(c.text||t).match(/```\w*\n([\s\S]*?)```/);if(m&&!c.code)code=m[1].replace(/\n$/,'')}
+   if(c.k==='C'&&c.sol){code=c.sol;html=c.html||null}
+   if(c.k!=='T'&&/\babove\b/i.test(t)&&REF.test(t)&&!c.code&&!c.ctx)throw new Error(`${ln}/${x.id}: card refers to something above it that isn't shown`)}}}
 // clean out-case buffers
 const walk=o=>{if(Array.isArray(o))o.forEach(walk);else if(o&&typeof o==='object'){if(o._b){o.out=o._b.join('\n').replace(/\n+$/,'');delete o._b}Object.values(o).forEach(walk)}};walk(COURSES);
 const json=JSON.stringify(COURSES).replace(/</g,'\\u003c');

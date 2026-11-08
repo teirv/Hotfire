@@ -16,10 +16,12 @@ function parse(txt,lang){
     if('BO'.includes(c.k)&&c.outs.length)o.vout=c.outs[0];
     if(c.k==='C'){o.start=_.start||'';if(!o.start.endsWith('\n'))o.start+='\n';o.sol=_.sol;o.hint=_.hint;if(_.after)o.after=_.after;if(_.replace)o.replace=_.replace;
       o.cases=c.outs.length?c.outs:[{stdin:[],out:''}];if(c.anyout)o.anyout=true;
+      if(_.exact!==undefined)o.exact=true;
+      if(_.files||_.module)o.python={files:_.files?JSON.parse(_.files):undefined,module:_.module};
       if(_.style)o.styles=_.style.split('\n').filter(Boolean).map(l=>{const [sel,prop,val]=l.split(' :: ');return{sel,prop,val}});
       if(_.must)o.must=_.must.split('\n').filter(Boolean).map(l=>{const [re,msg]=l.split(' :: ');return{re,msg}})}
     c._out=o}
-  for(const raw of txt.split('\n')){
+  for(const raw of txt.split(/\r?\n/)){
     let m;
     if((m=raw.match(/^=U (\S+) \| ([^|]+?)(?: \| (.*))?$/))){close();unit={id:m[1],title:m[2],blurb:m[3]||'',lessons:[]};units.push(unit);continue}
     if((m=raw.match(/^=([LF]) (\S+) \| (.*)$/))){close();lesson={id:m[2],title:m[3],s:[]};if(m[1]==='F')lesson.fire=true;unit.lessons.push(lesson);continue}

@@ -1,0 +1,60 @@
+/* Concepts the review buttons can point to. Each pattern is matched against code, never prose.
+   The build links a concept to the first lesson whose teaching cards show it, so this list
+   never names lessons and can't go stale when lessons move. */
+const P = {
+  python: {
+    'print': /\bprint\s*\(/, 'input': /\binput\s*\(/, 'int()': /\bint\s*\(/, 'float()': /\bfloat\s*\(/, 'str()': /\bstr\s*\(/,
+    'f-strings': /\bf["']/, 'format spec': /\{[^{}]*:[^{}]*\.\d+f\}/, 'round': /\bround\s*\(/, 'floor division': /\/\//, 'modulo': /\s%\s/,
+    'exponent': /\*\*/, 'comparison': /^\s*(if|elif|while)\b.*(==|!=|<=|>=|<|>)/m, 'and/or/not': /^\s*(if|elif|while)\b.*\b(and|or|not)\b/m, 'if': /^\s*if\b/m, 'elif': /^\s*elif\b/m, 'else': /^\s*else\s*:/m,
+    'for loop': /^\s*for\b.*\bin\b/m, 'range': /\brange\s*\(/, 'while': /^\s*while\b/m, 'break/continue': /\b(break|continue)\b/,
+    'def': /^\s*def\s/m, 'return': /\breturn\b/, 'lists': /=\s*\[/, 'append': /\.append\s*\(/, 'insert/remove/pop': /\.(insert|remove|pop)\s*\(/,
+    'len': /\blen\s*\(/, 'in': /\bin\s+\w/, 'indexing': /\w\[-?\d+\]/, 'slicing': /\[[-\d\w]*:[-\d\w]*(:[-\d\w]*)?\]/, 'sort': /\.sort\s*\(|\bsorted\s*\(/,
+    'sum/min/max': /\b(sum|min|max)\s*\(/, 'tuples': /\(\s*\w+\s*,\s*\w+\s*\)\s*=|=\s*\(\s*["'\d]/, 'dicts': /(=|\(|,|return)\s*\{\s*(["'][^"']*["']|\d+)\s*:|=\s*\{\s*\}|\bdict\s*\(/, 'dict methods': /\.(keys|values|items|get)\s*\(/,
+    'sets': /\bset\s*\(/, 'split': /\.split\s*\(/, 'join': /\.join\s*\(/, 'strip': /\.strip\s*\(/, 'upper/lower': /\.(upper|lower|title|capitalize)\s*\(/,
+    'replace/find': /\.(replace|find|count|startswith|endswith)\s*\(/, 'try/except': /^\s*try\s*:/m, 'raise': /\braise\b/,
+    'math module': /\bmath\.\w/, 'random': /\brandom\.\w/, 'open files': /\bopen\s*\(/, 'with': /^\s*with\s/m, 'csv': /\bcsv\./, 'type()': /\btype\s*\(/,
+    'isinstance': /\bisinstance\s*\(/, 'enumerate/zip': /\b(enumerate|zip)\s*\(/, 'comprehensions': /\[[^\]]+\bfor\b[^\]]+\]/, 'lambda': /\blambda\b/, 'class': /^\s*class\s/m,
+    'divmod': /\bdivmod\s*\(/, 'abs': /\babs\s*\(/,
+  },
+  javascript: {
+    'console.log': /console\.log/, 'let/const': /\b(let|const)\s/, 'template literals': /\$\{/, 'math operators': /\s[%*/]\s|\*\*/, 'comparison': /===|!==|<=|>=/,
+    'logic': /&&|\|\||!\w/, 'if': /\bif\s*\(/, 'else': /\belse\b/, 'switch': /\bswitch\s*\(/, 'ternary': /\?[^?.:]+:/, 'for loop': /\bfor\s*\(\s*let\b[^;]*;/,
+    'for...of': /\bfor\s*\(\s*(const|let)\s+\w+\s+of\b/, 'for...in': /\bfor\s*\(\s*(const|let)\s+\w+\s+in\b/, 'while': /\bwhile\s*\(/, 'functions': /\bfunction\s+\w+\s*\(/, 'arrow functions': /=>/,
+    'return': /\breturn\b/, 'arrays': /=\s*\[/, 'push/pop': /\.(push|pop|shift|unshift)\s*\(/, 'length': /\.length\b/, 'map': /\.map\s*\(/, 'filter': /\.filter\s*\(/,
+    'reduce': /\.reduce\s*\(/, 'find': /\.(find|findIndex|some|every)\s*\(/, 'forEach': /\.forEach\s*\(/, 'includes/indexOf': /\.(includes|indexOf)\s*\(/, 'slice/splice': /\.(slice|splice)\s*\(/,
+    'sort': /\.sort\s*\(/, 'join/split': /\.(join|split)\s*\(/, 'objects': /=\s*\{\s*\w+\s*:/, 'this': /\bthis\./, 'getters/setters': /\b(get|set)\s+\w+\s*\(/, 'Object.keys': /Object\.(keys|values|entries)/,
+    'Map': /new Map\b/, 'Set': /new Set\b/, 'string methods': /\.(toUpperCase|toLowerCase|trim|replace|padStart|startsWith|endsWith|charAt|substring)\s*\(/,
+    'Math': /\bMath\.\w/, 'toFixed': /\.toFixed\s*\(/, 'Number/parse': /\b(parseInt|parseFloat|Number)\s*\(/, 'Date': /new Date\b/, 'try/catch': /\btry\s*\{/, 'throw': /\bthrow\b/,
+    'class': /\bclass\s+\w+/, 'extends': /\bextends\b/, 'spread': /\.\.\.\w/, 'destructuring': /(const|let)\s*[\[{]\s*\w/, 'querySelector': /querySelector(All)?\s*\(|getElementById/,
+    'textContent/innerHTML': /\.(textContent|innerHTML)\b/, 'createElement': /createElement\s*\(|appendChild|\.append\s*\(/, 'classList': /\.classList\./, 'style': /\.style\.\w/,
+    'events': /addEventListener\s*\(/, 'forms': /\.value\b|preventDefault/, 'timers': /\b(setTimeout|setInterval)\s*\(/, 'JSON': /JSON\.(parse|stringify)/, 'XHR': /XMLHttpRequest/,
+    'fetch': /\bfetch\s*\(/, 'promises': /\.then\s*\(|new Promise\b/, 'async/await': /\basync\b|\bawait\b/, 'localStorage': /localStorage\./, 'regex': /\/[^\/\n]+\/[gimsuy]*\.test\s*\(|\.match\s*\(/,
+    'closures': /return\s+(function|\(\)\s*=>)/, 'modules': /^\s*(import|export)\s/m, 'canvas': /getContext\s*\(/, 'WebSocket': /new WebSocket\b/, 'jQuery': /\$\(/,
+  },
+  html: {
+    'headings': /<h[1-6]\b/, 'paragraphs': /<p\b/, 'strong/em': /<(strong|em)\b/, 'links': /<a\s/, 'images': /<img\b/, 'lists': /<(ul|ol)\b/, 'tables': /<table\b/,
+    'forms': /<form\b/, 'inputs': /<input\b/, 'labels': /<label\b/, 'buttons': /<button\b/, 'semantic tags': /<(header|nav|main|article|section|aside|footer)\b/,
+    'ids/classes': /\b(id|class)="/, 'page skeleton': /<!doctype|<head\b/i, 'color': /(^|[^-])color\s*:/m, 'background': /background(-color)?\s*:/, 'fonts': /font-(size|weight|family)\s*:/,
+    'text styles': /text-(align|decoration|transform)\s*:|line-height\s*:/, 'box model': /\b(margin|padding)\s*:/, 'borders': /border(-radius)?\s*:/, 'box-sizing': /box-sizing\s*:/,
+    'width/height': /(^|\s|;)(max-|min-)?(width|height)\s*:/m, 'display': /display\s*:\s*(block|inline|none)/, 'flexbox': /display\s*:\s*flex|justify-content|align-items/,
+    'flex sizing': /\bflex\s*:|flex-(grow|wrap|direction)/, 'grid': /display\s*:\s*grid|grid-template/, 'grid areas': /grid-(area|column|row)\s*:/, 'gap': /\bgap\s*:/,
+    'class selectors': /^\s*\.\w[\w-]*\s*[{,]/m, 'pseudo-classes': /:(hover|focus|nth-child|not|first-child|last-child)\b/, 'attribute selectors': /\[\w+[\^$*]?="/,
+    'media queries': /@media\b/, 'fluid sizes': /\b(clamp|min|max)\(|aspect-ratio/, 'position': /position\s*:/, 'z-index': /z-index\s*:/, 'transitions': /transition\s*:/,
+    'transforms': /transform\s*:/, 'variables': /var\(--|--\w+\s*:/,
+  },
+  csharp: {
+    'WriteLine': /Console\.Write(Line)?\s*\(/, 'ReadLine': /Console\.ReadLine/, 'variables': /\b(int|double|string|bool|var|decimal)\s+\w+\s*=/, 'interpolation': /\$"/,
+    'Parse': /\.(Parse|TryParse)\s*\(/, 'math': /\s[%*/]\s|Math\.\w/, 'if': /\bif\s*\(/, 'else': /\belse\b/, 'switch': /\bswitch\b/, 'for': /\bfor\s*\(/, 'foreach': /\bforeach\s*\(/,
+    'while': /\bwhile\s*\(/, 'methods': /\bstatic\s+\w+(<[^>]+>)?\s+\w+\s*\(/, 'return': /\breturn\b/, 'arrays': /\w\[\]\s+\w+|new\s+\w+\[/, 'List': /List</, 'Dictionary': /Dictionary</,
+    'string methods': /\.(ToUpper|ToLower|Trim|Split|Contains|Replace|Substring|Join)\s*\(/, 'classes': /\bclass\s+\w+/, 'properties': /\{\s*get;/, 'constructors': /public\s+[A-Z]\w*\s*\([^)]*\)\s*\{/,
+    'inheritance': /class\s+\w+\s*:\s*\w+/, 'override': /\b(virtual|override|abstract)\b/, 'interfaces': /\binterface\s+\w+/, 'try/catch': /\btry\b/, 'LINQ': /\.(Where|Select|OrderBy|Sum|Count|Any|First)\s*\(/,
+  },
+  rust: {
+    'println!': /println!/, 'let': /\blet\s/, 'mut': /\bmut\b/, 'types': /:\s*(i32|i64|u32|f64|bool|char|usize)\b/, 'math': /\s[%*/]\s/, 'if': /\bif\s/, 'match': /\bmatch\s/,
+    'loop': /\bloop\s*\{/, 'while': /\bwhile\s/, 'for': /\bfor\s+\w+\s+in\b/, 'ranges': /\d\.\.=?\d|\.\.=?\w/, 'functions': /\bfn\s+\w+\s*\(/, 'return values': /->\s*\w/,
+    'String': /String::from|\.to_string\(\)/, '&str': /&str\b/, 'borrowing': /&mut\s|&\w/, 'clone': /\.clone\(\)/, 'Vec': /\bvec!|Vec</, 'iterators': /\.iter\(\)|\.into_iter\(\)/,
+    'map/filter': /\.(map|filter|sum|collect)\s*\(/, 'closures': /\|\w*\|/, 'structs': /\bstruct\s+\w+/, 'impl': /\bimpl\b/, 'enums': /\benum\s+\w+/, 'Option': /\bSome\(|\bNone\b|Option</,
+    'Result': /\bOk\(|\bErr\(|Result</, '? operator': /\)\?/, 'traits': /\btrait\s+\w+/, 'HashMap': /HashMap/, 'parse': /\.parse(::<\w+>)?\(\)/, 'format!': /format!/,
+  },
+};
+module.exports = P;

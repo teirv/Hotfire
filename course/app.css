@@ -300,3 +300,28 @@ button.segb:disabled{cursor:default}
 
 .ctx{background:var(--panel,rgba(127,127,127,.08));border-left:3px solid var(--accent,#f5a623);border-radius:6px;padding:10px 14px;margin:0 0 14px}
 .ctx p:first-child{margin-top:0}.ctx p:last-child{margin-bottom:0}
+/* Review a concept: chips under the title on phones, a panel beside the card on wide screens */
+.revrail{border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.revrail summary{cursor:pointer;padding:9px 12px;font:600 13px/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);list-style:none;display:flex;align-items:center;gap:8px}
+.revrail summary::-webkit-details-marker{display:none}
+.revrail summary::before{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
+.revrail[open] summary::before{transform:rotate(45deg)}
+.revn{margin-left:auto;font:600 12px/1 var(--mono);background:var(--sunk);color:var(--ink);padding:3px 7px;border-radius:999px}
+.revlist{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px 10px}
+.revb{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:7px 10px;border-radius:5px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);min-height:44px;max-width:100%}
+.revb span{font:500 14px/1.25 var(--body)}
+.revb small{font-size:12px;color:var(--muted)}
+.revb:hover,.revb:focus-visible{border-color:var(--track)}
+@media (min-width:1180px){
+  .revrail{position:fixed;top:96px;left:calc(50% + 380px);width:220px;max-height:calc(100vh - 140px);overflow-y:auto;z-index:2}
+  .revlist{flex-direction:column;flex-wrap:nowrap}
+  .revb{width:100%}
+}
+.revpane{min-height:100vh;background:var(--bg);color:var(--ink);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.revwrap{max-width:720px;margin:0 auto;padding-block:18px 40px;display:flex;flex-direction:column;gap:14px}
+.revback{align-self:flex-start;font-size:16px;min-height:44px}
+.revtitle{margin:0;font:700 30px/1.1 var(--display);text-wrap:balance}
+.revcard{display:flex;flex-direction:column;gap:12px;padding-top:14px;border-top:1px solid var(--line);min-width:0}
+[hidden]{display:none!important}
+.revback svg{width:16px;height:16px;flex:none}
+.revback{white-space:nowrap}

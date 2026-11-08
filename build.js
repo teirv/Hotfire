@@ -13,9 +13,11 @@ function parse(txt,lang){
     if(c.k==='O')o.lines=_.lines.split('\n');
     if(c.k==='W')o.accept=_.accept.split('\n').filter(Boolean);
     if(_.why)o.why=_.why;
+    if(c.review)o.review=c.review;
     if('BO'.includes(c.k)&&c.outs.length)o.vout=c.outs[0];
     if(c.k==='C'){o.start=_.start||'';if(!o.start.endsWith('\n'))o.start+='\n';o.sol=_.sol;o.hint=_.hint;if(_.after)o.after=_.after;if(_.replace)o.replace=_.replace;
       o.cases=c.outs.length?c.outs:[{stdin:[],out:''}];if(c.anyout)o.anyout=true;
+      if(c.files)o.files=Object.fromEntries(c.files.map(f=>[f.name,f.buf.join('\n').replace(/\n+$/,'')+'\n']));
       if(_.style)o.styles=_.style.split('\n').filter(Boolean).map(l=>{const [sel,prop,val]=l.split(' :: ');return{sel,prop,val}});
       if(_.must)o.must=_.must.split('\n').filter(Boolean).map(l=>{const [re,msg]=l.split(' :: ');return{re,msg}})}
     c._out=o}
@@ -27,6 +29,8 @@ function parse(txt,lang){
     if((m=raw.match(/^@([TQPBOCW])$/))){close();card={k:m[1],_:{body:[]},outs:[]};sec='body';continue}
     if(card&&(m=raw.match(/^~(\w+)(?: (.*))?$/))){
       if(m[1]==='anyout'){card.anyout=true;continue}
+      if(m[1]==='file'){const buf=[];(card.files=card.files||[]).push({name:(m[2]||'').trim(),buf});sec=buf;continue}
+      if(m[1]==='review'){card.review=(m[2]||'').split(/[ ,]+/).filter(Boolean);sec='_skip';card._._skip=[];continue}
       if(m[1]==='out'){const c={stdin:[]},a=m[2]||'';if(a.startsWith('stdin='))c.stdin=a.slice(6).split('|');if(a.startsWith('with='))c.with=a.slice(5);card.outs.push(c);const buf=[];c._b=buf;sec=buf;continue}
       sec=m[1];card._[sec]=card._[sec]||[];continue}
     if(card){if(Array.isArray(sec))sec.push(raw);else card._[sec].push(raw)}
@@ -42,6 +46,7 @@ const js=[];CH.forEach(([t,f],i)=>{if(!fs.existsSync(f))return;let us=parse(fs.r
   if(i===0){const all=[...base,...us];us=ORDER1.map(id=>all.find(u=>u.id===id));us.forEach(u=>{if(MAP[u.id])u.blurb=MAP[u.id]+' '+u.blurb})}
   us.forEach(u=>{u.ch=t;js.push(u)})});
 const py=parse(fs.readFileSync('course/python.txt','utf8'),'python');
+py.push(...parse(fs.readFileSync('course/py_practice.txt','utf8'),'python'));
 
 const KANA=[['a',['あア a','いイ i','うウ u','えエ e','おオ o'],['かカ ka','きキ ki','くク ku','けケ ke','こコ ko']],
  ['s',['さサ sa','しシ shi si','すス su','せセ se','そソ so'],['たタ ta','ちチ chi ti','つツ tsu tu','てテ te','とト to']],
@@ -96,6 +101,36 @@ for(const l of Object.keys(COURSES))COURSES[l].units=COURSES[l].units.filter(u=>
    if(c.k!=='T'&&/\babove\b/i.test(t)&&REF.test(t)&&!c.code&&!c.ctx)throw new Error(`${ln}/${x.id}: card refers to something above it that isn't shown`)}}}
 // clean out-case buffers
 const walk=o=>{if(Array.isArray(o))o.forEach(walk);else if(o&&typeof o==='object'){if(o._b){o.out=o._b.join('\n').replace(/\n+$/,'');delete o._b}Object.values(o).forEach(walk)}};walk(COURSES);
+/* Review buttons. Every question in a hot fire links to the earlier lessons that teach the ideas
+   it uses (up to 10). course/concepts.js says what each idea looks like in code. The lesson that
+   first teaches an idea is found here, so moving or adding lessons never breaks the links. A card
+   can name its own lessons with "~review id, id". */
+{const PAT=require('./course/concepts.js');
+ const spans=t=>[...String(t||'').matchAll(/```\w*\n([\s\S]*?)```|`([^`\n]+)`/g)].map(m=>m[1]||m[2]).join('\n');
+ const teachCode=c=>c.k==='T'?(c.code||'')+'\n'+(c.html||'')+'\n'+spans(c.text):'';
+ const askCode=c=>[c.sol,c.code,c.start,c.html,spans(c.prompt),...(c.opts||[]).map(o=>o.t),...(c.lines||[]),...(c.ans||[])].filter(Boolean).join('\n');
+ let links=0;
+ for(const [ln,l] of Object.entries(COURSES)){const pats=Object.entries(PAT[ln]||{}),owner={},order={},byId={};let n=0;
+  for(const u of l.units)for(const x of u.lessons){order[x.id]=n++;byId[x.id]=x;x.unit=u}
+  /* Who teaches an idea: the earliest main lesson that shows it. "Going deeper" lessons
+     (ids starting with x) only count when no main lesson shows it. */
+  {const seen={};for(const u of l.units)for(const x of u.lessons){if(x.fire)continue;
+    for(const [k,re] of pats){const cnt=x.s.filter(c=>re.test(teachCode(c))).length;if(!cnt)continue;
+     const tier=x.id[0]==='x'?1:0;if(seen[k]===undefined||tier<seen[k]){seen[k]=tier;owner[k]=x.id}}}}
+  for(const u of l.units)for(const x of u.lessons){
+   if(!x.fire)continue;
+   const unitLessons=u.lessons.filter(y=>!y.fire&&order[y.id]<order[x.id]).map(y=>y.id);
+   const prevUnit=l.units[l.units.indexOf(u)-1];
+   const fallback=(unitLessons.length?unitLessons:prevUnit?prevUnit.lessons.filter(y=>!y.fire).map(y=>y.id):[]).slice(-10);
+   for(const c of x.s){if(c.k==='T')continue;
+    if(c.review){for(const id of c.review)if(!byId[id]||byId[id].fire||order[id]>=order[x.id])throw new Error(`${ln}/${x.id}: ~review names "${id}", which isn't an earlier lesson`);links+=c.review.length;continue}
+    const code=askCode(c),hits={};
+    for(const [k,re] of pats)if(owner[k]&&re.test(code))hits[owner[k]]=(hits[owner[k]]||0)+1;
+    let ids=Object.keys(hits).sort((a,b)=>hits[b]-hits[a]||order[a]-order[b]).slice(0,10);
+    for(const id of fallback){if(ids.length>=3)break;if(!ids.includes(id))ids.push(id)}
+    c.review=ids.sort((a,b)=>order[a]-order[b]);links+=c.review.length}}
+  for(const u of l.units)for(const x of u.lessons)delete x.unit}
+ console.log('review links',links)}
 const json=JSON.stringify(COURSES).replace(/</g,'\\u003c');
 const lit=f=>JSON.stringify(fs.readFileSync(f,'utf8')).replace(/</g,'\\u003c');
 const JQS=fs.readFileSync('vendor/jquery.min.js','utf8');
@@ -111,6 +146,7 @@ const COURSES=${json};
 const LINKEDOM=${lit('vendor/linkedom.iife.js')};
 const JSPRE=${lit('course/prelude.js')};
 const WEBPRE=${lit('course/webpre.js')};
+const PYFS=${lit('course/pyfs.py')};
 const JQUERY=${JSON.stringify(JQS).replace(/</g,'\\u003c')};
 ${app.replace(/<\/script/g,'<\\/script')}</script>
 `;

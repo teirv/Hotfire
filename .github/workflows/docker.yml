@@ -51,7 +51,7 @@ jobs:
       - name: Smoke test the runner
         if: matrix.name == 'hotfire-runner'
         run: |
-          docker run -d --name r -p 8100:8100 --read-only --tmpfs /tmp:exec,size=512m --memory 1g --pids-limit 512 \
+          docker run -d --name hfrunner -p 8100:8100 --read-only --tmpfs /tmp:exec,size=512m --memory 1g --pids-limit 512 \
             --cap-drop ALL --cap-add CHOWN --cap-add SETUID --cap-add SETGID --cap-add KILL --cap-add DAC_OVERRIDE --cap-add FOWNER \
             --security-opt no-new-privileges:true local/hotfire-runner:test
           for i in $(seq 1 30); do curl -sf localhost:8100/healthz && break; sleep 1; done

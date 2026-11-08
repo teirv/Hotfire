@@ -170,6 +170,7 @@ It's a very common way to agree.
 Tap the text to hear it.
 
 `Me llamo Laura y vivo en Austin con mi familia. Todos los días me levanto a las seis y voy al trabajo en coche. El fin de semana pasado fuimos a San Antonio. Hacía mucho calor, pero comimos muy bien. El próximo año quiero viajar a México.`
+~keep
 @Q
 How does Laura get to work?
 ~opts

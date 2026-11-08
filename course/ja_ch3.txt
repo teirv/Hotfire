@@ -598,6 +598,7 @@ What does {留学|りゅうがく}することにしました mean?
 Read this aloud, and tap sentences to hear them.
 
 {私|わたし}は {毎朝|まいあさ} {六時|ろくじ}に {起|お}きます。{朝|あさ}ごはんを {食|た}べて、{車|くるま}で {会社|かいしゃ}に {行|い}きます。{仕事|しごと}は {大変|たいへん}ですが、おもしろいです。{週末|しゅうまつ}は {家族|かぞく}と {公園|こうえん}に {行|い}きます。
+~keep
 @Q
 How does the writer get to work?
 ~opts

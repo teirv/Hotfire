@@ -329,6 +329,11 @@ button.segb:disabled{cursor:default}
 [hidden]{display:none!important}
 .revback svg{width:16px;height:16px;flex:none}
 .revback{white-space:nowrap}
+/* Autocomplete list, placed beside the caret */
+.acbox{position:fixed;z-index:50;min-width:150px;max-width:min(320px,calc(100vw - 16px));background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.28);padding:4px;font:400 14px/1.3 var(--mono);color:var(--ink)}
+.aci{padding:7px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aci b{font-weight:600;color:var(--track)}
+.aci.on{background:var(--sunk);box-shadow:inset 2px 0 0 var(--track)}
 </style>
 <div id="app"></div>
 <script>
@@ -359,7 +364,7 @@ const ICON={check:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" st
 
 /* ---------- saved progress ---------- */
 const KEY="hotfire.v1";
-const blank=()=>({at:{},drafts:{},voice:true,coach:true,voiceName:"",lang:"javascript",xp:0,days:{},done:{},missed:{},scratch:{}});
+const blank=()=>({at:{},drafts:{},voice:true,coach:true,complete:true,voiceName:"",lang:"javascript",xp:0,days:{},done:{},missed:{},scratch:{}});
 let S=blank(),dbRef=null,syncState="local",writing=false,dirty=false,timer=null,lastSaved=0,downloadsCap=null;
 try{const v=JSON.parse(localStorage.getItem(KEY)||"null");if(v)S=Object.assign(blank(),v)}catch(e){}
 function today(d=new Date()){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
@@ -567,6 +572,57 @@ function editorHTML(id,opts={}){return `<div class="ed" id="${id}"><div class="e
 <div class="edwrap"><div class="gut" aria-hidden="true"></div><div class="edscroll"><div class="edstack"><pre aria-hidden="true"></pre><textarea id="${id}-ta" aria-label="Code editor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea></div></div></div>
 <div class="keys" aria-label="Code symbols"></div><div class="con"><span class="label">Console</span><pre class="idle">Press Run to see the output.</pre></div>${opts.html?`<div class="pv"><span class="label">Page preview</span><div class="pvhost"></div></div>`:""}</div>`}
 function htmlPane(html){return `<details class="htmlv"><summary>page.html</summary><pre class="static">${esc(html)}</pre></details>`}
+/* ---------- autocomplete for code editors (never used for typed language answers) ---------- */
+const AC_WORDS={
+ python:{w:"and as assert break class continue def del elif else except False finally for from global if import in is lambda None nonlocal not or pass raise return True try while with yield print input int float str bool len range list dict set tuple sorted sum min max abs round type isinstance enumerate zip open map filter divmod reversed any all format chr ord math csv random",
+  dot:"append extend insert remove pop index count sort reverse copy clear keys values items get update setdefault split join strip lstrip rstrip upper lower title capitalize replace find startswith endswith isdigit isalpha isupper islower zfill read readline readlines write writelines close factorial sqrt floor ceil pi pow reader writer writerow writerows randint choice"},
+ javascript:{w:"const let var function return if else for while do switch case break continue default new class extends constructor this true false null undefined typeof instanceof try catch finally throw async await of in import export console Math JSON Number String Array Object Date Promise Map Set document window localStorage setTimeout setInterval clearTimeout clearInterval parseInt parseFloat isNaN fetch",
+  dot:"log error warn push pop shift unshift map filter reduce find findIndex some every forEach includes indexOf slice splice sort reverse join concat split length toUpperCase toLowerCase trim replace replaceAll startsWith endsWith padStart padEnd charAt substring repeat toFixed toString keys values entries assign floor ceil round random max min abs sqrt pow PI parse stringify querySelector querySelectorAll getElementById addEventListener removeEventListener textContent innerHTML classList add remove toggle contains style value appendChild append createElement setAttribute getAttribute dataset preventDefault target then catch finally json getItem setItem removeItem getContext fillRect fillStyle has get set delete size now getFullYear getMonth getDate getDay"},
+ csharp:{w:"using namespace class interface struct enum public private protected internal static void return if else for foreach in while do switch case break continue default new this base true false null var int double decimal float bool char string object try catch finally throw override virtual abstract readonly const get set Console Math List Dictionary Exception",
+  dot:"WriteLine Write ReadLine Parse TryParse ToString Length Count Add Remove RemoveAt Contains ContainsKey Clear Insert IndexOf ToUpper ToLower Trim Split Join Substring Replace StartsWith EndsWith Where Select OrderBy OrderByDescending Sum Max Min Average Any All First FirstOrDefault ToList Keys Values Round Floor Ceiling Sqrt Pow Abs Message"},
+ rust:{w:"fn let mut if else match loop while for in return break continue struct enum impl trait pub use mod self Self true false const as where Some None Ok Err String Vec HashMap Option Result Box i32 i64 u8 u32 u64 usize f32 f64 bool char str println! print! format! vec! panic!",
+  dot:"push pop len is_empty iter iter_mut into_iter map filter collect sum count rev enumerate zip clone to_string as_str to_uppercase to_lowercase unwrap unwrap_or expect contains insert remove get get_mut entry or_insert parse trim split chars lines push_str abs max min sort"},
+ html:{w:"html head body title meta link style script div span p h1 h2 h3 h4 a img ul ol li table thead tbody tr th td caption form fieldset legend input label button select option textarea section article header footer nav main aside strong em br hr figure figcaption time mark abbr class id href src alt type name value placeholder for required color background background-color margin margin-top margin-bottom margin-left margin-right padding padding-top padding-left border border-radius width height max-width min-width display flex grid block inline-block none justify-content align-items flex-direction flex-wrap gap grid-template-columns grid-template-areas grid-area grid-column font-size font-weight font-family line-height text-align text-decoration position relative absolute fixed sticky top left right bottom z-index transition transform opacity box-sizing border-box overflow center space-between solid auto",dot:""}};
+const acCache={};
+function acList(lang){if(acCache[lang])return acCache[lang];const d=AC_WORDS[lang]||{w:"",dot:""};return acCache[lang]={w:d.w.split(" ").filter(Boolean),dot:d.dot.split(" ").filter(Boolean)}}
+function attachComplete(ta,lang,paint){
+  const words=acList(lang),wordRe=lang==="html"?/[\w-]/:/[\w!]/,pairs={"(":")","[":"]","{":"}",'"':'"',"'":"'","`":"`"},closers=new Set([")","]","}",'"',"'","`"]);
+  let box=null,items=[],sel=0,from=0,cw=0;
+  const on=()=>S.complete!==false;
+  const close=()=>{if(box){box.remove();box=null}items=[]};
+  const measure=()=>{const cs=getComputedStyle(ta),c=document.createElement("canvas").getContext("2d");c.font=cs.fontSize+" "+cs.fontFamily;cw=c.measureText("MMMMMMMMMM").width/10;return cs};
+  function context(){const v=ta.value,a=ta.selectionStart;let i=a;while(i>0&&wordRe.test(v[i-1]))i--;const pre=v.slice(i,a);const ls=v.lastIndexOf("\n",i-1)+1,line=v.slice(ls,i);
+    const q=(line.match(/"/g)||[]).length%2||(line.match(/'/g)||[]).length%2,com=lang==="python"?line.includes("#"):lang!=="html"&&line.includes("//");
+    return{pre,start:i,dot:v[i-1]===".",skip:(q&&lang!=="html")||com}}
+  function show(){if(!on()){close();return}const c=context();if(c.skip||!c.pre||(!c.dot&&c.pre.length<2)||/^\d/.test(c.pre)){close();return}
+    const own=[...new Set((ta.value.slice(0,c.start)+" "+ta.value.slice(ta.selectionStart)).match(lang==="html"?/[A-Za-z][\w-]{2,}/g:/[A-Za-z_]\w{2,}/g)||[])];
+    const pool=c.dot?[...words.dot,...own]:[...own,...words.w];const lo=c.pre.toLowerCase();
+    items=[...new Set(pool)].filter(w=>w!==c.pre&&w.toLowerCase().startsWith(lo)).slice(0,6);
+    if(!items.length){close();return}from=c.start;sel=0;draw()}
+  function draw(){const cs=measure(),r=ta.getBoundingClientRect(),v=ta.value.slice(0,from),line=v.split("\n").length-1,col=from-(v.lastIndexOf("\n")+1),lh=parseFloat(cs.lineHeight)||22;
+    if(!box){box=document.createElement("div");box.className="acbox";box.setAttribute("role","listbox");box.addEventListener("mousedown",e=>{e.preventDefault();const b=e.target.closest("[data-ac]");if(b){sel=+b.dataset.ac;accept()}});document.body.appendChild(box)}
+    box.innerHTML=items.map((w,i)=>`<div class="aci${i===sel?" on":""}" role="option" aria-selected="${i===sel}" data-ac="${i}"><b>${esc(w.slice(0,ta.selectionStart-from))}</b>${esc(w.slice(ta.selectionStart-from))}</div>`).join("");
+    const x=Math.min(r.left+parseFloat(cs.paddingLeft)+col*cw,innerWidth-box.offsetWidth-8);let y=r.top+parseFloat(cs.paddingTop)+(line+1)*lh+2;
+    if(y+box.offsetHeight>innerHeight-8)y=y-lh-box.offsetHeight-4;box.style.left=Math.max(8,x)+"px";box.style.top=y+"px"}
+  function accept(){const w=items[sel];if(w==null)return;ta.setRangeText(w,from,ta.selectionStart,"end");close();paint()}
+  ta.addEventListener("keydown",e=>{
+    if(box){if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();e.stopImmediatePropagation();sel=(sel+(e.key==="ArrowDown"?1:items.length-1))%items.length;draw();return}
+      if(e.key==="Tab"||e.key==="Enter"){if(e.ctrlKey||e.metaKey){close();return}e.preventDefault();e.stopImmediatePropagation();accept();return}
+      if(e.key==="Escape"){e.preventDefault();e.stopImmediatePropagation();close();return}}
+    if(!on()||e.ctrlKey||e.metaKey||e.altKey)return;
+    const a=ta.selectionStart,b=ta.selectionEnd,v=ta.value,next=v[a]||"",prev=v[a-1]||"";
+    if(closers.has(e.key)&&a===b&&next===e.key&&(e.key!=='"'&&e.key!=="'"&&e.key!=="`"||prev!=="\\")){e.preventDefault();e.stopImmediatePropagation();ta.setSelectionRange(a+1,a+1);close();return}
+    if(pairs[e.key]){const quote=e.key==='"'||e.key==="'"||e.key==="`";if(e.key==="`"&&lang!=="javascript")return;
+      if(a!==b){e.preventDefault();e.stopImmediatePropagation();const t=v.slice(a,b);ta.setRangeText(e.key+t+pairs[e.key],a,b,"end");ta.setSelectionRange(a+1,b+1);paint();return}
+      const okNext=!next||/[\s)\]},;:]/.test(next),okPrev=!quote||!/\w/.test(prev)||(lang==="python"&&/^[fFrRbB]$/.test(prev)&&!/\w/.test(v[a-2]||""));
+      if(lang==="rust"&&e.key==="'")return;
+      if(okNext&&okPrev){e.preventDefault();e.stopImmediatePropagation();ta.setRangeText(e.key+pairs[e.key],a,b,"start");ta.setSelectionRange(a+1,a+1);paint();close()}return}
+    if(e.key==="Backspace"&&a===b&&pairs[prev]&&pairs[prev]===next){e.preventDefault();e.stopImmediatePropagation();ta.setRangeText("",a-1,a+1,"end");paint();close();return}
+    if(e.key==="Enter"&&a===b&&/[{(\[]/.test(prev)&&next===pairs[prev]){e.preventDefault();e.stopImmediatePropagation();const ls=v.lastIndexOf("\n",a-1)+1,lead=v.slice(ls,a).match(/^\s*/)[0],ind=lang==="python"?"    ":"  ";
+      ta.setRangeText("\n"+lead+ind+"\n"+lead,a,a,"start");const c=a+1+lead.length+ind.length;ta.setSelectionRange(c,c);paint()}},true);
+  ta.addEventListener("input",e=>{if(/^insert(Text|CompositionText)$/.test(e.inputType||"insertText")||e.inputType==="deleteContentBackward"&&box)show();else close()});
+  ta.addEventListener("blur",()=>setTimeout(close,120));ta.addEventListener("mousedown",close);
+  addEventListener("scroll",()=>{if(box)close()},true);addEventListener("resize",close)}
 function mountEditor(id,{code,lang,start,onChange,getStdin,html,after,files}){
   const root=document.getElementById(id),ta=$("textarea",root),pre=$("pre",root),gut=$(".gut",root),con=$(".con",root);
   const ind=lang==="python"?"    ":"  ";
@@ -576,6 +632,7 @@ function mountEditor(id,{code,lang,start,onChange,getStdin,html,after,files}){
   ta.value=code;paint();if(isDoc){doc();ta.addEventListener("input",()=>{clearTimeout(dbt);dbt=setTimeout(doc,250)})}
   const ins=(t)=>{const a=ta.selectionStart,b=ta.selectionEnd;ta.setRangeText(t,a,b,"end");paint()};
   ta.addEventListener("input",paint);
+  attachComplete(ta,lang,paint);
   ta.addEventListener("keydown",e=>{
     if(e.key==="Tab"){e.preventDefault();if(e.shiftKey){const a=ta.value.lastIndexOf("\n",ta.selectionStart-1)+1;if(ta.value.startsWith(ind,a)){ta.setRangeText("",a,a+ind.length,"preserve");paint()}}else ins(ind)}
     else if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();doRun()}
@@ -613,7 +670,7 @@ function sideHTML(){const t=S.days[today()]||0,nx=nextLesson();
   <div class="goalbar" role="img" aria-label="${Math.min(t,GOAL)} of ${GOAL} XP today"><i style="width:${Math.min(100,t/GOAL*100)}%"></i></div>
   ${nx?`<section class="next"><span class="label">Next step, unit ${nx.ui+1}</span><h2>${esc(nx.title)}</h2><p>${esc(nx.unit.blurb||"")}</p><button class="btn" data-start="${nx.id}">${allLessons(S.lang).some(l=>S.done[l.id])?"Continue":"Start"}</button></section>`
     :`<section class="next"><span class="label">Course complete</span><h2>Every ${esc(LANGS[S.lang].name)} step is done.</h2><p>Keep it sharp with a mixed drill.</p><button class="btn" data-drill="1">Start a drill</button></section>`}
-  ${jaTip()?`<div class="prefs">${jaTip()}</div>`:""}<div class="prefs"><span class="label">When I get one wrong</span>${canSpeak?`<label><input type="checkbox" id="prefVoice" ${S.voice?"checked":""}> Read the explanation aloud</label>`:""}${canSpeak&&voiceList().length?`<div class="voicepick"><label for="prefVoiceName">Voice</label><select id="prefVoiceName">${voiceOptions()}</select><button class="link" data-preview="1">Preview</button></div>${voiceTip()?`<small>${esc(voiceTip())}</small>`:""}`:""}${window.__hotfireHost&&!sampleFn?"":`<label><input type="checkbox" id="prefCoach" ${S.coach?"checked":""}> Have Claude explain my mistake</label><small>Claude sees only the exercise and your answer, and it won't write the fix for you.${window.__hotfireHost?"":" This uses your Claude usage."}</small>`}</div>
+  ${jaTip()?`<div class="prefs">${jaTip()}</div>`:""}<div class="prefs"><span class="label">Code editor</span><label><input type="checkbox" id="prefComplete" ${S.complete!==false?"checked":""}> Autocomplete: suggest code and close brackets as I type</label><small>Turn it off to practice writing everything yourself.</small></div><div class="prefs"><span class="label">When I get one wrong</span>${canSpeak?`<label><input type="checkbox" id="prefVoice" ${S.voice?"checked":""}> Read the explanation aloud</label>`:""}${canSpeak&&voiceList().length?`<div class="voicepick"><label for="prefVoiceName">Voice</label><select id="prefVoiceName">${voiceOptions()}</select><button class="link" data-preview="1">Preview</button></div>${voiceTip()?`<small>${esc(voiceTip())}</small>`:""}`:""}${window.__hotfireHost&&!sampleFn?"":`<label><input type="checkbox" id="prefCoach" ${S.coach?"checked":""}> Have Claude explain my mistake</label><small>Claude sees only the exercise and your answer, and it won't write the fix for you.${window.__hotfireHost?"":" This uses your Claude usage."}</small>`}</div>
   <p class="sync" id="savestate">${saveLine()}</p></aside>`}
 let openCh=null;
 function unitHTML(u,n,nx){return `<section class="unit"><div class="unit-head"><span class="num">${n}</span><h3>${esc(u.title)}</h3>${u.blurb?`<p>${esc(u.blurb)}</p>`:""}</div>
@@ -897,7 +954,7 @@ document.addEventListener("click",e=>{const j=e.target.closest&&e.target.closest
   else if(d.hint){$("#hintslot").innerHTML=`<div class="hintbox">${esc(L.queue[L.i].s.hint||"Reread the instructions and compare them line by line with your code.")}</div>`}
   else if(d.show){cancelCoach();const c=L.queue[L.i];ed.value=c.s.sol;L.showed=true;if(!S.missed[c.key]){S.missed[c.key]=Date.now();save()}$("#foot").innerHTML=codeFoot()}
 });
-document.addEventListener("change",e=>{if(e.target.id==="prefVoice"){S.voice=e.target.checked;if(S.voice)unlockVoice();else stopVoice();save()}if(e.target.id==="prefCoach"){S.coach=e.target.checked;save()}if(e.target.id==="prefVoiceName"){S.voiceName=e.target.value;save();unlockVoice();speak(PREVIEW)}});
+document.addEventListener("change",e=>{if(e.target.id==="prefVoice"){S.voice=e.target.checked;if(S.voice)unlockVoice();else stopVoice();save()}if(e.target.id==="prefCoach"){S.coach=e.target.checked;save()}if(e.target.id==="prefComplete"){S.complete=e.target.checked;save()}if(e.target.id==="prefVoiceName"){S.voiceName=e.target.value;save();unlockVoice();speak(PREVIEW)}});
 document.addEventListener("keydown",e=>{const rp=$("#revpane");if(rp&&!rp.hidden){if(e.key==="Escape")closeRev();return}if(!L||/TEXTAREA|INPUT/.test(document.activeElement.tagName)||document.querySelector(".sheet"))return;
   if(/^[1-4]$/.test(e.key)){const b=document.querySelectorAll(".opt")[+e.key-1];if(b&&!b.disabled)b.click()}
   if(e.key==="Enter"&&document.activeElement.tagName!=="BUTTON"){const p=$("#primary");if(p&&!p.disabled)p.click()}});

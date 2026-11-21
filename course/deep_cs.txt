@@ -1,0 +1,370 @@
+=E cs1a
+@T
+**How C# runs your code:** before anything runs, the compiler reads the whole file and turns it into a program. If one line has a mistake, like a missing `;` or a misspelled name, nothing runs at all. You get a compile error with a line number instead.
+
+That's different from Python, which runs line by line and only stops when it reaches a bad line. The upside of compiling: many mistakes are caught before the program ever starts.
+
+Capitals matter. `Console.WriteLine` works, while `console.writeline` is an error.
+~code
+Console.WriteLine("Line 1");
+Console.Write("Line 2, ");
+Console.Write("still line 2");
+Console.WriteLine();
+Console.WriteLine("Line 3");
+=E cs1b
+@T
+**Why types matter so much in C#:** the type is fixed when you create the variable. `int count = 5;` means `count` can only ever hold whole numbers. Assigning `"five"` later is a compile error, not a surprise at runtime.
+
+The type also decides how math behaves. When both sides of `/` are `int`, C# does whole-number division and drops the remainder. Make at least one side a `double` to keep the decimals.
+
+`var` doesn't make a variable flexible. `var x = 5;` is exactly the same as `int x = 5;`.
+~code
+int total = 7;
+int people = 2;
+Console.WriteLine(total / people);
+Console.WriteLine(total / (double)people);
+double share = total / 2.0;
+Console.WriteLine($"Each pays {share:F2}");
+=E cs1c
+@T
+**Reading input is two steps:** `Console.ReadLine()` gets the typed line as a `string`, then `int.Parse()` or `double.Parse()` turns that text into a number. Each `ReadLine()` call reads the next line.
+
+You can nest them, `int.Parse(Console.ReadLine())`, and read from the inside out.
+
+`Parse` throws an error if the text isn't a valid number. When input might be bad, `int.TryParse` (coming up in Methods) checks safely.
+
+Change the values in the **Input** box below the code and press Run to try it.
+~code
+string name = Console.ReadLine();
+int qty = int.Parse(Console.ReadLine());
+double price = double.Parse(Console.ReadLine());
+Console.WriteLine($"{name}: {qty * price:F2}");
+~stdin
+Seal
+3
+1.25
+=E cs2a
+@T
+**C# checks conditions in order and runs only the first block that's true.** The rest of the `if`/`else if`/`else` chain is skipped. Put the narrowest condition first.
+
+The braces `{ }` mark exactly which lines belong to a branch. If you leave them out, only the very next line belongs to the `if`, which causes sneaky bugs when you add a second line later. Always use braces while learning.
+
+`=` assigns and `==` compares. `if (x = 5)` won't even compile in C#, which saves you from a classic bug.
+~code
+int psi = 480;
+bool valveOpen = true;
+
+if (psi > 500 || !valveOpen)
+{
+    Console.WriteLine("Stop");
+}
+else if (psi > 450 && valveOpen)
+{
+    Console.WriteLine("Slow down");
+}
+else
+{
+    Console.WriteLine("Normal");
+}
+=E cs2b
+@T
+**Use `switch` when you compare one value against a list of exact options.** It's easier to read than a long `else if` chain checking the same variable.
+
+In a `switch` statement, C# doesn't let one case fall into the next by accident. Every case needs `break` (or `return`). Stacking several `case` labels with nothing between them is how you share one block.
+
+A **switch expression** goes further: it produces a value, so you can assign it directly. Arms are checked top to bottom, and `_` catches everything else.
+~code
+int month = 2;
+string season = month switch
+{
+    12 or 1 or 2 => "Winter",
+    3 or 4 or 5 => "Spring",
+    6 or 7 or 8 => "Summer",
+    _ => "Fall",
+};
+Console.WriteLine(season);
+=E cs3a
+@T
+**Walk through a `for` loop in order:** the start part runs once. Then the test is checked, and if it's true, the body runs, then the step runs. Then the test is checked again, and so on. When the test is false, the loop ends.
+
+So `for (int i = 0; i < 3; i++)` runs with `i` as 0, 1 and 2, then stops when `i` becomes 3.
+
+Choose `for` when you know how many rounds you need, and `while` when you only know when to stop, like "until the tank is full."
+~code
+int sum = 0;
+for (int i = 1; i <= 4; i++)
+{
+    sum += i;
+    Console.WriteLine($"i = {i}, sum = {sum}");
+}
+Console.WriteLine($"Done, sum = {sum}");
+=E cs3b
+@T
+**An array's size is fixed when you create it.** `new int[3]` makes three slots that start at 0. Valid positions are 0 to `Length - 1`, and reading `arr[arr.Length]` throws `IndexOutOfRangeException`.
+
+`foreach` is the simplest way to visit every item, and it can't go out of bounds. But it gives you a read-only copy of each item, so you can't use it to change the array. Use a `for` loop with an index for that.
+
+When you need to add items as you go, use a `List` instead (coming up in a later section).
+~code
+int[] scores = { 70, 85, 90 };
+for (int i = 0; i < scores.Length; i++)
+{
+    scores[i] += 5;
+}
+foreach (int s in scores)
+{
+    Console.Write(s + " ");
+}
+Console.WriteLine();
+=E cs4a
+@T
+**A method's first line is a contract:** what it returns, its name, and what it needs. `double Average(int a, int b)` promises to take two `int`s and give back a `double`. The compiler checks every call against that contract.
+
+When you call a method, each argument is copied into a parameter, the body runs, and `return` sends a value back to the exact spot where you called it.
+
+A `void` method does something (like printing) but gives nothing back, so you can't use it inside a calculation.
+~code
+double avg = Average(7, 8);
+Console.WriteLine(avg);
+Report("Tank A", avg);
+
+double Average(int a, int b)
+{
+    return (a + b) / 2.0;
+}
+
+void Report(string name, double value)
+{
+    Console.WriteLine($"{name}: {value:F1}");
+}
+=E cs4b
+@T
+**Why `TryParse` is so common:** user input is often bad. `int.Parse("abc")` crashes the program, while `int.TryParse` returns `true` or `false` and only fills in the number when it worked.
+
+The `out` keyword is how it hands back two things at once: the `bool` result as its return value, and the number through the `out` variable.
+
+That's the general idea behind `ref` and `out`: normally a method gets a copy, so changes stay inside. These keywords pass the actual variable instead.
+~code
+string[] tries = { "42", "4.5", "abc" };
+foreach (string text in tries)
+{
+    if (int.TryParse(text, out int n))
+    {
+        Console.WriteLine($"{text} -> {n * 2}");
+    }
+    else
+    {
+        Console.WriteLine($"{text} is not a whole number");
+    }
+}
+=E cs5a
+@T
+**Arrays vs lists:** an array is fixed-size, while a `List<T>` grows and shrinks as you `Add` and `Remove`. Lists use `.Count` where arrays use `.Length`.
+
+The `<T>` part says what type of item goes inside. `List<int>` only holds `int`s, so the compiler stops you from adding text by mistake.
+
+A `Dictionary<TKey, TValue>` is for looking things up by name instead of position. Use `TryGetValue` when a key might be missing. It works like `TryParse`, returning `true` or `false`.
+~code
+var prices = new Dictionary<string, double>
+{
+    ["valve"] = 4.5,
+    ["seal"] = 1.25,
+};
+string[] order = { "valve", "pump", "seal" };
+double total = 0;
+foreach (string part in order)
+{
+    if (prices.TryGetValue(part, out double p)) total += p;
+    else Console.WriteLine($"No price for {part}");
+}
+Console.WriteLine($"Total: {total:F2}");
+=E cs5b
+@T
+**LINQ reads like a sentence about your data:** "from these readings, where the value is over 10, select it doubled." Each step takes a sequence and passes a new one along, and the original list never changes.
+
+A lambda like `x => x > 10` is a tiny unnamed method. LINQ calls it once for each item, with that item as `x`.
+
+`Where` and `Select` give back a sequence. Add `.ToList()` when you want a real list, or finish with `Sum`, `Count` or `Max` to get a single value.
+~code
+var readings = new List<int> { 5, 12, 8, 30 };
+var result = readings.Where(x => x > 10).Select(x => x * 2).ToList();
+Console.WriteLine(string.Join(", ", result));
+Console.WriteLine(readings.Count(x => x > 10));
+Console.WriteLine(string.Join(", ", readings));
+=E cs6a
+@T
+**A class is the blueprint, and an object is one thing built from it.** `new Tank("T-1", 500)` builds one object, running the constructor to set up its data. Build another and it gets completely separate data.
+
+Inside the class, methods can use the object's own fields. When you call `a.Fill(100)`, the method changes `a`'s level, not anyone else's.
+
+Keeping data and the methods that change it together is the main idea of objects. Other code asks the object to change rather than changing its data directly.
+~code
+var a = new Tank("A", 500);
+var b = new Tank("B", 300);
+a.Fill(100);
+Console.WriteLine($"{a.Name} {a.Level}, {b.Name} {b.Level}");
+
+class Tank
+{
+    public string Name { get; }
+    public int Capacity { get; }
+    public int Level { get; private set; }
+
+    public Tank(string name, int capacity)
+    {
+        Name = name;
+        Capacity = capacity;
+    }
+
+    public void Fill(int amount) => Level = Math.Min(Capacity, Level + amount);
+}
+=E cs6b
+@T
+**Instance vs `static`:** a normal (instance) member belongs to each object, so every tank has its own `Level`. A `static` member belongs to the class itself, so there's only one copy, shared by everyone. That's why you call it on the class name: `Math.Max`, `Part.Made`.
+
+Use `static` for things that aren't about one particular object, like a counter of how many were made, or a helper calculation.
+
+`ToString()` is called automatically whenever an object is turned into text, including inside `Console.WriteLine` and `$"..."`.
+~code
+var a = new Part("valve");
+var b = new Part("seal");
+Console.WriteLine($"{a}, {b}, made {Part.Made}");
+
+class Part
+{
+    public static int Made = 0;
+    public string Name;
+    public Part(string name) { Name = name; Made++; }
+    public override string ToString() => $"Part({Name})";
+}
+=E cs7a
+@T
+**Inheritance means "is a kind of":** a `Dog` is a kind of `Animal`, so it gets everything `Animal` has and can add or change things.
+
+Because of that, a variable of type `Animal` can hold a `Dog` or a `Cat`. When you call a `virtual` method on it, C# runs the version for the actual object. This is called **polymorphism**: one call, different behavior depending on the object.
+
+If a child doesn't `override` a method, the parent's version runs.
+~code
+Animal[] pets = { new Dog(), new Cat(), new Animal() };
+foreach (Animal p in pets)
+{
+    Console.WriteLine(p.Speak());
+}
+
+class Animal
+{
+    public virtual string Speak() => "...";
+}
+class Dog : Animal
+{
+    public override string Speak() => "Woof";
+}
+class Cat : Animal { }
+=E cs7b
+@T
+**Interface or base class?** A base class shares code: children get its fields and methods for free. An interface shares only a promise: "anything that implements `IShape` has an `Area()`." Each class writes its own version.
+
+A class can inherit from only one base class, but it can implement many interfaces. So interfaces describe abilities (`IComparable`, `IDisposable`), while base classes describe what something is.
+
+Code that only needs the ability should accept the interface type. Then any class that keeps the promise works with it.
+~code
+IShape[] shapes = { new Square(2), new Circle(1) };
+double total = 0;
+foreach (IShape s in shapes) total += s.Area();
+Console.WriteLine($"Total area: {total:F2}");
+
+interface IShape { double Area(); }
+class Square : IShape
+{
+    double side;
+    public Square(double s) { side = s; }
+    public double Area() => side * side;
+}
+class Circle : IShape
+{
+    double r;
+    public Circle(double radius) { r = radius; }
+    public double Area() => Math.PI * r * r;
+}
+=E cs8a
+@T
+**What a `throw` does:** it stops the current method immediately and jumps outward, method by method, looking for a `catch` that matches the exception's type. If none is found, the program crashes with that message.
+
+So put `try` around the call that might fail, and catch the specific type you can handle, like `FormatException` for bad number text. Catch blocks are checked top to bottom, so put the specific ones before a general `Exception`.
+
+`finally` runs whether or not anything failed, which makes it the place for cleanup.
+~code
+foreach (string text in new[] { "8", "zero", "0" })
+{
+    try
+    {
+        int n = int.Parse(text);
+        Console.WriteLine(40 / n);
+    }
+    catch (FormatException)
+    {
+        Console.WriteLine($"'{text}' isn't a number");
+    }
+    catch (DivideByZeroException)
+    {
+        Console.WriteLine("Can't divide by zero");
+    }
+}
+=E cs8b
+@T
+**`null` means "no object here."** A `string` variable can hold text or `null`. Calling anything on `null`, like `name.Length`, throws `NullReferenceException`, one of the most common crashes in C#.
+
+The safe operators turn that crash into a choice. `name?.Length` gives `null` instead of crashing, and `?? "Unknown"` swaps in a fallback when the left side is `null`.
+
+They're often combined: `(name?.Length ?? 0)` means "the length, or 0 if there's no name."
+~code
+string[] names = { "Ada", null, "Grace" };
+foreach (string name in names)
+{
+    int len = name?.Length ?? 0;
+    Console.WriteLine($"{name ?? "(none)"}: {len}");
+}
+=R csfirst
+@T
+Every statement ends with `;`. `Console.WriteLine` prints a line, and `Console.Write` stays on the same line.
+
+`int / int` drops the decimals. `$"{x:F2}"` shows two decimals.
+
+`Console.ReadLine()` gives text, so turn it into a number with `int.Parse()`.
+=R csdecide
+@T
+`if (cond) { }` runs the first true branch. Combine checks with `&&`, `||` and `!`.
+
+`cond ? a : b` picks a value in one line.
+
+`switch` compares one value to exact cases, and `_` (or `default`) catches the rest.
+=R csloops
+@T
+`for (start; test; step)` counts. `while (test)` repeats until the test is false. `foreach (var x in items)` visits each item.
+
+Arrays count from 0 and have a fixed `.Length`.
+=R csmethods
+@T
+`int Name(int a)` returns an `int`, and `void` returns nothing. `return` sends the value back to the caller.
+
+Overloads share a name but take different parameters. `int.TryParse(text, out int n)` checks input safely.
+=R cscoll
+@T
+`List<T>` grows with `Add` and is counted with `.Count`. `Dictionary<K, V>` looks values up by key, and `TryGetValue` is the safe way.
+
+LINQ: `Where` filters, `Select` transforms, and `Sum`/`Count`/`Max` summarize.
+=R csclass
+@T
+`new ClassName(...)` builds an object and runs the constructor.
+
+Properties use `{ get; set; }`. `static` members are shared by the whole class. Override `ToString()` to control how an object prints.
+=R csoop
+@T
+`class Dog : Animal` inherits. Mark a parent method `virtual`, and replace it with `override` in the child.
+
+An interface is a promise of members. A class can implement many interfaces, but inherit from only one class.
+=R cserr
+@T
+`try { } catch (FormatException e) { }` handles a specific error, and `finally` always runs. `throw new ArgumentException("...")` raises your own.
+
+`x?.Member` is safe on `null`, and `x ?? fallback` replaces a `null`.

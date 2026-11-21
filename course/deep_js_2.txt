@@ -1,0 +1,443 @@
+=E webjs1
+@T
+**Order matters on a page.** The browser builds the page from the top of the HTML down, and runs each `<script>` the moment it reaches it. A script that runs before an element exists can't find that element. `getElementById` gives back `null`, and the next line crashes.
+
+That's why scripts usually go at the end of `<body>`, or use the `defer` attribute, which waits until the page has been built.
+
+In these lessons your code runs after the page is ready, so you can find any element in the preview.
+~html
+<p id="msg">Waiting</p>
+~code
+const msg = document.getElementById("msg");
+console.log(msg === null ? "not found" : "found it");
+msg.textContent = "Script ran after the page was built";
+=E dom1
+@T
+**The DOM is a tree of objects that mirrors your HTML.** Each tag becomes an object, nested inside its parent. JavaScript doesn't edit the HTML file. It changes these live objects, and the browser redraws the page to match.
+
+Finding elements is always the first step. `querySelector` takes any CSS selector, so whatever you can style, you can grab. It returns the first match, or `null` if nothing matches.
+
+`querySelectorAll` returns a list of every match, which you loop over with `for...of`.
+~html
+<ul id="parts"><li>Valve</li><li class="low">Seal</li><li class="low">Hose</li></ul>
+~code
+const first = document.querySelector("#parts li");
+console.log(first.textContent);
+const low = document.querySelectorAll(".low");
+for (const item of low) {
+  item.textContent += " (low stock)";
+}
+console.log(low.length, "items marked");
+=E dommod1
+@T
+**New elements exist in memory until you attach them.** `createElement` makes an element that isn't on the page yet. You can set its text, classes and attributes, and nothing shows. It only appears once you place it with `appendChild` (or `append`, `prepend` or `before`).
+
+This makes it efficient to build an element completely, then attach it once.
+
+Building from data is the everyday pattern: loop over an array, and create and append one element for each item.
+~html
+<ul id="list"></ul>
+~code
+const parts = ["Valve", "Seal", "Hose"];
+const list = document.getElementById("list");
+for (const name of parts) {
+  const li = document.createElement("li");
+  li.textContent = name;
+  list.appendChild(li);
+}
+console.log(list.children.length, "items on the page");
+=E events1
+@T
+**Your code doesn't call the handler. The browser does.** `addEventListener` just registers it: "when this button is clicked, run this function." The rest of your program finishes immediately, and the handler runs later, every time the event happens.
+
+So handlers need to look things up fresh when they run, such as reading an input's current `.value` inside the handler rather than once at the start.
+
+Pass the function itself, without parentheses: `addEventListener("click", save)`. Writing `save()` would run it right away instead.
+~html
+<input id="name" placeholder="Type a name">
+<button id="go">Greet</button>
+<p id="out"></p>
+~code
+const input = document.getElementById("name");
+const out = document.getElementById("out");
+document.getElementById("go").addEventListener("click", () => {
+  out.textContent = `Hello, ${input.value || "stranger"}!`;
+});
+console.log("Handler registered. Now type a name and press Greet.");
+=E timers1
+@T
+**A timer schedules work for later. It doesn't pause anything.** `setTimeout(fn, 1000)` says "run `fn` in about a second", then your program carries on with the next line straight away.
+
+That's why "after" prints before "later" below, even with a delay of 0. Timer callbacks wait until the current code has finished running.
+
+To do things in sequence with delays, put the next step inside the previous callback, or use `await` with a promise (in Chapter 3).
+~code
+console.log("before");
+setTimeout(() => console.log("later"), 0);
+console.log("after");
+=E cssjs1
+@T
+**Prefer toggling classes over setting styles one by one.** Keep the looks in CSS, as in `.alert { color: red; }`, and let JavaScript only decide when it applies with `classList.toggle("alert")`.
+
+That keeps your design in one place. Changing what an alert looks like then means editing CSS, not hunting through JavaScript.
+
+`element.style` is best for values computed while the program runs, like a position or a width from a percentage.
+~html
+<style>.alert { color: white; background: crimson; padding: 4px; }</style>
+<p id="s">Pressure reading</p>
+<div style="background:#ddd;width:200px"><div id="bar" style="background:seagreen;height:10px"></div></div>
+~code
+const s = document.getElementById("s");
+const psi = 520;
+s.classList.toggle("alert", psi > 500);
+console.log(s.classList.contains("alert"));
+document.getElementById("bar").style.width = `${(psi / 600) * 100}%`;
+=E forms1
+@T
+**Check on the way in.** The `submit` event fires before the form is sent, which is your chance to look at every field. If something's wrong, `event.preventDefault()` stops the send, and you show a message next to the field.
+
+Always tidy the value first. `.value` is a string, often with stray spaces, so `.trim()` it, and convert with `Number()` when you need a number.
+
+Browser checks like `required` and `type="email"` are a good first layer. Your JavaScript adds the rules only your app knows.
+~html
+<form id="f"><input id="qty" placeholder="Quantity"> <button>Order</button></form>
+<p id="err"></p>
+~code
+document.getElementById("f").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const qty = Number(document.getElementById("qty").value.trim());
+  const err = document.getElementById("err");
+  if (!Number.isInteger(qty) || qty < 1) {
+    err.textContent = "Enter a whole number of at least 1.";
+  } else {
+    err.textContent = `Ordered ${qty}.`;
+  }
+});
+console.log("Try submitting 0, abc and 3.");
+=E json1
+@T
+**JSON is a text format, not an object.** Data travels between programs as plain text, and JSON is a way of writing objects and arrays as text that any language can read.
+
+So there are always two directions: `JSON.stringify` before sending or saving (object to text), and `JSON.parse` after receiving (text to object).
+
+Parsing fails with an error if the text isn't valid JSON: single quotes, a trailing comma, or a missing brace. Wrap `JSON.parse` in `try` when the text comes from outside.
+~code
+const part = { name: "valve", qty: 3, tags: ["brass"] };
+const text = JSON.stringify(part);
+console.log(typeof text, text);
+const back = JSON.parse(text);
+console.log(back.tags[0], back.qty + 1);
+try {
+  JSON.parse("{'name': 'valve'}");
+} catch (error) {
+  console.log("Not valid JSON:", error.name);
+}
+=E xhr1
+@T
+**A request is a round trip that takes time.** Your code sends it and carries on. When the answer arrives, the browser runs your `load` handler. Everything that uses the answer has to happen inside that handler (or after an `await`), not on the lines below the send.
+
+The answer arrives as text plus a status code. Check the status first, `200` meaning OK, then `JSON.parse` the text.
+
+Here the practice server knows Austin, Seattle and Chicago. Try changing the city to one it doesn't know.
+~code
+const xhr = new XMLHttpRequest();
+xhr.open("GET", "https://api.example.com/weather?city=Seattle");
+xhr.addEventListener("load", () => {
+  if (xhr.status === 200) {
+    const data = JSON.parse(xhr.responseText);
+    console.log(`${data.city}: ${data.tempF}F, ${data.condition}`);
+  } else {
+    console.log("Status", xhr.status);
+  }
+});
+xhr.send();
+console.log("Request sent");
+=E ex21
+@T
+**Keep the state separate from the screen.** The game's truth lives in one place, a data structure like a 2D array of `true`/`false`. A `render` function reads that data and draws it.
+
+Every click follows the same loop: update the data, then call `render()` again. You never read the game state back from the page, so the display can't drift out of sync.
+
+This idea, data first and drawing second, is exactly what React and Angular are built around in later chapters.
+~html
+<div id="row"></div>
+~code
+let lights = [true, false, true];
+function render() {
+  const row = document.getElementById("row");
+  row.textContent = lights.map((on) => (on ? "🟡" : "⚫")).join(" ");
+}
+function press(i) {
+  lights[i] = !lights[i];
+  render();
+}
+render();
+press(0);
+console.log(lights);
+=E regex1
+@T
+**Build a pattern one piece at a time, left to right.** Each piece matches the next part of the text. `\d{3}` is exactly three digits, `-` is a literal dash, and `^` and `$` pin the pattern to the start and end, so nothing extra can sneak in.
+
+Without `^` and `$`, `.test()` passes if the pattern appears anywhere in the text. That's a common reason a check lets bad input through.
+
+Test patterns against both good and bad examples, like the list below.
+~code
+const partId = /^[A-Z]{2}-\d{3}$/;
+for (const id of ["PT-101", "pt-101", "PT-1012", "XPT-101"]) {
+  console.log(id, partId.test(id));
+}
+const loose = /[A-Z]{2}-\d{3}/;
+console.log("loose:", loose.test("XPT-1012"));
+=E clos1
+@T
+**A closure keeps variables alive.** Normally a function's variables disappear when it finishes. But if it creates an inner function that still uses them, JavaScript keeps them around for as long as that inner function exists.
+
+Each call to the outer function makes a fresh set of variables, so two counters below don't share a count.
+
+That's how you get private state: nothing outside can touch `count` directly, only through the functions that were returned.
+~code
+function makeCounter(label) {
+  let count = 0;
+  return () => {
+    count++;
+    return `${label}: ${count}`;
+  };
+}
+const valves = makeCounter("valves");
+const seals = makeCounter("seals");
+console.log(valves());
+console.log(valves());
+console.log(seals());
+=E mod1
+@T
+**Modules keep files from interfering with each other.** Without them, every script shares one global space, so two files that both define `total` overwrite each other. A module's variables stay inside that file unless it `export`s them.
+
+Named exports are imported with braces, `import { add } from "./math.js"`, and the names must match. A default export is imported without braces, and you can call it anything.
+
+Modules also load in order of their imports, so each file states exactly what it depends on.
+@Q
+`math.js` has `export function add(...)` and `export default function square(...)`. Which line imports both?
+~opts
+* `import square, { add } from "./math.js";`
+- `import { square, add } from "./math.js";`
+- `import add, square from "./math.js";`
+~why
+The default export comes first without braces, and named exports go inside braces.
+=E strict1
+@T
+**Strict mode removes JavaScript's quiet guesses.** Without it, a typo in a variable name silently creates a brand new global variable, and your program carries on with the wrong value. With it, the same typo throws an error right at that line.
+
+That's why modern code is effectively always strict. Modules and classes switch it on automatically.
+
+Errors you can see are far easier to fix than wrong answers you can't explain.
+~code
+"use strict";
+let total = 10;
+try {
+  totl = total + 5;
+} catch (error) {
+  console.log(error.name + ":", error.message);
+}
+console.log(total);
+=E stor1
+@T
+**localStorage only stores strings.** Save an object directly and you get the useless text `"[object Object]"`. So always `JSON.stringify` on the way in and `JSON.parse` on the way out.
+
+`getItem` returns `null` for a key that was never saved, so give a fallback for the first visit: `JSON.parse(localStorage.getItem("prefs")) || {}`.
+
+Storage belongs to one browser on one device. It's for conveniences like settings and drafts, not anything that must be kept safe or shared.
+~code
+const prefs = { theme: "dark", size: 16 };
+localStorage.setItem("prefs", JSON.stringify(prefs));
+const loaded = JSON.parse(localStorage.getItem("prefs")) || {};
+console.log(loaded.theme, loaded.size + 2);
+console.log(localStorage.getItem("missing"));
+=E canvas1
+@T
+**A canvas is pixels, not elements.** After you draw a rectangle, there's no rectangle object to move or click. It's just colored pixels. To change anything, clear the canvas and draw everything again.
+
+That's the animation loop: clear, update positions, draw, and repeat with `requestAnimationFrame`.
+
+Coordinates start at the top-left corner, and y grows downward. So the bottom of a 100-tall canvas is y = 100.
+~html
+<canvas id="c" width="200" height="100" style="border:1px solid #999"></canvas>
+~code
+const ctx = document.getElementById("c").getContext("2d");
+ctx.fillStyle = "steelblue";
+ctx.fillRect(10, 60, 40, 40);
+ctx.fillStyle = "tomato";
+ctx.beginPath();
+ctx.arc(120, 30, 20, 0, Math.PI * 2);
+ctx.fill();
+console.log("Square at the bottom, circle near the top");
+=E ws1
+@T
+**A WebSocket is a phone call, and a normal request is a letter.** With `fetch`, you send one request and get one reply. A WebSocket opens a connection and keeps it open, so either side can talk at any time.
+
+Everything is event-based. You can only `send` once the `open` event has fired, and each incoming message arrives in a `message` event with the text in `event.data`.
+
+Use it when the server needs to push updates, like chat, live scores or sensor dashboards. For one-off data, `fetch` is simpler.
+~code
+const ws = new WebSocket("wss://echo.example.com");
+ws.addEventListener("open", () => {
+  console.log("open");
+  ws.send("valve 3 open");
+});
+ws.addEventListener("message", (event) => {
+  console.log("got:", event.data);
+  ws.close();
+});
+=E prom1
+@T
+**A promise is a placeholder for a result that arrives later.** You attach what should happen next with `.then`, and JavaScript calls it once the result is ready.
+
+Each `.then` returns a new promise, which is why they chain: the value one step returns becomes the input to the next step.
+
+One `.catch` at the end handles a failure from any step above it, a bit like a `try`/`catch` around the whole chain.
+~code
+function getReading(ok) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => (ok ? resolve(42) : reject(new Error("sensor offline"))), 50);
+  });
+}
+getReading(true)
+  .then((psi) => psi * 2)
+  .then((doubled) => console.log("doubled:", doubled))
+  .catch((err) => console.log("failed:", err.message));
+getReading(false)
+  .then((psi) => console.log(psi))
+  .catch((err) => console.log("failed:", err.message));
+=E async1
+@T
+**`await` pauses only the `async` function it's in, not the whole page.** While the function waits, the browser keeps handling clicks and other code. When the promise settles, the function picks up where it left off.
+
+Write async code like normal top-to-bottom code: `const data = await load();` and then use `data` on the next line. Wrap the awaits in `try`/`catch` for failures.
+
+Calling an `async` function gives back a promise straight away, so the caller has to `await` it too, or use `.then`.
+~code
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+async function countdown() {
+  for (let n = 3; n > 0; n--) {
+    console.log(n);
+    await wait(50);
+  }
+  return "liftoff";
+}
+countdown().then((word) => console.log(word));
+console.log("countdown started");
+=E fetch1
+@T
+**fetch has two waits.** The first `await fetch(url)` finishes when the response starts arriving, with the status and headers. The second `await response.json()` reads and parses the body. Forget the second and you'll be holding a response object instead of your data.
+
+A 404 or 500 is still a successful trip, so fetch doesn't throw. Check `response.ok` yourself. fetch only rejects when it can't reach the server at all.
+~code
+async function weather(city) {
+  const response = await fetch(`https://api.example.com/weather?city=${city}`);
+  if (!response.ok) {
+    console.log(city, "failed with status", response.status);
+    return;
+  }
+  const data = await response.json();
+  console.log(`${data.city}: ${data.tempF}F`);
+}
+weather("Austin");
+weather("Atlantis");
+=R webjs
+@T
+`<script>` runs where it appears, so put it at the end of `<body>` or use `defer`.
+
+`document.getElementById("x")` returns `null` if the element doesn't exist yet.
+=R dom
+@T
+`querySelector(css)` finds the first match, and `querySelectorAll` finds them all.
+
+`textContent` sets plain text. Avoid putting user text in `innerHTML`.
+=R dommod
+@T
+`createElement` makes an element, then fill it in and attach it with `appendChild` or `append`.
+
+`remove()` deletes it, and `setAttribute` changes attributes.
+=R events
+@T
+`el.addEventListener("click", fn)` passes the function without `()`.
+
+`event.target` is the element used, and `event.preventDefault()` stops the default action.
+=R timers
+@T
+`setTimeout(fn, ms)` runs once later, and `setInterval` repeats. Stop it with `clearInterval(id)`.
+
+The next line runs right away, without waiting.
+=R cssjs
+@T
+`el.classList.add`, `remove`, `toggle` and `contains` keep the looks in CSS.
+
+`el.style.backgroundColor` uses camelCase names.
+=R formsjs
+@T
+Listen for `submit`, read `.value.trim()`, and convert with `Number()`.
+
+Call `event.preventDefault()` when the input is invalid.
+=R jsonu
+@T
+`JSON.stringify(obj)` turns an object into text, and `JSON.parse(text)` turns it back.
+
+JSON needs double quotes and no trailing commas.
+=R xhr
+@T
+`open(method, url)`, add a `load` handler, then `send()`.
+
+Check `xhr.status === 200`, then `JSON.parse(xhr.responseText)`.
+=R ex2
+@T
+Keep the data separate from the display: update the data, then call `render()` to redraw.
+=R labs2
+@T
+Find the elements, listen for the event, read the values, update the page.
+
+Test with good and bad input.
+=R regex
+@T
+`/pattern/.test(s)` gives true or false. `\d` is a digit and `\w` a word character, `+` is one or more, and `^...$` matches the whole string.
+
+The `g` flag finds every match, and `i` ignores case.
+=R classes
+@T
+`class Name { constructor(a) { this.a = a; } method() { } }`.
+
+`extends` inherits, and `super(...)` calls the parent's constructor. Getters use `get`.
+=R closures
+@T
+An inner function keeps the outer function's variables alive. Each outer call makes a fresh set, which gives private state.
+=R modules
+@T
+`export` shares a value, and `import { name } from "./file.js"` brings it in. A default import has no braces.
+
+`"use strict"` turns silent mistakes into errors.
+=R storage
+@T
+`localStorage.setItem(k, JSON.stringify(v))`, then `JSON.parse(localStorage.getItem(k))`.
+
+A missing key gives `null`.
+=R canvas
+@T
+Use `getContext("2d")`. `(0, 0)` is the top-left corner, and y grows downward.
+
+`fillRect` draws a rectangle, and `beginPath`/`arc`/`fill` draw a circle. To animate, clear and redraw.
+=R sockets
+@T
+`new WebSocket(url)`. `send` only after `open`, and incoming messages arrive in a `message` event as `event.data`.
+=R promises
+@T
+`.then` chains values and `.catch` handles failures.
+
+`async` functions return promises, and `await` pauses that function until the promise settles.
+=R fetchu
+@T
+`await fetch(url)`, check `response.ok`, then `await response.json()`.
+
+POST needs `method`, `headers` and a `JSON.stringify`ed `body`.
+=R labs3
+@T
+Plan the data first, then the functions that change it, then the code that shows it.
+
+For async steps, `await` each one inside `try`.

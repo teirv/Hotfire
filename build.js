@@ -24,6 +24,7 @@ function parse(txt,lang){
   for(const raw of txt.split('\n')){
     let m;
     if((m=raw.match(/^=X (\S+)$/))){close();unit={extend:m[1],lessons:[]};units.push(unit);continue}
+    if((m=raw.match(/^=([ER]) (\S+)$/))){close();lesson={id:'',title:'',s:[]};unit={[m[1]==='E'?'explain':'recap']:m[2],lessons:[lesson]};units.push(unit);continue}
     if((m=raw.match(/^=U (\S+) \| ([^|]+?)(?: \| (.*))?$/))){close();unit={id:m[1],title:m[2],blurb:m[3]||'',lessons:[]};units.push(unit);continue}
     if((m=raw.match(/^=([LF]) (\S+) \| (.*)$/))){close();lesson={id:m[2],title:m[3],s:[]};if(m[1]==='F')lesson.fire=true;unit.lessons.push(lesson);continue}
     if((m=raw.match(/^@([TQPBOCW])$/))){close();card={k:m[1],_:{body:[]},outs:[]};sec='body';continue}
@@ -84,18 +85,33 @@ for(const [lang,base] of Object.entries(EXTRA)){const files=fs.readdirSync('cour
   const u=COURSES[lang].units.find(y=>y.id===x.extend);if(!x.extend||!u)throw new Error(f+': no section '+(x.extend||x.id));
   for(const l of x.lessons){if(l.fire)u.lessons.push(l);else{let i=u.lessons.findIndex(y=>y.fire);if(i<0)i=u.lessons.length;u.lessons.splice(i,0,l)}}}}
 for(const l of Object.keys(COURSES))COURSES[l].units=COURSES[l].units.filter(u=>!u.extend);
+/* Deeper teaching. course/deep_*.txt files hold two kinds of block:
+   =E lesson-id  explanation cards, placed after the lesson's opening teach cards, before its questions.
+   =R id         a recap card at the start of hot fires: a section id covers every hot fire in it,
+                 a hot fire id covers just that one. */
+const DEEP={javascript:'deep_js',python:'deep_py',html:'deep_web',csharp:'deep_cs',rust:'deep_rs'};
+{let nE=0,nR=0;
+ for(const [lang,pre] of Object.entries(DEEP)){const all=()=>COURSES[lang].units.flatMap(u=>u.lessons);
+  for(const n of fs.readdirSync('course').filter(n=>n.startsWith(pre)&&n.endsWith('.txt')).sort())for(const x of parse(fs.readFileSync('course/'+n,'utf8'),lang)){
+   const cards=x.lessons[0].s;if(!cards.length)throw new Error(n+': empty block for '+(x.explain||x.recap));
+   if(x.explain){const l=all().find(y=>y.id===x.explain);if(!l)throw new Error(n+': no lesson '+x.explain);if(l.fire)throw new Error(n+': '+x.explain+' is a hot fire; use =R');
+     let i=l.s.findIndex(c=>c.k!=='T');if(i<0)i=l.s.length;cards.forEach(c=>c.deep=true);l.s.splice(i,0,...cards);nE++}
+   else{const u=COURSES[lang].units.find(y=>y.id===x.recap),one=all().find(y=>y.id===x.recap);
+     const targets=u?u.lessons.filter(y=>y.fire):one&&one.fire?[one]:null;if(!targets||!targets.length)throw new Error(n+': no section or hot fire '+x.recap);
+     for(const t of targets){if(t.s[0]&&t.s[0].recap)throw new Error(n+': '+t.id+' already has a recap');t.s.unshift(...cards.map(c=>Object.assign({},c,{recap:true,deep:true})));nR++}}}}
+ console.log('explanations',nE,'recapped hot fires',nR)}
 {const seen=new Set();for(const l of Object.values(COURSES))for(const u of l.units)for(const x of u.lessons){if(seen.has(x.id))throw new Error('Duplicate lesson id '+x.id);seen.add(x.id);if(!x.s.length)throw new Error('Empty lesson '+x.id)}}
 /* Cards never point at something they don't show. "Refer to the code above" copies in the nearest
    earlier code from the same lesson, and a teach card marked ~keep stays on screen for the questions after it. */
 {const REF=/\b(the )?code (above|below)\b|above code|example above|\b(the )?same (code|component|function|class|object|loop|program)\b/i;
  for(const [ln,l] of Object.entries(COURSES))for(const u of l.units)for(const x of u.lessons){let code=null,html=null,ctx=null;
   for(const c of x.s){
-   if(c.k==='T'){if(c.keep){ctx=c.text.replace(/^Read this[^\n]*\n+/i,'').replace(/^Tap the text[^\n]*\n+/i,'');delete c.keep}else ctx=null}
+   if(c.k==='T'&&!c.deep){if(c.keep){ctx=c.text.replace(/^Read this[^\n]*\n+/i,'').replace(/^Tap the text[^\n]*\n+/i,'');delete c.keep}else ctx=null}
    else if(ctx&&!c.code)c.ctx=ctx;
    const t=c.prompt||'';
    if('QP'.includes(c.k)&&!c.code&&!t.includes('```')&&REF.test(t)){if(!code)throw new Error(`${ln}/${x.id}: "${t.slice(0,50)}" refers to code, but the lesson has none before it`);c.code=code;if(html&&!c.html)c.html=html}
    if('QP'.includes(c.k)&&c.code)c.prompt=t.replace(/Refer to the code above\./,'Refer to the code below.').replace(/\bthe code above\b/,'the code below');
-   if(c.k!=='B'&&c.k!=='O'&&c.code){code=c.code;html=c.html||null}
+   if(c.k!=='B'&&c.k!=='O'&&c.code&&!c.deep){code=c.code;html=c.html||null}
    {const m=(c.text||t).match(/```\w*\n([\s\S]*?)```/);if(m&&!c.code)code=m[1].replace(/\n$/,'')}
    if(c.k==='C'&&c.sol){code=c.sol;html=c.html||null}
    if(c.k!=='T'&&/\babove\b/i.test(t)&&REF.test(t)&&!c.code&&!c.ctx)throw new Error(`${ln}/${x.id}: card refers to something above it that isn't shown`)}}}
@@ -107,7 +123,7 @@ const walk=o=>{if(Array.isArray(o))o.forEach(walk);else if(o&&typeof o==='object
    can name its own lessons with "~review id, id". */
 {const PAT=require('./course/concepts.js');
  const spans=t=>[...String(t||'').matchAll(/```\w*\n([\s\S]*?)```|`([^`\n]+)`/g)].map(m=>m[1]||m[2]).join('\n');
- const teachCode=c=>c.k==='T'?(c.code||'')+'\n'+(c.html||'')+'\n'+spans(c.text):'';
+ const teachCode=c=>c.k==='T'&&!c.deep?(c.code||'')+'\n'+(c.html||'')+'\n'+spans(c.text):'';
  const askCode=c=>[c.sol,c.code,c.start,c.html,spans(c.prompt),...(c.opts||[]).map(o=>o.t),...(c.lines||[]),...(c.ans||[])].filter(Boolean).join('\n');
  let links=0;
  for(const [ln,l] of Object.entries(COURSES)){const pats=Object.entries(PAT[ln]||{}),owner={},order={},byId={};let n=0;

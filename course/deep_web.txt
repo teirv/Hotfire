@@ -1,0 +1,337 @@
+=E h1a
+@T
+**Think of tags as labels on content.** `<h1>` doesn't mean "big text". It means "this is the main heading". The browser gives each label a default look, and later CSS lets you change that look without changing the meaning.
+
+An element is the opening tag, the content, and the closing tag together. The closing tag has a `/` and tells the browser where the label stops. Leave one out and the label keeps going.
+
+Try it: delete the `</strong>` below and press Run. The rest of the line turns bold, because the browser doesn't know where "strong" should stop.
+~code
+<h1>Test Day</h1>
+<p>Burn starts at <strong>9:00</strong> sharp.</p>
+<p>Bring ear protection.</p>
+=E h1b
+@T
+**The skeleton separates information about the page from the page itself.** Everything in `<head>` is for the browser: the tab title, the character set, links to CSS. Everything in `<body>` is what people see.
+
+Nesting is a strict rule: an element must close before its parent does. `<p><strong>hi</p></strong>` is wrong, because `strong` started inside the `p`, so it has to end inside it too.
+
+Indenting each level makes the tree easy to read. The browser ignores the spaces, but people don't.
+~code
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Shown on the browser tab</title>
+  </head>
+  <body>
+    <h1>Shown on the page</h1>
+    <p>Only body content is visible.</p>
+  </body>
+</html>
+=E h2a
+@T
+**A link has two parts:** the text people click (between the tags) and the destination (`href`). Make the text say where it goes. "Test schedule" is far more useful than "click here", especially for screen readers, which can list every link on a page.
+
+`alt` text is what a screen reader says instead of showing the image, and what appears if the image fails to load. Describe what matters in the picture. For a purely decorative image, use `alt=""` so it's skipped.
+
+Paths without `http` are **relative**: the browser looks for them starting from the current page's folder.
+~code
+<p>See the <a href="#schedule">test schedule</a> below.</p>
+<img src="missing-photo.png" alt="Engine on the test stand during a burn" width="220">
+<h2 id="schedule">Schedule</h2>
+<p>Burn at 9:00.</p>
+=E h2b
+@T
+**Choose the list by asking whether order matters.** Steps you must follow in sequence go in `<ol>`. A set of items where order doesn't matter goes in `<ul>`.
+
+Only `<li>` can be a direct child of `<ul>` or `<ol>`. To make a sub-list, put the whole new list inside an `<li>`, after that item's text and before its closing `</li>`.
+
+Lists aren't just for bullet points. Navigation menus are usually a `<ul>` of links, styled with CSS to sit in a row.
+~code
+<ol>
+  <li>Prep the stand
+    <ul>
+      <li>Gloves</li>
+      <li>Goggles</li>
+    </ul>
+  </li>
+  <li>Run the test</li>
+</ol>
+=E h3a
+@T
+**Build a table one row at a time.** Each `<tr>` is a row, read left to right, and each cell in it is a column. Every row should have the same number of cells, or the columns won't line up.
+
+Use `<th>` for cells that label data, usually the first row or column, and `<td>` for the data itself. Screen readers use the headers to announce each cell, like "Qty: 3".
+
+Tables are for data that has rows and columns. Don't use them to lay out a page. That's what CSS grid and flexbox are for.
+~code
+<table border="1">
+  <thead>
+    <tr><th>Part</th><th>Qty</th><th>Bin</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Valve</td><td>3</td><td>A2</td></tr>
+    <tr><td>Seal</td><td>12</td><td>B1</td></tr>
+  </tbody>
+</table>
+=E h3b
+@T
+**Every input needs a label, and they're tied together by matching `for` and `id`.** Then clicking the label focuses the input, and screen readers read the label aloud when the input is reached.
+
+The input's `type` changes the keyboard and checks on phones: `type="email"` shows an @ key, and `type="number"` shows digits. `required` stops the form from sending while the field is empty.
+
+Radio buttons in a group share a `name`, which is what makes them pick-one. Checkboxes each stand alone.
+~code
+<form>
+  <label for="who">Name</label>
+  <input id="who" name="who" type="text" required>
+  <p>Shift:</p>
+  <input type="radio" id="d" name="shift" value="day"><label for="d">Day</label>
+  <input type="radio" id="n" name="shift" value="night"><label for="n">Night</label>
+  <p><input type="checkbox" id="ppe"><label for="ppe">I have PPE</label></p>
+  <button type="submit">Sign up</button>
+</form>
+=E h4a
+@T
+**Pick tags by asking "what is this?" rather than "how should it look?"** A page header is `<header>`. The site's links are `<nav>`. The one main thing on the page is `<main>`. A standalone post is `<article>`.
+
+Screen reader users can jump straight to these landmarks, like "skip to main content". A page built entirely from `<div>`s gives them nothing to jump to.
+
+`<div>` and `<span>` are still useful as plain wrappers for styling, when no meaningful tag fits.
+~code
+<header><strong>Hotfire Ops</strong></header>
+<nav><a href="#a">Today</a> · <a href="#b">Logs</a></nav>
+<main>
+  <article>
+    <h2>Burn 42</h2>
+    <p>Nominal. <span style="color:seagreen">All sensors green.</span></p>
+  </article>
+</main>
+<footer>Updated 9:40</footer>
+=E h4b
+@T
+**Much of accessibility comes free with the right element.** A `<button>` can already be reached with Tab and pressed with Enter. `<details>` already opens and closes from the keyboard. A `<div>` you made clickable does none of that until you add it yourself.
+
+The same goes for media: `controls` gives you working, labeled play buttons.
+
+The `<head>` tags matter even though you can't see them. Without the viewport tag, phones zoom out and show your page tiny, as if it were on a desktop screen.
+~code
+<figure>
+  <img src="stand.png" alt="Test stand at night" width="200">
+  <figcaption>Stand 2, night burn</figcaption>
+</figure>
+<details>
+  <summary>Safety notes</summary>
+  <p>Stay behind the blast wall.</p>
+</details>
+=E c1a
+@T
+**Read a CSS rule as "for these elements, set these looks."** The selector picks the elements, and every declaration inside the braces applies to all of them.
+
+One rule can style hundreds of elements. Change the rule and every match updates, which is why CSS is kept separate from HTML.
+
+Classes are the everyday tool. Add `class="warn"` to any element that should look like a warning, and give `.warn` one rule. An element can have several classes separated by spaces: `class="card warn"`.
+~code
+<style>
+  .card { border: 1px solid #999; padding: 8px; margin: 6px 0; }
+  .warn { color: darkorange; font-weight: bold; }
+</style>
+<p class="card">Normal card</p>
+<p class="card warn">Card and warning</p>
+<p class="warn">Just a warning</p>
+=E c1b
+@T
+**Text styles are inherited.** Set `font-family` or `color` on `body` and every element inside it picks it up, unless a more specific rule overrides it. That's why most sites set fonts once at the top.
+
+Readable text comes from a few choices together: a comfortable `font-size` (16px is the usual base), a `line-height` around 1.4 to 1.6, and enough contrast between text and background.
+
+A font list is tried left to right, and the first font the device has wins. Always end with a generic family like `sans-serif`.
+~code
+<style>
+  body { font-family: Georgia, serif; color: #333; line-height: 1.5; }
+  h2 { font-family: "Trebuchet MS", sans-serif; color: firebrick; }
+  .small { font-size: 0.85rem; color: gray; }
+</style>
+<h2>Test report</h2>
+<p>All channels read within limits.</p>
+<p class="small">Inherits the font, changes size and color.</p>
+=E c2a
+@T
+**Padding is inside the border and margin is outside it.** Padding takes the element's background color. Margin is always transparent, and it pushes neighbors away.
+
+So use padding for breathing room inside a box, like text not touching its edge, and margin for space between boxes.
+
+The four-value shorthand goes clockwise from the top: `margin: 10px 20px 30px 40px` is top, right, bottom, left. With two values, the first is top and bottom and the second is left and right.
+~code
+<style>
+  .box { background: lightblue; border: 3px solid steelblue; }
+  .a { padding: 20px; margin: 0 0 10px; }
+  .b { padding: 4px; margin: 10px 40px; }
+</style>
+<div class="box a">Lots of padding</div>
+<div class="box b">Little padding, big side margins</div>
+=E c2b
+@T
+**Every element starts as either block or inline.** Block elements like `div` and `p` take the full width and stack vertically. Inline elements like `span` and `a` sit inside a line of text, and they ignore `width` and `height`.
+
+`display` lets you switch: `inline-block` sits in a line like text but accepts a width and padding, which is how button-like links are made.
+
+For sizes, prefer flexible units. `max-width: 600px` with `width: 100%` fills small screens but stops growing on big ones.
+~code
+<style>
+  .tag { display: inline-block; width: 80px; padding: 4px; background: gold; text-align: center; }
+  .panel { width: 100%; max-width: 300px; background: #eee; padding: 8px; }
+</style>
+<p>Labels: <span class="tag">fuel</span> <span class="tag">ox</span></p>
+<div class="panel">Never wider than 300px</div>
+=E c3a
+@T
+**Flexbox has two axes.** The main axis is the direction items flow: a row by default. The cross axis runs the other way.
+
+`justify-content` arranges items along the main axis, and `align-items` lines them up across it. Switch to `flex-direction: column` and the two swap: `justify-content` now works vertically.
+
+The properties go on the **parent**, which is the flex container. Its direct children are the items, so grandchildren aren't affected.
+~code
+<style>
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; height: 70px; background: #eef; padding: 0 8px; }
+  .bar div { background: tomato; color: white; padding: 6px; }
+  .tall { padding: 20px 6px; }
+</style>
+<div class="bar"><div>One</div><div class="tall">Two</div><div>Three</div></div>
+=E c4a
+@T
+**Grid makes the layout first, and the items fill it.** `grid-template-columns` says how many columns there are and how wide each one is. Items then fill the cells in order, left to right, wrapping to new rows on their own.
+
+`fr` means a share of the leftover space. `200px 1fr` gives a fixed sidebar and lets the main area take everything else. `1fr 2fr` makes the second column twice as wide as the first.
+
+Use flexbox for one row or column of things, and grid for a layout with rows and columns.
+~code
+<style>
+  .page { display: grid; grid-template-columns: 100px 1fr 2fr; gap: 6px; }
+  .page div { background: lightsteelblue; padding: 8px; }
+</style>
+<div class="page"><div>100px</div><div>1fr</div><div>2fr</div><div>4</div><div>5</div></div>
+=E c5a
+@T
+**Read combined selectors right to left.** `nav a` finds every `a` first, then keeps only those inside a `nav`. `.card > h2` keeps `h2`s whose direct parent has the class `card`.
+
+The space and the `>` mean different things. A space means "anywhere inside, at any depth", while `>` means "one level down only".
+
+Pseudo-classes add a condition about state or position. `a:hover` is a link the mouse is over, and `li:first-child` is a list item that's first in its list.
+~code
+<style>
+  .card > p { color: seagreen; }
+  .card p { font-style: italic; }
+  li:first-child { font-weight: bold; }
+</style>
+<div class="card"><p>Direct child: green and italic</p><div><p>Grandchild: italic only</p></div></div>
+<ul><li>First</li><li>Second</li></ul>
+=E c5b
+@T
+**When two rules set the same property on the same element, the more specific selector wins.** Roughly: count ids, then classes, then tags. One id beats any number of classes, and one class beats any number of tags.
+
+Order only matters when specificity ties. Then the rule that comes later wins.
+
+So when a style "won't apply", it usually isn't broken. Another rule with a stronger selector is winning. Making your selector more specific, or simplifying the other one, fixes it without `!important`.
+~code
+<style>
+  #note { color: purple; }
+  .alert { color: red; }
+  p { color: blue; }
+  .alert { color: darkorange; }
+</style>
+<p>Tag only: blue</p>
+<p class="alert">Class wins over tag, and the later class rule wins: orange</p>
+<p class="alert" id="note">Id beats class: purple</p>
+=E c7a
+@T
+**`absolute` needs an anchor.** An absolutely placed element measures `top` and `left` from its nearest positioned ancestor, which is usually a parent you've given `position: relative`. With no anchor, it measures from the whole page, which is a common surprise.
+
+That pairing is the standard trick for badges and labels on a corner of a card.
+
+`absolute` and `fixed` elements are taken out of the normal flow, so the content around them closes up as if they weren't there.
+~code
+<style>
+  .card { position: relative; width: 200px; padding: 16px; background: #eef; }
+  .badge { position: absolute; top: -8px; right: -8px; background: crimson; color: white; border-radius: 999px; padding: 2px 8px; }
+</style>
+<div class="card">Valve 3<span class="badge">2</span></div>
+=E c7b
+@T
+**A transition animates between two states you've already written.** Put the transition on the normal state and the change on another state like `:hover`, and the browser animates in between, both ways.
+
+`transform` is the right tool for motion. Moving with `top` or `margin` shifts the layout around it, while `transform: translateY(-3px)` just slides the element visually.
+
+Variables make a design consistent: define colors and spacing once on `:root`, use `var(--name)` everywhere, and change the theme in one place.
+~code
+<style>
+  :root { --accent: seagreen; --radius: 6px; }
+  .btn { background: var(--accent); color: white; border: 0; border-radius: var(--radius); padding: 10px 14px; transition: transform .2s, background .2s; }
+  .btn:hover { transform: translateY(-3px); background: darkgreen; }
+</style>
+<button class="btn">Hover me</button>
+=R hstart
+@T
+Tags label content: `<h1>` is a heading and `<p>` is a paragraph. Close tags in the reverse order you opened them.
+
+`<head>` holds page info, and `<body>` holds what people see.
+=R hcontent
+@T
+`<a href="...">` links, and the text says where it goes. `<img src alt>` needs `alt` text.
+
+Use `<ol>` when order matters, `<ul>` when it doesn't, and put each item in `<li>`.
+=R htables
+@T
+Tables: `<tr>` is a row, `<th>` a header cell and `<td>` a data cell.
+
+Forms: every `<input>` gets a `<label for="id">`. Radio buttons in one group share a `name`.
+=R hsem
+@T
+Choose tags by meaning: `<header>`, `<nav>`, `<main>`, `<article>`, `<aside>` and `<footer>`.
+
+Buttons do things, and links go places.
+=R hfire
+@T
+Start with the skeleton, add semantic sections, then fill in headings, paragraphs, lists, tables and forms.
+
+Check that every tag is closed and every image has `alt` text.
+=R cstart
+@T
+`selector { property: value; }`: tag names, `.class` and `#id` pick elements.
+
+Text properties like `color` and `font-family` are inherited by children.
+=R cbox
+@T
+From the inside out: content, padding, border, margin. `box-sizing: border-box` makes `width` include padding and border.
+
+`margin: 0 auto` centers a block that has a width.
+=R cflex
+@T
+`display: flex` goes on the parent. `justify-content` works along the row, and `align-items` across it.
+
+`gap` adds spacing, and `flex: 1` on a child takes the leftover space.
+=R cgrid
+@T
+`display: grid` with `grid-template-columns: repeat(3, 1fr)` makes 3 equal columns.
+
+`grid-column: span 2` stretches an item, and `grid-template-areas` lays out the page by name.
+=R cselect
+@T
+`a b` is `b` anywhere inside `a`, and `a > b` is a direct child only. `:hover`, `:nth-child()` and `:not()` add conditions.
+
+The more specific selector wins: id beats class beats tag. On a tie, the later rule wins.
+=R cresp
+@T
+Write mobile styles first, then add `@media (min-width: ...)` for bigger screens.
+
+`clamp()`, `min()`, `max()` and `aspect-ratio` resize smoothly without breakpoints.
+=R ceffects
+@T
+Anchor `position: absolute` inside a `position: relative` parent. `z-index` sets the stacking order.
+
+`transition` animates changes, and `var(--name)` reuses values.
+=R cfire
+@T
+Plan the layout first: flexbox for one direction, grid for two.
+
+Build from the box model out, and use variables for colors you repeat.

@@ -1577,7 +1577,7 @@ Invalid input
 
 `.read()` gets everything. `.readlines()` gets a list of lines. A `for` loop over the file goes line by line.
 
-This app runs Python in your browser with no real file system, so the examples below are for reading, and the code here won't run. Try them in VS Code.
+This app gives Python a small pretend folder, so you can try reading and writing files right here. Each run starts fresh.
 @Q
 Which mode **adds** to the end of a file and keeps what's there?
 ~opts

@@ -1,0 +1,453 @@
+=E pyhello
+@T
+**How Python reads your program:** it starts at line 1 and runs each line in order, top to bottom. Nothing happens until a line is reached, so a `print` on line 5 can only use values made on lines 1 to 4.
+
+Every value has a **type**, and the type decides what you can do with it. `"7"` and `7` look alike, but one is text and one is a number. `"7" * 2` repeats the text, while `7 * 2` multiplies.
+
+Watch the output: the quotes are gone. Quotes only tell Python where text starts and stops. They're never printed.
+~code
+print("7" * 2)
+print(7 * 2)
+print("7" + "2")
+print(7 + 2)
+=E pycomment
+@T
+**Why converting matters:** text and numbers don't mix. `+` means "add" for numbers and "join" for strings, so Python refuses to guess when you give it one of each. You pick the meaning by converting first.
+
+Read a conversion from the inside out: `int("42")` takes the text `"42"` and hands back the number `42`. If the text isn't a whole number, like `"4.5"` or `"hi"`, you get a `ValueError`.
+
+To go from a float to a whole number, choose on purpose: `int()` cuts off the decimals, and `round()` rounds.
+~code
+age_text = "30"
+age = int(age_text)
+print(age + 1)
+print("Age: " + age_text)
+print("Age:", age)
+print(int(7.99), round(7.99))
+=E pyassign
+@T
+**A variable is a label, not a box.** `x = 5` makes the name `x` point at the value `5`. Assigning again moves the label to a new value.
+
+The right side of `=` always runs first. In `count = count + 1`, Python reads the current `count`, adds 1, then points `count` at the result. That's why the name can appear on both sides.
+
+Python figures out the type from the value, so the same name can hold a number now and text later. That's legal, but confusing, so keep one name for one kind of thing.
+~code
+count = 5
+count = count + 1
+print(count)
+
+first = "Ada"
+greeting = "Hi " + first
+first = "Grace"
+print(greeting)
+@T
+In that last example, `greeting` still says `Hi Ada`. It was built from `first` at that moment. Changing `first` afterwards doesn't reach back and rebuild it.
+=E pyinput
+@T
+**What happens at `input()`:** the program pauses, waits for one line of typing, and hands that line back as a string. The Enter key isn't included.
+
+Most programs convert right away by wrapping the call: `int(input())`. Read it from the inside out: get the text, then turn it into a number.
+
+On tests, the expected output never includes prompt text, so call `input()` with nothing inside the parentheses unless the task shows the prompt in the output.
+
+Try it: change the numbers in the **Input** box below the code and press Run.
+~code
+qty = int(input())
+price = float(input())
+print(qty * price)
+~stdin
+3
+2.5
+=E pyops
+@T
+**Division comes in three flavors**, and mixing them up is the most common math bug:
+
+`/` always gives a float, even when it divides evenly. `10 / 2` is `5.0`.
+
+`//` gives how many whole times it fits. `17 // 5` is `3`.
+
+`%` gives what's left over. `17 % 5` is `2`.
+
+Together, `//` and `%` split one amount into units: hours and minutes, dollars and cents, tons and pounds. Work from the biggest unit down, keeping the remainder each time.
+~code
+cents = 1234
+dollars = cents // 100
+left = cents % 100
+quarters = left // 25
+left = left % 25
+print(dollars, "dollars,", quarters, "quarters,", left, "cents left")
+=E pymod
+@T
+**Why modules exist:** Python keeps its core small. Extra tools live in modules that you load when you need them. `import math` loads the whole module, and you reach inside with a dot: `math.sqrt`.
+
+The dot reads as "the `sqrt` that belongs to `math`." Forget the import and you get `NameError: name 'math' is not defined`.
+
+`ceil` rounds up and `floor` rounds down, whatever the decimal. That's different from `round`, which goes to the nearest. Use `ceil` for questions like "how many boxes do I need?", where a partly full box still counts.
+~code
+import math
+
+items = 23
+per_box = 10
+print(math.ceil(items / per_box), "boxes")
+print(math.floor(items / per_box), "full boxes")
+print(round(2.5), round(3.5))
+@T
+That last line surprises people: `round(2.5)` is `2`. Python rounds exact halves to the nearest **even** number. For money, format with `:.2f` instead of relying on `round`.
+=E pyslice
+@T
+**Picture the positions between characters.** For `"valve"`, position 0 is before the `v` and position 5 is after the `e`. A slice `s[1:4]` cuts at positions 1 and 4, giving `"alv"`.
+
+That's why the stop number isn't included, and why `s[:3] + s[3:]` always gives back the whole string.
+
+Leaving out a number means "from the start" or "to the end." A third number is the step: `s[::2]` takes every other character, and `s[::-1]` walks backwards, reversing it. This also works on lists.
+~code
+s = "valve"
+print(s[1:4])
+print(s[:3] + s[3:])
+print(s[-3:])
+print(s[::-1])
+print(len(s), s[len(s) - 1])
+=E pymethods
+@T
+**Methods are actions a value knows how to do.** You call them with a dot: `name.upper()`. String methods never change the original, because strings can't change. They hand back a **new** string, so save it or print it.
+
+You can chain them, and they run left to right: `text.strip().lower()` strips first, then lowercases the stripped result.
+
+`split` and `join` are a pair you'll use constantly. `split` turns one string into a list of pieces, and `join` glues a list back into one string, using the string it's called on as the glue.
+~code
+raw = "  Hot Fire Test  "
+clean = raw.strip().lower()
+print(clean)
+words = clean.split()
+print(words)
+print("_".join(words))
+print(raw)
+=E pyfstr
+@T
+**An f-string is a template.** Everything inside `{ }` is real Python that runs, and its result is dropped into the text. You can put variables, math or method calls there.
+
+After a colon comes the **format spec**, which only changes how the value looks. `{price:.2f}` keeps the number as is but shows exactly two decimals, rounding if needed.
+
+This is the safest way to match test output. `print("Total:", total)` adds a space automatically, while an f-string puts characters exactly where you type them.
+~code
+item = "seal"
+qty = 3
+price = 4.5
+print(f"{qty} {item}s cost ${qty * price:.2f}")
+print(f"{item.upper()}: {qty * price}")
+print("Total:", qty * price)
+=E pybranch
+@T
+**Python checks conditions top to bottom and takes the first one that's true.** Once a branch runs, the rest of the `if`/`elif`/`else` chain is skipped.
+
+That means order matters. Check the most specific case first. If `temp > 70` came before `temp > 100`, a reading of 120 would say "Warm" and never reach "Too hot".
+
+Separate `if` statements are different: each one is checked on its own. Use `elif` when only one answer should win, and separate `if`s when several things can be true at once.
+~code
+temp = 120
+if temp > 70:
+    print("elif chain: Warm")
+elif temp > 100:
+    print("elif chain: Too hot")
+
+if temp > 100:
+    print("separate ifs: Too hot")
+if temp > 70:
+    print("separate ifs: Warm")
+=E pyfor
+@T
+**A `for` loop hands you one item at a time.** On each round, the loop variable is set to the next item and the indented block runs. When the items run out, the loop ends and Python moves on to the next line below it.
+
+The loop variable is just a name you choose. `for part in parts` reads naturally, while `for i in range(5)` is the habit when you only need to count.
+
+`range(n)` runs exactly `n` times, starting at 0. That's why `range(1, n + 1)` is the way to count from 1 to `n`.
+~code
+total = 0
+for n in range(1, 5):
+    total = total + n
+    print("added", n, "total is now", total)
+print("final:", total)
+=E pywhile
+@T
+**Use `while` when you don't know how many rounds you'll need**, only when to stop. Reading input until a stop value is the classic case.
+
+Every `while` loop needs three things: a starting value, a condition, and something inside the loop that changes, so the condition eventually becomes false. Forget the change and the loop never ends.
+
+`break` leaves the loop right away. `continue` skips the rest of this round and goes back to the condition.
+~code
+count = 0
+total = 0
+value = int(input())
+while value != -1:
+    count += 1
+    total += value
+    value = int(input())
+print(count, total)
+~stdin
+4
+6
+-1
+=E pylists
+@T
+**A list is an ordered row of slots**, numbered from 0. Unlike strings, lists can change in place. `append`, `insert`, `remove`, `pop` and `sort` all modify the list itself.
+
+That leads to a classic trap. Methods that change a list in place return `None`, so `nums = nums.sort()` throws your list away. Call `nums.sort()` on its own line, or use `sorted(nums)` to get a new list.
+
+To build a list from input, start with an empty one and `append` in a loop.
+~code
+nums = []
+for text in "5 2 9".split():
+    nums.append(int(text))
+print(nums)
+
+result = nums.sort()
+print(result, nums)
+print(sorted([3, 1, 2]))
+=E pycomp
+@T
+**Read a comprehension from the middle out.** In `[n * 2 for n in nums if n > 0]`, the loop `for n in nums` comes first, then the filter `if n > 0`, and the expression on the left, `n * 2`, is what gets saved.
+
+It's the same as this longer loop:
+
+```
+result = []
+for n in nums:
+    if n > 0:
+        result.append(n * 2)
+```
+
+Use a comprehension when you're building one list from another. Use a regular loop when you need several steps or prints along the way.
+~code
+nums = [4, -1, 7, 0]
+doubled = [n * 2 for n in nums if n > 0]
+print(doubled)
+names = ["ana", "leo"]
+print([name.title() for name in names])
+=E pydicts
+@T
+**A dictionary is a lookup table.** Instead of numbered positions, you look things up by a key you choose, like a part name or a stock symbol. That's why dictionaries show up whenever a task gives you prices, counts or settings by name.
+
+Keys must be unique. Assigning to an existing key replaces its value, and assigning to a new key adds it.
+
+`d[key]` means "I'm sure it's there" and crashes with `KeyError` if it isn't. `d.get(key, default)` means "it might not be there," and gives you the default instead.
+~code
+prices = {"valve": 4.5, "seal": 1.25}
+order = ["valve", "seal", "seal"]
+total = 0
+for part in order:
+    total += prices[part]
+print(f"Total: ${total:.2f}")
+print(prices.get("pump", 0))
+=E pysets
+@T
+**A set answers one question very fast: "is this in here?"** It keeps only unique values and has no order, so there's no indexing like `s[0]`.
+
+Turning a list into a set is the quickest way to remove duplicates: `set(items)`. Wrap it in `sorted()` if you need a predictable order back, since sets print in any order.
+
+The set operators read like a Venn diagram. `a & b` is what's in both, `a | b` is everything, and `a - b` is what's in `a` but not `b`.
+~code
+visits = ["bay1", "bay2", "bay1", "bay3", "bay2"]
+unique = set(visits)
+print(len(unique))
+print(sorted(unique))
+monday = {"Ana", "Leo", "Kim"}
+tuesday = {"Leo", "Sam"}
+print(sorted(monday & tuesday), sorted(monday - tuesday))
+=E pydef
+@T
+**A function is a named recipe.** `def` only writes the recipe down. Nothing inside runs until you call it with parentheses.
+
+When you call `area(3, 4)`, the values are matched to the parameters in order (`w = 3`, `h = 4`), the body runs, and `return` sends a value back to where the call was. The call is then replaced by that value, so `area(3, 4) + 1` becomes `12 + 1`.
+
+`return` also ends the function immediately. Any lines after it in that run are skipped.
+~code
+def area(w, h):
+    return w * h
+    print("never runs")
+
+result = area(3, 4) + 1
+print(result)
+print(area(2, 5))
+=E pyscope
+@T
+**Each call gets its own fresh set of variables.** Names created inside a function exist only while that call runs. Two functions can both use a variable named `total` without stepping on each other.
+
+That's a feature: a function only depends on what you pass in and only affects the outside through what it returns. So pass values in as parameters and send results out with `return`, instead of reaching for `global`.
+
+The exception is a mutable object like a list. The function gets the same list, not a copy, so changes it makes are visible outside.
+~code
+def double_all(nums):
+    nums = [n * 2 for n in nums]
+    return nums
+
+data = [1, 2, 3]
+new = double_all(data)
+print(data, new)
+=E pytry
+@T
+**How `try` works:** Python runs the `try` block line by line. If a line raises an error, the rest of the block is skipped and Python jumps to the first matching `except`. If nothing goes wrong, the `except` blocks are skipped entirely.
+
+Keep the `try` block small, around only the lines that can fail. Then you know exactly which problem the `except` is handling.
+
+Catch the specific error you expect, like `ValueError` for bad numbers or `IndexError` for a bad position. A bare `except:` also hides your own typos, which makes bugs hard to find.
+~code
+items = ["Django", "Flask"]
+for text in ["1", "5", "x"]:
+    try:
+        index = int(text)
+        print(items[index])
+    except ValueError:
+        print(text, "is not a number")
+    except IndexError:
+        print(index, "is out of range")
+=E pyfiles
+@T
+**A file is just text with line breaks in it.** `open()` gives you a file object, and its methods move through that text:
+
+`read()` gives the whole file as one string, including the `\n` line breaks.
+
+`for line in f` gives one line at a time, each still ending in `\n`. Use `.strip()` to remove it.
+
+Writing works the other way. `write()` doesn't add a new line for you, so put `"\n"` where you want one. Mode `"w"` wipes the file first, and `"a"` adds to the end.
+
+This app gives Python a small pretend folder, so the code below really runs.
+~code
+with open("log.txt", "w") as f:
+    f.write("start\n")
+with open("log.txt", "a") as f:
+    f.write("burn\n")
+with open("log.txt") as f:
+    for line in f:
+        print(line.strip().upper())
+=R pyout
+@T
+`print()` shows values, separated by spaces. Change that with `sep=` and `end=`.
+
+Types: `str` is text, `int` is a whole number, `float` is a decimal, and `bool` is `True` or `False`.
+
+Convert with `int()`, `float()` and `str()` before mixing text and numbers.
+=R pyvars
+@T
+`=` points a name at a value, and the right side runs first. `x += 1` is short for `x = x + 1`.
+
+`input()` always returns a string, so wrap it: `int(input())`. Each call reads the next line.
+=R pymath
+@T
+`/` gives a float. `//` gives whole times it fits. `%` gives the remainder. `**` is a power.
+
+`import math` gives you `math.sqrt`, `math.ceil` (up), `math.floor` (down) and `math.pi`.
+=R pystr
+@T
+Positions start at 0, and `-1` is the last character. `s[a:b]` stops before `b`.
+
+Strings never change. Methods like `.upper()` and `.strip()` return a new string, so save it.
+
+`f"{value:.2f}"` shows two decimals.
+=R pyif
+@T
+Conditions end with `:`, and the block underneath is indented.
+
+The first true branch wins and the rest are skipped, so put the most specific check first.
+
+Combine checks with `and`, `or` and `not`.
+=R pyloop
+@T
+`for x in items` runs once per item. `range(a, b)` counts from `a` up to, but not including, `b`.
+
+`while` repeats until its condition is false, so something inside must change. `break` leaves the loop, and `continue` skips to the next round.
+=R pylist
+@T
+Lists are ordered, start at index 0, and can change. `append` adds, `pop` removes, and `len` counts.
+
+`.sort()` changes the list and returns `None`. `sorted()` returns a new list.
+
+`[expr for x in items if cond]` builds a list in one line.
+=R pydict
+@T
+`d[key]` looks up a value and crashes if the key is missing. `d.get(key, default)` doesn't.
+
+`for k, v in d.items():` loops over pairs.
+
+A set keeps unique values. `&` is both, `|` is either, and `-` is the difference.
+=R pyfunc
+@T
+`def name(params):` defines a function, and calling `name(args)` runs it.
+
+`return` sends a value back and ends the call. Without it, the call gives `None`.
+
+Variables made inside a function stay inside it.
+=R pyerr
+@T
+Put risky lines in `try:`, and handle a specific error in `except ValueError:`.
+
+`with open(name, mode) as f:` closes the file for you. Modes: `"r"` reads, `"w"` replaces, `"a"` adds to the end.
+=R pyprac1
+@T
+Read each count with `int(input())`. Total distance is each count times that employee's miles, added up.
+
+`f"{total:.2f}"` shows exactly two decimals.
+=R pyprac2
+@T
+Work from the biggest unit down: `//` gives how many whole units fit, and `%` gives what's left to split further.
+
+A ton is 16 × 2000 ounces.
+=R pyprac3
+@T
+`type(x).__name__` gives the type's name as text, like `"list"` or `"int"`.
+
+`name in ["list", "str"]` checks whether it's one of several names.
+=R pyprac4
+@T
+`/` always gives a float, so `56 / 2` is `28.0`.
+
+When the task says not to round, print the number as it is, with no `:.2f`.
+=R pyprac5
+@T
+`+` adds numbers but joins strings: `"1" + "3"` is `"13"`.
+
+Convert each value with `float()` or `str()` before adding it to that total.
+=R pyprac6
+@T
+`str()` turns a number into text so you can slice it.
+
+`s[:3]` is the first three characters, `s[3:5]` the next two, and `s[5:]` the rest.
+=R pyprac7
+@T
+`value in my_list` is already `True` or `False`.
+
+A function sends its answer back with `return`, and an f-string can show a `bool` directly.
+=R pyprac8
+@T
+Indexing past the end of a list raises `IndexError`.
+
+`try:` the risky lookup, and `except IndexError:` print the fallback.
+=R pyprac9
+@T
+An `if`/`elif` chain takes the first true branch, so check from coldest to hottest.
+
+A second, separate `if` can add an extra line in some cases.
+=R pyprac10
+@T
+Read the count first, then loop that many times with `range(count)`, reading one symbol each round.
+
+Look up each price with `stocks[symbol]` and keep a running total.
+=R pyprac11
+@T
+Work out the full cost first, then apply the discount.
+
+Check the biggest quantity range first. Taking 10% off means multiplying by `0.90`.
+=R pyprac12
+@T
+`f.read().split()` turns a file's lines into a list of words.
+
+Mode `"a"` adds to the end, and `" ".join(words)` makes the sentence.
+=R pyprac13
+@T
+`csv.reader(f)` gives each row as a list of strings.
+
+`row[::-1]` is the same list, reversed.
+=R pyprac14
+@T
+`import math`, then `math.factorial(n)`.
+
+A comparison like `a > b` is already `True` or `False`, so print it directly.

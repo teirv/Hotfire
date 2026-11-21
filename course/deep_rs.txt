@@ -1,0 +1,345 @@
+=E rs1a
+@T
+**How Rust runs your code:** the compiler checks the whole program before anything runs, and it's strict. Wrong types, missing semicolons, and many memory mistakes are all caught at this stage. If the compiler complains, read its message carefully. Rust's errors usually say exactly what's wrong and often suggest the fix.
+
+`fn main()` is where every program starts. Code outside a function, other than definitions, isn't allowed.
+
+`println!` checks its placeholders at compile time too: two `{}` with only one value is an error, not a surprise later.
+~code
+fn main() {
+    let name = "Rust";
+    let year = 2015;
+    println!("{} 1.0 came out in {}", name, year);
+    println!("{name} checks code before it runs");
+}
+=E rs1b
+@T
+**Why variables can't change by default:** when you read `let x = 5;`, you know `x` is 5 everywhere below. That makes code easier to trust. When something does need to change, `mut` makes it obvious.
+
+Input is a good example of everything working together. You read a line into a `String`, which needs `mut` because `read_line` fills it in. Then `trim()` removes the Enter key, and `parse()` turns the text into a number.
+
+Try changing the value in the **Input** box below the code.
+~code
+use std::io;
+
+fn main() {
+    let mut line = String::new();
+    io::stdin().read_line(&mut line).unwrap();
+    let qty: i32 = line.trim().parse().unwrap();
+    let mut total = 0;
+    total += qty * 3;
+    println!("{qty} boxes hold {total} parts");
+}
+~stdin
+4
+=E rs2a
+@T
+**`if` gives back a value in Rust.** Each branch is a block, and the last expression in a block (with no `;`) is that block's value. That's why `let status = if psi > 500 { "High" } else { "OK" };` works. Both branches must give the same type.
+
+The same rule applies to `loop`: `break value` ends the loop and hands back a value.
+
+Ranges: `0..n` runs `n` times, from 0 up to `n - 1`. `0..=n` includes `n`. Use `.rev()` to count down.
+~code
+fn main() {
+    let psi = 480;
+    let status = if psi > 500 { "High" } else if psi > 450 { "Watch" } else { "OK" };
+    println!("{status}");
+    for i in (1..=3).rev() {
+        print!("{i} ");
+    }
+    println!("go");
+    let mut n = 1;
+    let first_big = loop {
+        n *= 3;
+        if n > 50 {
+            break n;
+        }
+    };
+    println!("{first_big}");
+}
+=E rs2b
+@T
+**`match` must handle every possible value.** If you leave a case out, the program won't compile. That sounds strict, but it means you can't forget a case. Add a new enum variant later and the compiler points to every `match` that needs updating.
+
+Arms are tried top to bottom, and the first pattern that fits wins. So put narrow patterns before wide ones like `_`.
+
+Like `if`, `match` is an expression. Every arm gives back a value of the same type, and you can store the result.
+~code
+fn grade(score: u32) -> char {
+    match score {
+        90..=100 => 'A',
+        80..=89 => 'B',
+        70..=79 => 'C',
+        _ => 'F',
+    }
+}
+
+fn main() {
+    for s in [95, 83, 40] {
+        println!("{s}: {}", grade(s));
+    }
+}
+=E rs3a
+@T
+**Expressions vs statements is the key idea in Rust functions.** An expression produces a value: `a + b`. Adding a semicolon turns it into a statement, which produces nothing.
+
+So a function whose last line is `width * height` returns that value, but `width * height;` returns nothing. The compiler will say it expected `f64` but found `()`. `()` is Rust's "nothing" value.
+
+Every parameter needs a type, and the return type comes after `->`. Rust never guesses these, so a function's first line tells you exactly how to use it.
+~code
+fn area(width: f64, height: f64) -> f64 {
+    width * height
+}
+
+fn label(psi: i32) -> String {
+    if psi < 0 {
+        return String::from("invalid");
+    }
+    format!("{psi} psi")
+}
+
+fn main() {
+    println!("{}", area(2.5, 4.0));
+    println!("{} / {}", label(450), label(-1));
+}
+=E rs4a
+@T
+**The three ownership rules:** each value has one owner. There's only one owner at a time. When the owner goes out of scope (its closing `}`), the value is cleaned up.
+
+Moving follows from that. `let b = a;` with a `String` hands ownership to `b`, so using `a` afterwards is a compile error. Passing a `String` to a function moves it into the function too.
+
+Numbers, `bool` and `char` are small and are simply copied, so they don't move. When you really need two separate strings, `.clone()` makes a full copy.
+~code
+fn take(s: String) -> usize {
+    s.len()
+}
+
+fn main() {
+    let a = String::from("valve");
+    let b = a.clone();
+    let n = take(a);
+    println!("{n} {b}");
+
+    let x = 5;
+    let y = x;
+    println!("{x} {y}");
+}
+=E rs4b
+@T
+**Borrowing is lending, not giving.** `&value` lends a read-only view, and the owner gets it back when the borrow ends. `&mut value` lends it with permission to change it.
+
+The rule: either many readers, or one writer, never both at the same time. That's what stops one part of a program from changing data while another part is reading it.
+
+Most functions that only read data should take `&` so the caller keeps ownership. Use `&mut` only when the function has to change something.
+~code
+fn total(parts: &Vec<u32>) -> u32 {
+    parts.iter().sum()
+}
+
+fn add_spare(parts: &mut Vec<u32>) {
+    parts.push(1);
+}
+
+fn main() {
+    let mut parts = vec![3, 4];
+    add_spare(&mut parts);
+    println!("{} parts in {} bins", total(&parts), parts.len());
+}
+=E rs5a
+@T
+**A struct is your own type made from named fields.** You create one by giving every field a value, and read fields with a dot: `tank.level`.
+
+Methods live in a separate `impl` block. `&self` means the method reads the struct, and `&mut self` means it changes it, so the struct itself must be declared with `let mut`. You can tell from the first parameter what a method is allowed to do.
+
+`new` is just a naming habit for a function that builds the struct. It has no `self`, so you call it as `Tank::new(...)`.
+~code
+struct Tank {
+    level: u32,
+    capacity: u32,
+}
+
+impl Tank {
+    fn new(capacity: u32) -> Tank {
+        Tank { level: 0, capacity }
+    }
+    fn fill(&mut self, amount: u32) {
+        self.level = (self.level + amount).min(self.capacity);
+    }
+    fn percent(&self) -> u32 {
+        self.level * 100 / self.capacity
+    }
+}
+
+fn main() {
+    let mut t = Tank::new(200);
+    t.fill(150);
+    t.fill(100);
+    println!("{} of {} ({}%)", t.level, t.capacity, t.percent());
+}
+=E rs6a
+@T
+**Why `Option` instead of `null`:** in other languages any value might secretly be missing, and you only find out when the program crashes. In Rust, a value that might be missing has a different type, `Option<T>`. The compiler won't let you use it as a plain value until you've handled `None`.
+
+`match` handles both cases. `if let Some(x) = ...` handles just the case you care about. `unwrap_or(default)` gives a fallback in one step.
+
+Enums in general work the same way: a value is exactly one variant, and `match` makes you handle each.
+~code
+fn find(parts: &[&str], name: &str) -> Option<usize> {
+    parts.iter().position(|p| *p == name)
+}
+
+fn main() {
+    let parts = ["valve", "seal", "hose"];
+    match find(&parts, "seal") {
+        Some(i) => println!("seal is at {i}"),
+        None => println!("no seal"),
+    }
+    if let Some(i) = find(&parts, "hose") {
+        println!("hose is at {i}");
+    }
+    println!("{}", find(&parts, "pump").unwrap_or(99));
+}
+=E rs7a
+@T
+**Iterators are lazy.** `filter` and `map` only describe the steps. Nothing happens until something consumes the iterator: `collect`, `sum`, `count`, or a `for` loop.
+
+`iter()` hands out references to each item, so the closures receive `&x`. That's why you'll see `*x` or `|&x|` to get the value itself. The original vector is untouched and still usable afterwards.
+
+`collect()` needs to know what to build, so give the variable a type like `Vec<i32>`.
+~code
+fn main() {
+    let readings = vec![5, 12, 8, 30];
+    let doubled_high: Vec<i32> = readings.iter().filter(|&&x| x > 10).map(|x| x * 2).collect();
+    let total: i32 = readings.iter().sum();
+    println!("{:?} {total} {}", doubled_high, readings.len());
+}
+=E rs7b
+@T
+**A `HashMap` stores pairs and finds a value by its key** almost instantly, however many entries there are.
+
+Reading a key returns an `Option`, because it might not be there: `map.get("valve")` gives `Some(&3)` or `None`.
+
+`entry(key).or_insert(0)` is the counting tool. It finds the value for that key, adding `0` first if the key is new. Then `*count += 1` changes the value in place. The `*` means "the value this points to."
+
+A `HashMap` has no order. Collect and sort the keys when you need predictable output.
+~code
+use std::collections::HashMap;
+
+fn main() {
+    let mut counts = HashMap::new();
+    for word in "go stop go wait go".split(' ') {
+        let count = counts.entry(word).or_insert(0);
+        *count += 1;
+    }
+    let mut keys: Vec<_> = counts.keys().collect();
+    keys.sort();
+    for k in keys {
+        println!("{k}: {}", counts[k]);
+    }
+}
+=E rs8a
+@T
+**Rust treats failure as a normal value.** A function that can fail returns `Result<T, E>`: `Ok` with the answer, or `Err` with what went wrong. Nothing is thrown, so the possibility of failure is visible right in the function's type.
+
+You decide what to do with it: `match` to handle both cases, `unwrap_or` for a fallback, or `?` to pass the error up to your own caller.
+
+`?` is shorthand: if it's `Ok`, take the value and keep going. If it's `Err`, return that error from this function right now.
+~code
+fn parse_pair(a: &str, b: &str) -> Result<i32, String> {
+    let x: i32 = a.parse().map_err(|_| format!("bad: {a}"))?;
+    let y: i32 = b.parse().map_err(|_| format!("bad: {b}"))?;
+    Ok(x + y)
+}
+
+fn main() {
+    for (a, b) in [("2", "3"), ("2", "x")] {
+        match parse_pair(a, b) {
+            Ok(sum) => println!("sum {sum}"),
+            Err(e) => println!("error {e}"),
+        }
+    }
+}
+=E rs9a
+@T
+**A trait describes what a type can do,** like an interface in C#. Any type can implement it, even types you didn't write, and a trait can include default methods that use the required ones.
+
+Generic code then asks for the ability instead of a specific type. `fn show(item: &impl Describe)` accepts anything that implements `Describe`, and the compiler checks each call.
+
+You've used traits all along: `{:?}` needs `Debug`, `{}` needs `Display`, and `.clone()` needs `Clone`.
+~code
+trait Describe {
+    fn name(&self) -> String;
+    fn describe(&self) -> String {
+        format!("This is {}", self.name())
+    }
+}
+
+struct Valve;
+struct Pump {
+    rpm: u32,
+}
+
+impl Describe for Valve {
+    fn name(&self) -> String { "a valve".to_string() }
+}
+impl Describe for Pump {
+    fn name(&self) -> String { format!("a pump at {} rpm", self.rpm) }
+}
+
+fn show(item: &impl Describe) {
+    println!("{}", item.describe());
+}
+
+fn main() {
+    show(&Valve);
+    show(&Pump { rpm: 1200 });
+}
+=R rsfirst
+@T
+Programs start in `fn main()`. `println!("{}", x)` fills each `{}` in order, and `{x:.2}` shows two decimals.
+
+`let` can't change, so use `let mut` when it must. Convert number types with `as`.
+=R rsflow
+@T
+`if` and `match` are expressions, so they can give back a value.
+
+`1..4` is 1 to 3, and `1..=4` includes 4.
+
+`match` must cover every case, so use `_` for the rest. `loop` repeats until `break`.
+=R rsfn
+@T
+`fn name(x: i32) -> i32 { ... }`: every parameter has a type.
+
+The last line without `;` is the return value. `return` leaves early.
+=R rsown
+@T
+A `String` has one owner. Assigning or passing it moves it, and `.clone()` copies it.
+
+`&x` borrows to read, and `&mut x` borrows to change. You can have many readers or one writer.
+=R rsstruct
+@T
+`struct` groups fields, and `impl` holds methods.
+
+`&self` reads, `&mut self` changes, and `Type::new(...)` builds one.
+=R rsenum
+@T
+An `enum` is one of several variants, and `match` handles each.
+
+`Option` is `Some(x)` or `None`. `if let Some(x) = ...` handles one case, and `unwrap_or(d)` gives a fallback.
+=R rscoll
+@T
+`vec![...]` makes a vector, with `push` to add and `len` to count.
+
+`.iter().filter(...).map(...).collect()` builds a new collection.
+
+`HashMap`: `entry(k).or_insert(0)` counts, and `get(k)` returns an `Option`.
+=R rserr
+@T
+`Result` is `Ok(v)` or `Err(e)`. `match` it, use `unwrap_or` for a fallback, or use `?` to pass the error up.
+
+`"42".parse::<i32>()` returns a `Result`.
+=R rstrait
+@T
+`trait` lists methods, and `impl Trait for Type` provides them.
+
+`&impl Trait` accepts any type with that trait, and `T: PartialOrd` limits a generic to types that can be compared.

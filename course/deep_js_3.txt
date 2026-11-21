@@ -1,0 +1,358 @@
+=E jq11
+@T
+**jQuery works on groups, not single elements.** `$(".tip")` gives a wrapped set of every match, and calling a method on it applies to all of them, whether that's 0, 1 or 50. Plain DOM code needs a `for` loop for the same thing.
+
+Matching nothing isn't an error. Methods on an empty set do nothing, so a wrong selector fails silently. Check `.length` when something "doesn't work".
+
+Most methods are both getter and setter: `.text()` reads, and `.text("hi")` writes. Writing returns the same set, which is why chaining works.
+~html
+<p class="tip">One</p><p class="tip">Two</p><p class="tip">Three</p>
+~code
+console.log($(".tip").length, "tips found");
+$(".tip").text("Updated").css("color", "seagreen");
+console.log($(".tip").first().text());
+console.log($(".nope").length, "for a wrong selector");
+=E jq21
+@T
+**`$(this)` is the element that triggered the event.** When one handler is attached to many buttons, `this` tells you which one was clicked, and wrapping it in `$()` gives you jQuery methods on just that element.
+
+Delegation solves a common bug. `$("li").on("click", ...)` only attaches to items that exist right now. Items added later get nothing. Attach to the parent instead, `$("#list").on("click", "li", ...)`, and it catches clicks on any `li` inside, including future ones.
+~html
+<ul id="list"><li>Valve</li></ul>
+<button id="add">Add part</button>
+~code
+$("#list").on("click", "li", function () {
+  $(this).toggleClass("done").css("text-decoration", $(this).hasClass("done") ? "line-through" : "none");
+});
+$("#add").on("click", () => $("#list").append("<li>New part</li>"));
+console.log("Add parts, then click any item, including new ones.");
+=E jq32
+@T
+**Inside or beside:** `append` and `prepend` put content inside the element, as its last or first child. `after` and `before` put content next to the element, as a sibling.
+
+`.html("<b>x</b>")` reads text as HTML, while `.text("<b>x</b>")` shows the characters literally. Use `.text` for anything a user typed, so it can't inject HTML.
+
+`.empty()` clears the children but keeps the element. `.remove()` takes the element itself away.
+~html
+<ul id="u"><li>Two</li></ul>
+~code
+$("#u").prepend("<li>One</li>").append("<li>Three</li>");
+$("#u").before("<h3>Steps</h3>");
+$("#u").after($("<p>").text("<b>shown as text</b>"));
+console.log($("#u li").length, "items");
+=E jq41
+@T
+**`$.getJSON` does the request and the `JSON.parse` for you.** You get back an object you attach handlers to: `.done` for success and `.fail` for errors, which is the same idea as `.then` and `.catch`.
+
+As with any request, the data only exists inside the callback. Code on the lines after `$.getJSON(...)` runs before the answer arrives.
+
+Pass query values as an object, `{ city: "Austin" }`, and jQuery builds and encodes the `?city=Austin` part for you.
+~html
+<p id="w">Loading</p>
+~code
+$.getJSON("https://api.example.com/weather", { city: "Chicago" })
+  .done((data) => $("#w").text(`${data.city}: ${data.tempF}F ${data.condition}`))
+  .fail(() => $("#w").text("Could not load weather"));
+console.log("Request sent; the page updates when it returns.");
+=E ng11
+@T
+**Library vs framework comes down to who's in charge.** With jQuery, your code is in charge and calls the library when it needs something. With Angular, the framework is in charge: it starts the app, builds components, and calls your code at the right moments.
+
+You give up some freedom and get a lot of structure in return: a standard way to organize files, share data, route between pages and test. That's why large teams like it.
+
+TypeScript adds types to JavaScript, like `name: string`. The compiler catches many mistakes before the app runs, much like C#.
+@Q
+In a framework like Angular, who decides when your component's code runs?
+~opts
+* The framework
+- Your own `main` function
+- The browser's `<script>` order
+~why
+You write the pieces, and Angular creates and calls them.
+=E ng21
+@T
+**A component is three things working together:** a class that holds data and methods, a template that shows them, and a selector that says where it goes.
+
+```
+@Component({
+  selector: "app-part",
+  template: `<p>{{ name }}: {{ qty }}</p>`,
+})
+export class PartComponent {
+  name = "Valve";
+  qty = 3;
+}
+```
+
+Wherever another template writes `<app-part></app-part>`, Angular creates a `PartComponent` and draws its template there. When `qty` changes in the class, the page updates by itself, with no `textContent` calls.
+=E ng31
+@T
+**Follow the direction of the arrows.** `{{ }}` and `[property]` carry data from the class to the page. `(event)` carries actions from the page to the class. `[( )]` does both, so it's nicknamed "banana in a box".
+
+```
+<input [(ngModel)]="name">
+<button [disabled]="!name" (click)="save()">Save</button>
+<p>Hello {{ name }}</p>
+```
+
+Typing updates `name` in the class. That instantly updates the greeting and switches the button on, all without event listeners you write yourself.
+@Q
+Which binding sends a click from the page to the class?
+~opts
+* `(click)="save()"`
+- `[click]="save()"`
+- `{{ save() }}`
+~why
+Parentheses mean an event, flowing from the page to the class.
+=E ng41
+@T
+**Structural directives change what exists, not how it looks.** `*ngIf="parts.length"` adds or removes the element entirely. `*ngFor="let p of parts"` stamps out one copy per item.
+
+Services answer "where does shared data live?" Instead of each component loading parts separately, one `PartsService` does it. Any component that lists it in its constructor gets the same instance:
+
+```
+constructor(private parts: PartsService) {}
+```
+
+That's dependency injection: the component asks for what it needs, and Angular supplies it.
+=E ng52
+@T
+**Choose by where the form's rules live.** Template-driven forms put them in the HTML with `ngModel` and attributes like `required`. That's fast for a login box.
+
+Reactive forms put them in the class as objects you can inspect and test:
+
+```
+form = new FormGroup({
+  email: new FormControl("", [Validators.required, Validators.email]),
+});
+```
+
+The template just connects to it with `[formGroup]`. Rules like "show this field only if that one is checked" are much easier when the form is code.
+=E ng61
+@T
+**A pipe changes the display, never the data.** `{{ price | currency }}` shows `$4.50`, but `price` in the class is still the number `4.5`. Your math stays correct.
+
+Pipes chain left to right, and some take options after a colon:
+
+```
+{{ launch | date:"MMM d" | uppercase }}
+```
+
+Write your own pipe when the same formatting repeats in many templates, such as turning seconds into `mm:ss`.
+=E ng72
+@T
+**Promise vs Observable:** a promise is one future value. An Observable is a stream that can deliver many values over time, like a timer ticking or search results updating as you type.
+
+Nothing happens until you subscribe, and the subscription keeps running until it's cancelled. That's why you unsubscribe when a component closes, or let the `async` pipe do it.
+
+Operators reshape the stream before you see it:
+
+```
+interval(1000).pipe(map(n => 10 - n), take(11)).subscribe(n => this.left = n);
+```
+=E re11
+@T
+**React's core idea is that the UI is a function of your data.** You never write "find this element and change its text." You write what the page should look like for the current data, and when the data changes, React works out the smallest set of DOM updates for you.
+
+That's the Lights Out lesson's "data first, then render" idea, done automatically.
+
+JSX is just a nicer way to write those descriptions. `<p>Hi</p>` becomes a function call that creates a description object, not real HTML.
+@Q
+In React, how does the page change after a click?
+~opts
+* You update data (state), and React re-renders what changed
+- You find the element and set its `textContent`
+- The browser reloads the component file
+~why
+You change data, and React updates the DOM to match.
+=E re21
+@T
+**Props flow one way: from parent to child.** The parent decides the values, and the child only reads them. If a child needs to change something, the parent passes down a function as a prop, and the child calls it.
+
+```
+function Part({ name, onRemove }) {
+  return <li>{name} <button onClick={onRemove}>x</button></li>;
+}
+```
+
+Because data only flows down, you can always find where a value came from by looking up the tree.
+=E re22
+@T
+**Never change state directly. Always go through the setter.** `count++` changes the variable, but React doesn't notice, so the screen doesn't update. `setCount(count + 1)` tells React to re-render with the new value.
+
+For arrays and objects, give React a new copy instead of changing the old one:
+
+```
+setParts([...parts, "Seal"]);
+```
+
+`parts.push("Seal")` edits the same array, so React thinks nothing changed.
+@Q
+Which line correctly adds `"Seal"` to a `parts` state array?
+~opts
+* `setParts([...parts, "Seal"]);`
+- `parts.push("Seal");`
+- `parts = [...parts, "Seal"];`
+~why
+React only re-renders when the setter receives a new value.
+=E re31
+@T
+**Keys tell React which item is which.** When a list re-renders, React matches old and new items by `key`. With a stable id, it can tell that "Seal" moved to the top rather than every item changing.
+
+Using the array index as the key breaks when items are inserted or removed, because the indexes shift. Use something that belongs to the item, like an id.
+
+A controlled input stores its value in state, `value={text}` with `onChange` calling `setText`, so React always knows what's typed.
+=E re51
+@T
+**A full app has two programs talking over HTTP.** The back end owns the data and enforces the rules, like "a message can't be empty", because anyone can send requests to it directly. The front end shows the data and sends requests with `fetch`.
+
+The flow for posting a message: the form calls `fetch("/api/messages", { method: "POST", ... })`, the server saves it and replies with the saved message, and React adds it to state so it appears.
+
+Keep the two sides' jobs separate, and each is easier to change.
+=E a111
+@T
+**Accessibility helps far more people than you'd guess.** It covers permanent disabilities, temporary ones like a broken arm, and situations like bright sunlight on a phone, a noisy room, or a slow connection.
+
+Most of it comes from using HTML as intended. Real buttons, real labels and headings in order give screen readers and keyboards what they need for free.
+
+Automated checkers like Lighthouse catch maybe a third of problems. The quickest real test is to put the mouse away and use your page with only Tab, Enter and Space.
+@Q
+What's the fastest hands-on accessibility check?
+~opts
+* Use the page with only the keyboard
+- Run it in two different browsers
+- Zoom out to 50%
+~why
+If you can't reach or press something with Tab and Enter, keyboard and screen reader users can't either.
+=E a121
+@T
+**A screen reader turns your page into a list of things it can announce:** "heading level 2, Test results", "button, Save", "link, Schedule". Semantic HTML is what provides those names and roles.
+
+A clickable `<div>` is announced as plain text and can't be reached with Tab, so for many users it simply doesn't exist.
+
+ARIA attributes like `aria-label` fill gaps when no native element fits, but the first rule of ARIA is: if a real HTML element does the job, use it instead.
+@Q
+You need a clickable control that saves a form. What's best?
+~opts
+* `<button type="button">Save</button>`
+- `<div onclick="save()">Save</div>`
+- `<span role="button">Save</span>` with no keyboard handling
+~why
+A real button is focusable, works with Enter and Space, and is announced as a button.
+=E a131
+@T
+**Never let color carry the meaning alone.** About 1 in 12 men have some color vision deficiency, so "the red fields are required" may be invisible to them. Pair color with text, an icon or a pattern.
+
+Contrast is measurable. Dark gray on light gray often fails the 4.5:1 ratio that normal text needs, so check it with a contrast tool, not by eye.
+
+Link text should make sense out of context, because screen reader users often browse a list of just the links. Ten links that all say "click here" tell them nothing.
+@Q
+A form marks errors only by turning the border red. What's the fix?
+~opts
+* Add an error message in words next to the field
+- Use a brighter red
+- Make the border thicker
+~why
+Words reach everyone, including people who can't tell red from other colors.
+=E a141
+@T
+**A label is the field's name, and it has to stay put.** A placeholder vanishes as soon as typing starts, so people forget what the field was, and some screen readers skip it. Use a real `<label for="id">` every time.
+
+Good error messages say what's wrong and how to fix it, like "Enter a date as MM/DD/YYYY", and sit next to the field they're about.
+
+For text, sizes in `rem` respect the reader's own font-size setting, so pages stay readable for people who need bigger text.
+=R jq1
+@T
+`$(selector)` wraps every match, and methods act on all of them. `.text()` reads, and `.text(value)` writes.
+
+An empty selection does nothing, so check `.length`.
+=R jq2
+@T
+`.on("click", fn)` attaches a handler. `$(this)` is the clicked element, and `.val()` reads a field.
+
+Delegate with `.on("click", "li", fn)` on the parent to cover items added later.
+=R jq3
+@T
+`.css`, `.addClass` and `.toggleClass` change the look. `.hide()`, `.fadeIn()` and `.slideUp()` animate.
+
+`.append` and `.prepend` add inside, and `.before` and `.after` add beside.
+=R jq4
+@T
+`$.getJSON(url, data).done(fn).fail(fn)`. Use the data inside `done`.
+
+Plugins add methods to `$.fn`.
+=R labs4
+@T
+Select elements, attach handlers with `.on`, and update with `.text`, `.css` or `.append`.
+
+Load data with `$.getJSON`.
+=R ng1
+@T
+Angular is a framework: your components plug into it. Apps are written in TypeScript.
+
+`ng new`, `ng serve` and `ng generate component` are the main CLI commands.
+=R ng2
+@T
+A component is a class, a template, and a selector. `{{ value }}` shows class data.
+
+Nest components by using their selector tags.
+=R ng3
+@T
+`{{ }}` and `[prop]` go from class to page, `(event)` from page to class, and `[(ngModel)]` both ways.
+
+`@Input` passes data down, and `@Output` sends events up.
+=R ng4
+@T
+`*ngIf` and `*ngFor` change structure, and `[ngClass]` changes looks.
+
+Services hold shared logic. Ask for one in the constructor and Angular injects it.
+=R ng5
+@T
+Modules group features, and lazy loading loads them when needed.
+
+Template-driven forms use `ngModel`. Reactive forms use `FormGroup` and `FormControl` with validators.
+=R ng6
+@T
+Pipes format values for display: `{{ price | currency }}`. The data itself doesn't change.
+=R ng7
+@T
+Routes map URLs to components, and `routerLink` navigates.
+
+Observables stream values, so subscribe and unsubscribe. `HttpClient` returns observables.
+=R re1
+@T
+React draws the UI from your data. JSX uses `className`, needs one parent element, and puts values in `{ }`.
+=R re2
+@T
+Components are capitalized functions. Props are read-only inputs.
+
+`const [x, setX] = useState(0)`: always change state with the setter, using new arrays and objects.
+=R re3
+@T
+Conditions: `{ok ? <A /> : <B />}` or `{show && <C />}`.
+
+Lists: `.map` with a stable `key`. Controlled inputs use `value` plus `onChange`.
+=R re4
+@T
+React Router maps paths to components. Fetch data in `useEffect`, then store it in state.
+=R re5
+@T
+The back end stores data and checks rules. The front end calls its routes with `fetch` and keeps results in state.
+=R a11y1
+@T
+Accessibility means anyone can use the site. Test with the keyboard only, plus a screen reader and a checker like Lighthouse.
+=R a11y2
+@T
+Use semantic tags and real `<button>`s. Headings go in order.
+
+ARIA only fills gaps that HTML can't.
+=R a11y3
+@T
+Normal text needs 4.5:1 contrast. Never rely on color alone.
+
+`alt` describes the purpose, or use `alt=""` for decoration. Link text should make sense on its own.
+=R a11y4
+@T
+Every field gets a `<label for>`, because a placeholder isn't a label.
+
+Errors say how to fix the problem. Use `rem` so text can grow.

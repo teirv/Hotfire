@@ -92,4 +92,8 @@ Python challenges can include files with `~file name.txt` followed by the conten
 
 The Python **Practice Test** is in `course/py_practice.txt`.
 
+**Explanations and recaps** live in `course/deep_*.txt`. `=E lessonid` adds explanation cards after a lesson's opening cards, before its questions. `=R sectionid` (or a hot fire id) adds a "Remember" recap at the start of each hot fire in it.
+
+Every code editor has an **Input** box. Run feeds it to `input()` (Python), `prompt()` (JavaScript), `Console.ReadLine()` (C#) or stdin (Rust). Check always uses the lesson's test inputs.
+
 Test every card with `node tests/verify.js`. For C# and Rust, start `runner/runner.py` on port 8101 first.

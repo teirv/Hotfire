@@ -6,13 +6,14 @@ await p.route('https://app.test/',r=>r.fulfill({contentType:'text/html',body:'<!
 await p.goto('https://app.test/');await p.waitForTimeout(300);
 const st=()=>p.evaluate(()=>JSON.stringify(__hf.state()));
 await p.click('[data-ch="Chapter 1: JavaScript Fundamentals"]').catch(()=>{});
-await p.evaluate(()=>{__hf.state().at.forloop=5;__hf.open('forloop')});await p.waitForTimeout(100);
-ok('clickable up to current',await p.$$eval('button.segb',x=>x.length)===6);ok('future not clickable',await p.$$eval('span.segb',x=>x.length)>0);
+const CI=await p.evaluate(()=>__hf.COURSES.javascript.units.flatMap(u=>u.lessons).find(l=>l.id==='forloop').s.findIndex(c=>c.k==='C'));
+await p.evaluate(ci=>{__hf.state().at.forloop=ci;__hf.open('forloop')},CI);await p.waitForTimeout(100);
+ok('clickable up to current',await p.$$eval('button.segb',x=>x.length)===CI+1);ok('future not clickable',await p.$$eval('span.segb',x=>x.length)>0);
 await p.fill('#ed-ta','for (let i = 1; i <= 2; i++) {\n}\n');const s0=await st();
 await p.click('[data-seg="1"]');ok('jumps to card 2',(await p.textContent('.seg .look')==='' )&&!!(await p.$('.peeknote')));ok('card 2 highlighted',await p.$eval('[data-seg="1"] i',x=>x.classList.contains('look')));
 await p.screenshot({path:S+'seg.png'});
 await p.click('[data-seg="3"]');ok('jumps forward',await p.$eval('[data-seg="3"] i',x=>x.classList.contains('look')));
-await p.click('[data-seg="5"]');ok('current restored',!(await p.$('.peeknote')));ok('typed code kept',(await p.inputValue('#ed-ta')).includes('i <= 2'));
+await p.click(`[data-seg="${CI}"]`);ok('current restored',!(await p.$('.peeknote')));ok('typed code kept',(await p.inputValue('#ed-ta')).includes('i <= 2'));
 await p.waitForTimeout(100);const a=JSON.parse(s0),z=JSON.parse(await st());ok('progress same',z.xp===a.xp&&JSON.stringify(z.at)===JSON.stringify(a.at)&&JSON.stringify(z.missed)===JSON.stringify(a.missed));
 await p.fill('#ed-ta','for (let i = 1; i <= 5; i++) {\n  console.log(i);\n}\n');await p.click('#primary');await p.waitForSelector('.verdict.ok');ok('locked after answer',await p.$$eval('button.segb',x=>x.every(b=>b.disabled)));
 await b.close()})().catch(e=>{console.log('ERR',e);process.exit(1)})

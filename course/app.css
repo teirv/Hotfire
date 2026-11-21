@@ -330,3 +330,14 @@ button.segb:disabled{cursor:default}
 .aci{padding:7px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .aci b{font-weight:600;color:var(--track)}
 .aci.on{background:var(--sunk);box-shadow:inset 2px 0 0 var(--track)}
+/* Input console inside each editor */
+.edin{border-top:1px solid var(--ed-line);background:var(--ed-bg)}
+.edin summary{display:flex;align-items:baseline;gap:10px;padding:8px 12px;cursor:pointer;list-style:none;color:var(--ed-gutter)}
+.edin summary::-webkit-details-marker{display:none}
+.edin summary .label{color:var(--ed-gutter)}
+.edin summary small{font-size:12px;color:var(--ed-gutter);opacity:.85;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edin summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .15s;flex:none;align-self:center}
+.edin[open] summary::after{transform:rotate(45deg)}
+.edin textarea{display:block;width:calc(100% - 24px);margin:0 12px 10px;font:400 14.5px/1.6 var(--mono);background:var(--ed-bg);color:var(--ed-ink);border:1px solid var(--ed-line);border-radius:4px;padding:6px 10px;resize:vertical;caret-color:var(--ed-num)}
+.edin textarea:focus{outline:2px solid var(--track);outline-offset:-1px}
+.recapl{align-self:flex-start;font:600 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--track);border:1px solid var(--track);border-radius:999px;padding:5px 10px}

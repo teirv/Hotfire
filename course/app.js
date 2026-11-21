@@ -141,9 +141,9 @@ async function runPythonRaw(code,stdin){
   catch(e){return pyError(e,out)}}
 let live=null; /* a page left running so its preview stays interactive */
 function stopLive(){if(live){try{live.terminate()}catch(e){}live=null}}
-function runJS(code,web){return new Promise(res=>{
+function runJS(code,web,stdin){return new Promise(res=>{
   const wantsJq=web&&/\$\(|\$\.|jQuery/.test(code+(web.after||""));
-  const pre=(web?LINKEDOM+"\nconst __HTML="+JSON.stringify(/<html|<body/i.test(web.html)?web.html:"<!doctype html><html><head></head><body>"+web.html+"</body></html>")+";\n":"")+JSPRE+"\n"+(web?WEBPRE+"\n"+(wantsJq?"(function(){"+JQUERY+"\n}).call(self);self.$=self.jQuery=__w.jQuery||self.jQuery;\n":""):"self.window=self;\n");
+  const pre=(web?LINKEDOM+"\nconst __HTML="+JSON.stringify(/<html|<body/i.test(web.html)?web.html:"<!doctype html><html><head></head><body>"+web.html+"</body></html>")+";\n":"")+JSPRE+"\nself.prompt=(q=>m=>q.length?q.shift():null)("+JSON.stringify(stdin||[])+");\n"+(web?WEBPRE+"\n"+(wantsJq?"(function(){"+JQUERY+"\n}).call(self);self.$=self.jQuery=__w.jQuery||self.jQuery;\n":""):"self.window=self;\n");
   const offs=pre.split("\n").length;
   const end=web?"__snap();__main=true;"+(web.live?"":"__pending=0;")+"__check()":"__main=true;__check()";
   const src=pre+(web&&web.live?"__live=true;\n":"")+"(async()=>{\n"+code+"\n"+(web?";await __loaded();\n":"")+"})().then(()=>{"+end+"},__fail);\n";
@@ -194,7 +194,7 @@ async function runRemote(lang,code,stdin,h){
   if(!r.ok)return{out:"",error:{name:"Runner error",msg:"The code runner didn't answer. Try again in a moment."}};
   return r.json()}
 function harness(lang,after){return !after?null:lang==="csharp"?{prefix:after}:lang==="rust"?{suffix:after}:null}
-function run(lang,code,stdin,web,h){const p=runQ.then(()=>REMOTE.includes(lang)?runRemote(lang,code,stdin,h):lang==="python"?runPython(code,stdin,h):runJS(code,web));runQ=p.catch(()=>{});return p}
+function run(lang,code,stdin,web,h){const p=runQ.then(()=>REMOTE.includes(lang)?runRemote(lang,code,stdin,h):lang==="python"?runPython(code,stdin,h):runJS(code,web,stdin));runQ=p.catch(()=>{});return p}
 const EXPLAIN={SyntaxError:"The code isn't written in a shape the language can read. Check this line and the one above for a missing bracket, quote or colon.",
  ReferenceError:"You used a name that doesn't exist. It's usually a typo, or the variable was made later in the code.",
  NameError:"You used a name that doesn't exist. It's usually a typo, or the variable was made later in the code.",
@@ -249,13 +249,13 @@ function attachComplete(ta,lang,paint){
   function context(){const v=ta.value,a=ta.selectionStart;let i=a;while(i>0&&wordRe.test(v[i-1]))i--;const pre=v.slice(i,a);const ls=v.lastIndexOf("\n",i-1)+1,line=v.slice(ls,i);
     const q=(line.match(/"/g)||[]).length%2||(line.match(/'/g)||[]).length%2,com=lang==="python"?line.includes("#"):lang!=="html"&&line.includes("//");
     return{pre,start:i,dot:v[i-1]===".",skip:(q&&lang!=="html")||com}}
-  function show(){if(!on()){close();return}const c=context();if(c.skip||!c.pre||(!c.dot&&c.pre.length<2)||/^\d/.test(c.pre)){close();return}
+  function show(force){if(!on()){close();return}const c=context();if(!force&&(c.skip||!c.pre||(!c.dot&&c.pre.length<2))||/^\d/.test(c.pre)){close();return}
     const own=[...new Set((ta.value.slice(0,c.start)+" "+ta.value.slice(ta.selectionStart)).match(lang==="html"?/[A-Za-z][\w-]{2,}/g:/[A-Za-z_]\w{2,}/g)||[])];
     const pool=c.dot?[...words.dot,...own]:[...own,...words.w];const lo=c.pre.toLowerCase();
-    items=[...new Set(pool)].filter(w=>w!==c.pre&&w.toLowerCase().startsWith(lo)).slice(0,6);
+    items=[...new Set(pool)].filter(w=>w!==c.pre&&w.toLowerCase().startsWith(lo)).slice(0,force?8:6);
     if(!items.length){close();return}from=c.start;sel=0;draw()}
   function draw(){const cs=measure(),r=ta.getBoundingClientRect(),v=ta.value.slice(0,from),line=v.split("\n").length-1,col=from-(v.lastIndexOf("\n")+1),lh=parseFloat(cs.lineHeight)||22;
-    if(!box){box=document.createElement("div");box.className="acbox";box.setAttribute("role","listbox");box.addEventListener("mousedown",e=>{e.preventDefault();const b=e.target.closest("[data-ac]");if(b){sel=+b.dataset.ac;accept()}});document.body.appendChild(box)}
+    if(!box){box=document.createElement("div");box.className="acbox";box.setAttribute("role","listbox");box.addEventListener("mousedown",e=>e.preventDefault());box.addEventListener("pointerdown",e=>{e.preventDefault();const b=e.target.closest("[data-ac]");if(b){sel=+b.dataset.ac;accept();ta.focus({preventScroll:true})}});document.body.appendChild(box)}
     box.innerHTML=items.map((w,i)=>`<div class="aci${i===sel?" on":""}" role="option" aria-selected="${i===sel}" data-ac="${i}"><b>${esc(w.slice(0,ta.selectionStart-from))}</b>${esc(w.slice(ta.selectionStart-from))}</div>`).join("");
     const x=Math.min(r.left+parseFloat(cs.paddingLeft)+col*cw,innerWidth-box.offsetWidth-8);let y=r.top+parseFloat(cs.paddingTop)+(line+1)*lh+2;
     if(y+box.offsetHeight>innerHeight-8)y=y-lh-box.offsetHeight-4;box.style.left=Math.max(8,x)+"px";box.style.top=y+"px"}
@@ -264,6 +264,7 @@ function attachComplete(ta,lang,paint){
     if(box){if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();e.stopImmediatePropagation();sel=(sel+(e.key==="ArrowDown"?1:items.length-1))%items.length;draw();return}
       if(e.key==="Tab"||e.key==="Enter"){if(e.ctrlKey||e.metaKey){close();return}e.preventDefault();e.stopImmediatePropagation();accept();return}
       if(e.key==="Escape"){e.preventDefault();e.stopImmediatePropagation();close();return}}
+    if(on()&&(e.ctrlKey||e.metaKey)&&(e.code==="Space"||e.key===" ")){e.preventDefault();e.stopImmediatePropagation();show(true);return}
     if(!on()||e.ctrlKey||e.metaKey||e.altKey)return;
     const a=ta.selectionStart,b=ta.selectionEnd,v=ta.value,next=v[a]||"",prev=v[a-1]||"";
     if(closers.has(e.key)&&a===b&&next===e.key&&(e.key!=='"'&&e.key!=="'"&&e.key!=="`"||prev!=="\\")){e.preventDefault();e.stopImmediatePropagation();ta.setSelectionRange(a+1,a+1);close();return}
@@ -275,10 +276,18 @@ function attachComplete(ta,lang,paint){
     if(e.key==="Backspace"&&a===b&&pairs[prev]&&pairs[prev]===next){e.preventDefault();e.stopImmediatePropagation();ta.setRangeText("",a-1,a+1,"end");paint();close();return}
     if(e.key==="Enter"&&a===b&&/[{(\[]/.test(prev)&&next===pairs[prev]){e.preventDefault();e.stopImmediatePropagation();const ls=v.lastIndexOf("\n",a-1)+1,lead=v.slice(ls,a).match(/^\s*/)[0],ind=lang==="python"?"    ":"  ";
       ta.setRangeText("\n"+lead+ind+"\n"+lead,a,a,"start");const c=a+1+lead.length+ind.length;ta.setSelectionRange(c,c);paint()}},true);
-  ta.addEventListener("input",e=>{if(/^insert(Text|CompositionText)$/.test(e.inputType||"insertText")||e.inputType==="deleteContentBackward"&&box)show();else close()});
+  ta.addEventListener("input",e=>{
+    if(on()&&e.inputType==="insertText"&&e.data&&e.data.length===1&&ta.selectionStart===ta.selectionEnd){const a=ta.selectionStart,v=ta.value,ch=e.data,next=v[a]||"",prev=v[a-2]||"";
+      if(closers.has(ch)&&next===ch&&!pairs[ch]||(ch==='"'||ch==="'"||ch==="`")&&next===ch&&prev!=="\\"){ta.setRangeText("",a,a+1,"end");paint()}
+      else if(pairs[ch]&&!(ch==="`"&&lang!=="javascript")&&!(lang==="rust"&&ch==="'")){const quote=ch==='"'||ch==="'"||ch==="`";
+        const okNext=!next||/[\s)\]},;:]/.test(next),okPrev=!quote||!/\w/.test(prev)||(lang==="python"&&/^[fFrRbB]$/.test(prev)&&!/\w/.test(v[a-3]||""));
+        if(okNext&&okPrev){ta.setRangeText(pairs[ch],a,a,"start");paint()}}}
+    if(/^insert(Text|CompositionText)$/.test(e.inputType||"insertText")||e.inputType==="deleteContentBackward"&&box)show();else close()});
   ta.addEventListener("blur",()=>setTimeout(close,120));ta.addEventListener("mousedown",close);
   addEventListener("scroll",()=>{if(box)close()},true);addEventListener("resize",close)}
-function mountEditor(id,{code,lang,start,onChange,getStdin,html,after,files}){
+const INPUT_RE={python:/\binput\s*\(/,javascript:/\bprompt\s*\(/,csharp:/ReadLine\s*\(/,rust:/stdin\s*\(\s*\)/};
+const INPUT_HINT={python:"One line for each input() call",javascript:"One line for each prompt() call",csharp:"One line for each Console.ReadLine()",rust:"One line for each line read from stdin"};
+function mountEditor(id,{code,lang,start,onChange,getStdin,html,after,files,console:wantIn}){
   const root=document.getElementById(id),ta=$("textarea",root),pre=$("pre",root),gut=$(".gut",root),con=$(".con",root);
   const ind=lang==="python"?"    ":"  ";
   const paint=()=>{const v=ta.value;pre.innerHTML=hl(v,lang)+"\n";gut.textContent=v.split("\n").map((_,i)=>i+1).join("\n");if(onChange)onChange(v)};
@@ -288,6 +297,14 @@ function mountEditor(id,{code,lang,start,onChange,getStdin,html,after,files}){
   const ins=(t)=>{const a=ta.selectionStart,b=ta.selectionEnd;ta.setRangeText(t,a,b,"end");paint()};
   ta.addEventListener("input",paint);
   attachComplete(ta,lang,paint);
+  /* Input console: values typed here are what the program reads when you press Run. */
+  let inBox=null;if(!isDoc){const first=getStdin?getStdin():[],reads=INPUT_RE[lang]&&INPUT_RE[lang].test(code);
+    const d=document.createElement("details");d.className="edin";if(first.length||reads||wantIn)d.open=true;
+    ta.addEventListener("input",()=>{if(!d.open&&INPUT_RE[lang]&&INPUT_RE[lang].test(ta.value))d.open=true});
+    d.innerHTML=`<summary><span class="label">Input</span><small>${esc(INPUT_HINT[lang]||"One value per line")}</small></summary><textarea id="${id}-in" rows="${Math.min(Math.max(first.length,2),6)}" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Program input, one value per line"></textarea>`;
+    con.before(d);inBox=$("textarea",d);inBox.value=first.join("\n");
+    inBox.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();doRun()}})}
+  const stdinNow=()=>inBox?inBox.value.replace(/\n+$/,"").split("\n").filter((x,i,a)=>a.length>1||x!==""):(getStdin?getStdin():[]);
   ta.addEventListener("keydown",e=>{
     if(e.key==="Tab"){e.preventDefault();if(e.shiftKey){const a=ta.value.lastIndexOf("\n",ta.selectionStart-1)+1;if(ta.value.startsWith(ind,a)){ta.setRangeText("",a,a+ind.length,"preserve");paint()}}else ins(ind)}
     else if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();doRun()}
@@ -300,11 +317,12 @@ function mountEditor(id,{code,lang,start,onChange,getStdin,html,after,files}){
   async function doRun(){if(isDoc){doc();$(".pv",root).scrollIntoView({block:"nearest",behavior:"smooth"});return}const btn=$("[data-ed=run]",root);btn.disabled=true;btn.textContent="Running";
     con.innerHTML=`<span class="label">Console</span><pre class="idle">Running</pre>`;
     const pv=$(".pvhost",root);let webo;if(html){webo={html,live:true,onDom:(d,w)=>{try{renderPreview(pv,d,w)}catch(e){}},onOut:o=>{const q=$("pre",con);if(q&&done2){q.classList.remove("idle");q.textContent=o}},onErr:er=>{con.insertAdjacentHTML("beforeend",`<pre class="err">${esc(er.name)}: ${esc(er.msg)}</pre>`)}}}
-    let done2=false;const remote=REMOTE.includes(lang),src=after&&!html&&!remote?ta.value+"\n"+after:ta.value;const r=await run(lang,src,getStdin?getStdin():[],webo,remote?harness(lang,after):lang==="python"?files:null);done2=true;btn.disabled=false;btn.textContent="Run";
+    let done2=false;const remote=REMOTE.includes(lang),src=after&&!html&&!remote?ta.value+"\n"+after:ta.value;const r=await run(lang,src,stdinNow(),webo,remote?harness(lang,after):lang==="python"?files:null);done2=true;btn.disabled=false;btn.textContent="Run";
     let h=`<span class="label">Console</span><pre>${esc(r.out||"")}</pre>`;
     if(!r.out&&!r.error&&!r.timedOut)h=html?`<span class="label">Console</span><pre class="idle">Nothing printed. See the page preview.</pre>`:`<span class="label">Console</span><pre class="idle">Your program ran but printed nothing.</pre>`;
     if(r.timedOut)h+=`<pre class="err">Stopped after ${REMOTE.includes(lang)?5:3} seconds</pre><div class="why">A loop may never be ending. Check that something inside it changes.</div>`;
-    if(r.error){h+=`<pre class="err">${esc(r.error.name)}${r.error.line?` (line ${r.error.line})`:""}: ${esc(r.error.msg)}</pre>`;if(EXPLAIN[r.error.name])h+=`<div class="why">${esc(EXPLAIN[r.error.name])}</div>`}
+    if(r.error){h+=`<pre class="err">${esc(r.error.name)}${r.error.line?` (line ${r.error.line})`:""}: ${esc(r.error.msg)}</pre>`;if(EXPLAIN[r.error.name])h+=`<div class="why">${esc(EXPLAIN[r.error.name])}</div>`;
+      if(inBox&&!inBox.value.trim()&&INPUT_RE[lang]&&INPUT_RE[lang].test(ta.value))h+=`<div class="why">Your program reads input, but the Input box is empty. Type one value per line there, then Run again.</div>`}
     con.innerHTML=h;if(pv)pv.parentElement.scrollIntoView({block:"nearest",behavior:"smooth"})}
   root.addEventListener("click",e=>{const a=e.target.dataset.ed;if(a==="run")doRun();if(a==="reset"){ta.value=start;paint();if(isDoc)doc()}});
   return{get value(){return ta.value},set value(v){ta.value=v;paint()},run:doRun}}
@@ -359,8 +377,8 @@ function boardHTML(){return `<main class="page"><div><h1>Leaderboard</h1></div><
 async function loadBoard(){boardErr=false;try{if(dirty){clearTimeout(timer);await flush()}const r=await fetch("/api/leaderboard",{cache:"no-store"});if(r.status===401){location.href="/login";return}if(!r.ok)throw 0;boardRows=(await r.json()).rows}catch(e){boardErr=true}const b=$("#boardbody");if(b)b.innerHTML=boardBody()}
 
 /* ---------- scratchpad ---------- */
-function scratchHTML(){const py=S.lang==="python";return `<main class="page"><div><h1>Scratchpad</h1></div><p>Your own space to try ideas in ${esc(LANGS[S.lang].name)}. There's no autocomplete and nothing suggests code while you type, so all of the typing is yours.</p>
-  ${editorHTML("pad",{file:LANGS[S.lang].file,reset:true,html:S.lang==="html"})}${py?`<div class="inputs"><label class="label" for="padin">Input lines for input()</label><textarea id="padin" rows="2" spellcheck="false">Teir</textarea></div>`:""}</main>`}
+function scratchHTML(){return `<main class="page"><div><h1>Scratchpad</h1></div><p>Your own space to try ideas in ${esc(LANGS[S.lang].name)}. Type values in <b>Input</b> to test what your program reads. Autocomplete can be turned off in Review.</p>
+  ${editorHTML("pad",{file:LANGS[S.lang].file,reset:true,html:S.lang==="html"})}</main>`}
 
 /* ---------- render ---------- */
 function render(){setTrack();const a=$("#app");
@@ -370,7 +388,7 @@ function render(){setTrack();const a=$("#app");
   if(view==="board"){a.innerHTML=topBar()+boardHTML()}
   if(view==="scratch"){a.innerHTML=topBar()+scratchHTML();
     const key=S.lang,st=LANGS[key].scratch;
-    ed=mountEditor("pad",{code:S.scratch[key]??st,start:st,lang:key,onChange:v=>{S.scratch[key]=v;if(save.t)clearTimeout(save.t);save.t=setTimeout(save,800)},getStdin:()=>{const i=$("#padin");return i?i.value.split("\n"):[]}})}
+    ed=mountEditor("pad",{code:S.scratch[key]??st,start:st,lang:key,onChange:v=>{S.scratch[key]=v;if(save.t)clearTimeout(save.t);save.t=setTimeout(save,800)},console:true,getStdin:()=>key==="python"?["Teir"]:[]})}
   if(S.lang==="python")ensureSkulpt().catch(()=>{})}
 
 /* ---------- spoken feedback ---------- */
@@ -455,7 +473,7 @@ function shell(inner,foot){const q=L.queue;
 function showCard(){const c=L.queue[L.i];if(!c)return finish();
   const s=c.s,lang=L.lang,crumb=crumbFor(s,lang);L.sel=null;L.fills=[];L.locked=false;L.fails=0;ed=null;
   const a=$("#app");
-  if(s.k==="T"){const has=!!s.code;a.innerHTML=shell(crumb+`<div class="prose">${md(s.text)}</div>`+(has?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+(s.stdin?`<div class="stdin">Input for this example: ${esc(s.stdin.join(" / "))}</div>`:""):""),`<button class="btn" id="primary" data-next="1">Continue</button>`);
+  if(s.k==="T"){const has=!!s.code;a.innerHTML=shell(crumb+(s.recap?`<span class="recapl">Remember</span>`:"")+`<div class="prose">${md(s.text)}</div>`+(has?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+"":""),`<button class="btn" id="primary" data-next="1">Continue</button>`);
     if(has)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]})}
   else if(s.k==="Q"||s.k==="P"){const opts=L.optOrder=shuffle(s.opts);
     a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.code?`<pre class="static" tabindex="0">${hl(s.code,lang)}</pre>`:"")+`<div class="opts" role="group" aria-label="Answers">${opts.map((o,i)=>`<button class="opt" data-opt="${i}" aria-pressed="false"><span class="k">${"ABCD"[i]}</span><span class="v">${s.k==="P"?`<pre>${esc(o.t)}</pre>`:inline(o.t)}</span></button>`).join("")}</div>`,`<button class="btn" id="primary" data-check="1" disabled>Check</button>`)}
@@ -464,8 +482,8 @@ function showCard(){const c=L.queue[L.i];if(!c)return finish();
   else if(s.k==="B"){L.toks=shuffle([...s.ans,...s.extra].map((t,i)=>({t,i})));renderBlank(crumb)}
   else if(s.k==="O"){L.toks=shuffle(s.lines.map((t,i)=>({t,i})));while(L.toks.length>1&&L.toks.every((x,i)=>x.i===i))L.toks=shuffle(L.toks);renderOrder(crumb)}
   else if(s.k==="C"){L.code=null;const first=s.cases[0]||{},stdin=first.stdin||[];
-    a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+(stdin.length?`<div class="stdin">Run uses this input: ${esc(stdin.join(" / "))}</div>`:"")+filesHTML(s.files)+testsHTML(s,lang)+`<div id="hintslot"></div>`,REMOTE.includes(lang)&&!canRemote()?`<div class="row"><p class="muted remote-note">C# and Rust code runs on your Hotfire server.</p><button class="btn ghost" id="primary" data-next="1">Skip for now</button></div>`:codeFoot());
-    const dk=c.key;let dt;ed=mountEditor("ed",{code:S.drafts[dk]??s.start,start:s.start,lang,html:s.html,after:s.replace?null:s.after,files:s.files,getStdin:()=>stdin,onChange:v=>{clearTimeout(dt);dt=setTimeout(()=>{if(L&&L.queue[L.i]&&L.queue[L.i].key===dk&&v!==s.start&&v.length<8000){S.drafts[dk]=v;save()}},900)}})}
+    a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+filesHTML(s.files)+testsHTML(s,lang)+`<div id="hintslot"></div>`,REMOTE.includes(lang)&&!canRemote()?`<div class="row"><p class="muted remote-note">C# and Rust code runs on your Hotfire server.</p><button class="btn ghost" id="primary" data-next="1">Skip for now</button></div>`:codeFoot());
+    const dk=c.key;let dt;ed=mountEditor("ed",{code:S.drafts[dk]??s.start,start:s.start,lang,html:s.html,after:s.replace?null:s.after,files:s.files,console:true,getStdin:()=>stdin,onChange:v=>{clearTimeout(dt);dt=setTimeout(()=>{if(L&&L.queue[L.i]&&L.queue[L.i].key===dk&&v!==s.start&&v.length<8000){S.drafts[dk]=v;save()}},900)}})}
   window.scrollTo(0,0)}
 /* Review buttons: each hot fire question links to the earlier lessons that teach what it uses.
    Opening one covers the question with a read-only copy of that lesson. Nothing in the lesson

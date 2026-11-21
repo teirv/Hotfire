@@ -1,0 +1,270 @@
+=E hello
+@T
+**How JavaScript runs your program:** it starts at the first line and does each instruction in order, top to bottom. Each line has to finish before the next one starts, so the order of your lines is the order things happen.
+
+When something goes wrong, JavaScript stops at that line and shows an error in the console. Lines above it already ran, and lines below it never run. That's a clue when you're hunting a bug: the last thing printed tells you how far the program got.
+~code
+console.log("Step 1");
+console.log("Step 2");
+console.log("Step 3");
+=E values
+@T
+**Every value has a type, and the type decides what operators do.** `+` with two numbers adds. With a string on either side, it joins. That's why `"2" + 3` is `"23"` and not `5`.
+
+`typeof` tells you what you have, which helps when a result looks odd.
+
+Other math operators like `-`, `*` and `/` turn text into numbers when they can. That inconsistency is a famous JavaScript trap, so convert on purpose with `Number()` before doing math on text.
+~code
+console.log(2 + 3);
+console.log("2" + 3);
+console.log("6" * 2);
+console.log(typeof 42, typeof "42");
+console.log(Number("2") + 3);
+=E names
+@T
+**A variable is a name that points at a value.** `let` makes one that can change later, and `const` makes one that can't be reassigned. Prefer `const` unless you know the value will change, so readers can tell at a glance which names move.
+
+The right side of `=` is worked out first, then stored. So `count = count + 1` reads the old value, adds 1, and saves the result.
+
+`prompt()` asks the user for text. Here it reads from the **Input** box below the code. Like Python's `input()`, it always gives a string.
+~code
+const name = prompt("Name?");
+let visits = Number(prompt("Visits?"));
+visits = visits + 1;
+console.log(`${name} has visited ${visits} times`);
+~stdin
+Teir
+4
+=E andor
+@T
+**`&&` and `||` stop as soon as they know the answer.** With `a && b`, if `a` is false the whole thing must be false, so `b` is never checked. With `a || b`, if `a` is true, `b` is skipped.
+
+That's useful: `user && user.name` only reads `.name` when `user` exists, so it can't crash on a missing user.
+
+`||` also gives back one of its actual values, not just `true` or `false`. So `name || "Guest"` means "use `name`, or `"Guest"` if `name` is empty."
+~code
+const user = null;
+console.log(user && user.name);
+
+const typed = "";
+console.log(typed || "Guest");
+
+const age = 20;
+const hasID = true;
+console.log(age >= 18 && hasID);
+=E forloop
+@T
+**Trace a loop on paper** when it doesn't do what you expect. Write down `i` and any running total, then apply the three parts in order: check the condition, run the body, apply the step, and repeat.
+
+Most loop bugs are "off by one". `i < 5` runs with 0 to 4, five times, while `i <= 5` runs six times. Starting at 0 with `<` is the habit, because it matches array positions.
+
+A loop that never ends means the condition never becomes false. Check that the step really moves toward it.
+~code
+let total = 0;
+for (let i = 1; i <= 3; i++) {
+  total += i * 10;
+  console.log(`i=${i} total=${total}`);
+}
+console.log("after loop:", total);
+=E define
+@T
+**Defining and calling are two different moments.** `function area(w, h) { ... }` only stores the recipe. The code inside runs each time you call `area(3, 4)`, with `w` set to 3 and `h` set to 4 for that call.
+
+`return` hands a value back to wherever the call was, so you can store it or use it in more math. A function without `return` gives back `undefined`.
+
+Printing isn't returning. `console.log` inside a function shows text, but the caller can't use it.
+~code
+function area(w, h) {
+  return w * h;
+}
+function show(w, h) {
+  console.log(w * h);
+}
+const a = area(3, 4);
+const b = show(3, 4);
+console.log(a + 1, b);
+=E lists
+@T
+**An array keeps values in order, at numbered positions starting from 0.** So the last item is always at `length - 1`. Reading past the end doesn't crash. It quietly gives `undefined`, which can hide bugs.
+
+`push` and `pop` change the array itself. Many other methods, like `slice`, `map` and `filter`, leave the original alone and give you a new array.
+
+`const` on an array stops you from pointing the name at a different array, but you can still change what's inside it.
+~code
+const parts = ["valve", "seal"];
+parts.push("hose");
+console.log(parts.length, parts[parts.length - 1]);
+console.log(parts[5]);
+const firstTwo = parts.slice(0, 2);
+console.log(firstTwo, parts);
+=E keys
+@T
+**Use an object when each value has a meaning, and an array when values are a list of the same kind of thing.** A truck has a color, miles and a fuel type. A fleet is an array of trucks.
+
+That combination, an array of objects, is how almost all real data looks: users, orders, sensor readings. You loop through the array and read the keys of each object.
+
+Reading a key that doesn't exist gives `undefined` instead of an error, so a typo like `truck.colour` fails quietly.
+~code
+const fleet = [
+  { id: "T1", miles: 42000 },
+  { id: "T2", miles: 18500 },
+];
+let total = 0;
+for (const truck of fleet) {
+  total += truck.miles;
+  console.log(truck.id, truck.miles);
+}
+console.log("Total miles:", total);
+console.log(fleet[0].colour);
+=E map1
+@T
+**Map or object?** Use a plain object for a fixed set of named fields, like a part's `name` and `size`. Use a `Map` when you're collecting entries as the program runs, like counts of each word or prices by item code.
+
+A Map tells you its `size` directly, keeps the order you added things, and accepts any type as a key. Numbers stay numbers instead of turning into strings.
+
+The counting pattern reads the current value with `get`, using `0` if it's missing, then `set`s it one higher.
+~code
+const counts = new Map();
+for (const word of "go stop go go".split(" ")) {
+  counts.set(word, (counts.get(word) || 0) + 1);
+}
+console.log(counts.size);
+for (const [word, n] of counts) {
+  console.log(`${word}: ${n}`);
+}
+=E str1
+@T
+**Strings never change.** Every string method gives you a new string, and the original stays the same. `s.toUpperCase()` on its own line does nothing useful. You have to save or use the result.
+
+Positions start at 0, and `slice(start, end)` stops before `end`, just like arrays. A negative number counts from the end: `slice(-3)` is the last three characters.
+
+`indexOf` returns `-1` when it can't find something, so check for that before using the position.
+~code
+const s = "Valve-PT101";
+s.toUpperCase();
+console.log(s);
+const upper = s.toUpperCase();
+console.log(upper);
+const dash = s.indexOf("-");
+console.log(s.slice(0, dash), s.slice(dash + 1), s.slice(-3));
+console.log(s.indexOf("x"));
+=E date1
+@T
+**Inside, a Date is one big number:** the milliseconds since January 1, 1970. Methods like `getMonth()` just read pieces of that number in your time zone.
+
+That's why subtracting two dates works. You get the difference in milliseconds, then divide to convert. A day is `1000 * 60 * 60 * 24` milliseconds.
+
+The month numbers trip everyone up. In `new Date(2026, 10, 3)`, the `10` means November, because months count from 0.
+~code
+const start = new Date(2026, 10, 3);
+const end = new Date(2026, 10, 17);
+const days = (end - start) / (1000 * 60 * 60 * 24);
+console.log(days, "days");
+console.log(start.getMonth() + 1, "is the real month number");
+=E math1
+@T
+**Rounding comes in three directions:** `Math.round` goes to the nearest whole number, `Math.floor` always goes down, and `Math.ceil` always goes up. Pick based on meaning: "how many full boxes" is `floor`, and "how many boxes do I need" is `ceil`.
+
+To show money, use `toFixed(2)`. It rounds for display and returns a **string**, so do your math first and call `toFixed` last.
+
+Decimals aren't exact in computers. `0.1 + 0.2` is `0.30000000000000004`, which is another reason to format before printing.
+~code
+const items = 23;
+console.log(Math.ceil(items / 10), "boxes needed");
+console.log(Math.floor(items / 10), "full boxes");
+console.log(0.1 + 0.2);
+console.log((0.1 + 0.2).toFixed(2));
+=E trycatch
+@T
+**When an error happens inside `try`, the rest of the `try` block is skipped** and JavaScript jumps straight into `catch`. Lines after the whole `try`/`catch` keep running normally, so the program survives.
+
+Wrap only the risky part, like reading data that might be missing or parsing text that might be bad. A huge `try` around everything makes it hard to tell what failed.
+
+`finally` runs either way. It's for cleanup that must happen whether or not things went wrong.
+~code
+const inputs = ['{"psi": 40}', "not json"];
+for (const text of inputs) {
+  try {
+    const data = JSON.parse(text);
+    console.log("psi is", data.psi);
+  } catch (error) {
+    console.log("Bad data:", text);
+  } finally {
+    console.log("checked one");
+  }
+}
+=R first
+@T
+Code runs top to bottom. `console.log()` shows a value.
+
+Text goes in quotes, and numbers don't. `"2" + 3` joins to make `"23"`.
+=R vars
+@T
+`let` can change, and `const` can't be reassigned. Names are camelCase.
+
+Template literals use backticks: `` `Hi ${name}` ``.
+=R math
+@T
+`%` is the remainder and `**` is a power. `+=` adds to a variable.
+
+`Number("5")` turns text into a number, and `.length` counts characters.
+=R decide
+@T
+`if (cond) { } else if (cond) { } else { }`: the first true branch wins.
+
+Use `===` to compare. `&&` is and, `||` is or, and `!` is not.
+
+`0`, `""`, `null`, `undefined` and `NaN` are falsy.
+=R loops
+@T
+`for (let i = 0; i < n; i++)` runs `n` times. `while (cond)` repeats until the condition is false.
+
+`for (const x of list)` visits each item. `break` stops the loop, and `continue` skips to the next round.
+=R funcs
+@T
+`function name(a, b) { return a + b; }`. Calling it runs the body with those values.
+
+`return` gives back a value. Without it, you get `undefined`. Arrow form: `(a, b) => a + b`.
+=R scope
+@T
+`let` and `const` live inside the nearest `{ }` block.
+
+A function can read variables from outside it, but variables made inside stay inside.
+=R arrays
+@T
+Arrays count from 0, and the last item is at `length - 1`.
+
+`push`/`pop` change the array itself. `map`, `filter`, `slice` and `find` return new values.
+=R objects
+@T
+`{ key: value }` stores labeled data. Read it with `obj.key`, or `obj[name]` when the key is in a variable.
+
+Inside an object's own methods, `this` is that object.
+=R maps
+@T
+`new Map()`: `set(k, v)`, `get(k)`, `has(k)`, `size`.
+
+`for (const [k, v] of map)` loops over pairs in the order they were added.
+=R strobj
+@T
+String methods return new strings: `slice`, `indexOf` (-1 if not found), `replace`, `split`, `includes`, `padStart`.
+=R dateobj
+@T
+Months count from 0, so November is `10`.
+
+Subtracting dates gives milliseconds, and a day is `86400000` of them.
+=R mathobj
+@T
+`Math.round` goes to the nearest, `floor` down and `ceil` up. `Math.max` and `Math.min` compare.
+
+`Math.floor(Math.random() * n) + 1` gives 1 to `n`. `toFixed(2)` returns a string.
+=R bugs
+@T
+Read the error name and line number first.
+
+`try { } catch (error) { }` keeps the program running. `throw new Error("msg")` raises your own error.
+=R labs1
+@T
+Break the task into steps: read the values, compute, then print in the exact format asked for.
+
+Check the expected output for spaces and capitals before pressing Check.

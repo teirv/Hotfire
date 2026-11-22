@@ -14,10 +14,12 @@ function parse(txt,lang){
     if(c.k==='W')o.accept=_.accept.split('\n').filter(Boolean);
     if(_.why)o.why=_.why;
     if(c.review)o.review=c.review;
+    /* ~file name [noeol]: a file the program can open. noeol leaves off the final newline. */
+    if(c.files)o.files=Object.fromEntries(c.files.map(f=>{const [name,flag]=f.name.split(/\s+/);const body=f.buf.join('\n').replace(/\n+$/,'');return [name,flag==='noeol'?body:body+'\n']}));
     if('BO'.includes(c.k)&&c.outs.length)o.vout=c.outs[0];
     if(c.k==='C'){o.start=_.start||'';if(!o.start.endsWith('\n'))o.start+='\n';o.sol=_.sol;o.hint=_.hint;if(_.after)o.after=_.after;if(_.replace)o.replace=_.replace;
       o.cases=c.outs.length?c.outs:[{stdin:[],out:''}];if(c.anyout)o.anyout=true;
-      if(c.files)o.files=Object.fromEntries(c.files.map(f=>[f.name,f.buf.join('\n').replace(/\n+$/,'')+'\n']));
+      
       if(_.style)o.styles=_.style.split('\n').filter(Boolean).map(l=>{const [sel,prop,val]=l.split(' :: ');return{sel,prop,val}});
       if(_.must)o.must=_.must.split('\n').filter(Boolean).map(l=>{const [re,msg]=l.split(' :: ');return{re,msg}})}
     c._out=o}
@@ -48,6 +50,7 @@ const js=[];CH.forEach(([t,f],i)=>{if(!fs.existsSync(f))return;let us=parse(fs.r
   us.forEach(u=>{u.ch=t;js.push(u)})});
 const py=parse(fs.readFileSync('course/python.txt','utf8'),'python');
 py.push(...parse(fs.readFileSync('course/py_practice.txt','utf8'),'python'));
+py.push(...parse(fs.readFileSync('course/py_review.txt','utf8'),'python'));
 
 const KANA=[['a',['あア a','いイ i','うウ u','えエ e','おオ o'],['かカ ka','きキ ki','くク ku','けケ ke','こコ ko']],
  ['s',['さサ sa','しシ shi si','すス su','せセ se','そソ so'],['たタ ta','ちチ chi ti','つツ tsu tu','てテ te','とト to']],

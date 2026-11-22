@@ -1,0 +1,570 @@
+=U pyrev | Practice Review: Files, CSV and Factorial | Step-by-step review of three practice test problems.
+=L pyrev1 | Append a sentence, step by step
+@T
+**The task:** read a file name, read the three words in that file, append them as one sentence on a new line, then show the whole updated file.
+
+Sample: the file `WordTextFile.txt` holds `cat`, `chases` and `dog` on three lines. The expected output is:
+
+```
+cat
+chases
+dog
+cat chases dog
+```
+
+**The plan:** you need three file operations, in order:
+
+1. Read the file.
+2. Append to it.
+3. Read it again to display it.
+@T
+**Step 1: get the file name.**
+
+The sample output doesn't show the `Enter the name of the input file:` text, so most autograders expect a plain `input()` with no prompt string.
+
+If yours wants the prompt printed, use `input("Enter the name of the input file:\n")`.
+
+Run it below. The **Input** box already holds the file name.
+~code
+filename = input()
+print("You typed:", filename)
+~stdin
+WordTextFile.txt
+@T
+**Step 2: open the file in read mode and get the words.**
+
+`'r'` opens the file for reading. `read()` returns the whole file as one string, including the hidden `\n` line breaks. `with` closes the file for you when the indented block ends.
+
+`repr()` shows the hidden characters, so you can see exactly what `read()` gave you. Run it.
+~file WordTextFile.txt
+cat
+chases
+dog
+~code
+filename = input()
+with open(filename, 'r') as file:
+    content = file.read()
+print(repr(content))
+~stdin
+WordTextFile.txt
+@Q
+Refer to the code above. What does `content` hold?
+~opts
+* `'cat\nchases\ndog\n'`, one string with line breaks
+- `['cat', 'chases', 'dog']`, a list of words
+- `'cat chases dog'`, words joined by spaces
+~why
+`read()` always returns one string, line breaks included. Splitting it into words is the next step.
+@T
+**Step 3: split the text into words and build the sentence.**
+
+`split()` with no argument breaks the text on **any** whitespace: spaces, tabs and newlines, including stray trailing spaces. That gives `['cat', 'chases', 'dog']`, which is why the words end up separated by exactly one space.
+
+`' '.join(words)` puts one space between the words: `'cat chases dog'`.
+~code
+content = 'cat  \nchases\ndog\n'
+words = content.split()
+sentence = ' '.join(words)
+print(words)
+print(repr(sentence))
+@Q
+Why use `split()` instead of `split('\n')` here?
+~opts
+* `split('\n')` keeps stray spaces and leaves an empty `''` at the end, so the sentence gets extra spaces
+- `split('\n')` only works on Windows
+- `split()` sorts the words
+~why
+`'cat\nchases\ndog\n'.split('\n')` gives `['cat', 'chases', 'dog', '']`. Joining that adds a space at the end.
+@T
+**Step 4: open the file in append mode and write the sentence.**
+
+`'a'` (append) adds to the end of the file. Don't use `'w'`, because it erases the file first.
+
+The `if` check handles a file whose last word has no newline after it. Without it, you'd get `dogcat chases dog` on one line. `Words2.txt` below has that problem. Run it, then delete the two `if` lines and run it again to see what goes wrong.
+~file Words2.txt noeol
+owl
+hunts
+mice
+~code
+filename = "Words2.txt"
+with open(filename, 'r') as file:
+    content = file.read()
+sentence = ' '.join(content.split())
+
+with open(filename, 'a') as file:
+    if not content.endswith('\n'):
+        file.write('\n')
+    file.write(sentence + '\n')
+
+with open(filename, 'r') as file:
+    print(file.read())
+@Q
+What would `open(filename, 'w')` do in Step 4?
+~opts
+* Erase the three words, leaving only the sentence
+- Add the sentence at the end, same as `'a'`
+- Raise an error because the file exists
+~why
+`'w'` starts the file over from empty. `'a'` keeps what's there and writes at the end.
+@T
+**Step 5: open the file again in read mode and print it.**
+
+You reopen the file because the `content` you read in Step 2 is from **before** the sentence was added. Printing `content` would leave the new line out.
+
+```
+with open(filename, 'r') as file:
+    print(file.read())
+```
+
+**Testing it on your own computer:** every run appends another sentence. After running it a few times, reset `WordTextFile.txt` to its three original words. In this app, each run starts from a fresh copy.
+@O
+Put the full program in order.
+~lines
+filename = input()
+with open(filename, 'r') as file:
+    content = file.read()
+sentence = ' '.join(content.split())
+with open(filename, 'a') as file:
+    if not content.endswith('\n'):
+        file.write('\n')
+    file.write(sentence + '\n')
+with open(filename, 'r') as file:
+    print(file.read())
+~why
+Read, build the sentence, append, then read again to display it.
+@C
+Write the whole program yourself. Read the file name, append the three words as one sentence on a new line, then print the updated file.
+
+Check tests a normal file and one whose last line has no newline.
+~start
+# Step 1: get the file name
+# Step 2: read the file
+# Step 3: build the sentence
+# Step 4: append it
+# Step 5: print the updated file
+
+~sol
+filename = input()
+
+with open(filename, 'r') as file:
+    content = file.read()
+
+words = content.split()
+sentence = ' '.join(words)
+
+with open(filename, 'a') as file:
+    if not content.endswith('\n'):
+        file.write('\n')
+    file.write(sentence + '\n')
+
+with open(filename, 'r') as file:
+    print(file.read())
+~hint
+Three `with open(...)` blocks: `'r'`, then `'a'`, then `'r'` again.
+~file WordTextFile.txt
+cat
+chases
+dog
+~file Words2.txt noeol
+owl
+hunts
+mice
+~out stdin=WordTextFile.txt
+cat
+chases
+dog
+cat chases dog
+~out stdin=Words2.txt
+owl
+hunts
+mice
+owl hunts mice
+~must
+\bopen\s*\( :: Use `open()`.
+['"]a['"] :: Open the file in append mode, `'a'`.
+\.write\s*\( :: Use `write()` to add the sentence.
+=L pyrev2 | Reverse CSV rows, step by step
+@T
+**The task:** read a CSV file name, read the file with the `csv` module, and print each row with its values in reverse order, as a list.
+
+Sample: `input1.csv` holds:
+
+```
+fruits,sports,countries
+banana,football,United States
+apple,soccer,Brazil
+orange,volleyball,Canada
+```
+
+The expected output starts with `['countries', 'sports', 'fruits']`.
+
+It follows the same pattern as the last task: get the file name, open the file, then loop through what you read.
+@T
+**Step 1: import the csv module.**
+
+`csv` is built into Python, so there's nothing to install. Import it at the top of the file.
+
+**Step 2: get the file name** with a plain `input()`. If your autograder wants the prompt shown, use `input("Enter the name of the file along with its extension:\n")`.
+
+```
+import csv
+
+filename = input()
+```
+@T
+**Step 3: open the file and create a CSV reader.**
+
+`newline=''` is what the Python docs recommend whenever you use the `csv` module. It lets the module handle line endings itself.
+
+`csv.reader(file)` turns the file into something you can loop over. Each time through the loop, you get one row as a **list of strings**, already split at the commas. Run it to see the raw rows.
+~file input1.csv
+fruits,sports,countries
+banana,football,United States
+apple,soccer,Brazil
+orange,volleyball,Canada
+~code
+import csv
+
+filename = input()
+with open(filename, 'r', newline='') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        print(row)
+~stdin
+input1.csv
+@T
+**Step 4: loop through the rows, reverse each one, and print it.**
+
+`row[::-1]` is slice notation for "the whole list, stepping backward", which gives a reversed copy.
+
+`print()` on a list shows the brackets and quotes, so it matches the required output format.
+
+The loop has to stay indented **inside** the `with` block. Once the `with` block ends, the file closes and the reader has nothing left to read. Run this to see the error.
+~file input1.csv
+fruits,sports,countries
+banana,football,United States
+~code
+import csv
+
+with open("input1.csv", 'r', newline='') as file:
+    reader = csv.reader(file)
+
+for row in reader:
+    print(row[::-1])
+@Q
+Refer to the code above. Why does it fail?
+~opts
+* The loop runs after the `with` block has closed the file
+- `row[::-1]` can't reverse a list
+- `csv.reader` needs `'w'` mode
+~why
+The reader reads from the file as you loop, so the loop must stay inside the `with` block.
+@P
+What does this print?
+~code
+row = ['fruits', 'sports', 'countries']
+print(row.reverse())
+~opts
+* None
+- ['countries', 'sports', 'fruits']
+- ['fruits', 'sports', 'countries']
+~why
+`row.reverse()` changes the list in place and returns `None`. Call it on its own line, then `print(row)`, or use `row[::-1]`.
+@T
+**Why not `split(',')`?** Splitting each line yourself works on the sample file. But `csv.reader` also handles values like `"Washington, D.C."`, where the comma sits inside quotes and isn't a separator. The assignment also requires `csv.reader`.
+
+Run it and compare the two rows.
+~file cities.csv
+city,state
+"Washington, D.C.",DC
+~code
+import csv
+
+with open("cities.csv", newline='') as file:
+    lines = file.read().split('\n')
+print(lines[1].split(','))
+
+with open("cities.csv", newline='') as file:
+    rows = list(csv.reader(file))
+print(rows[1])
+@Q
+The first line of `input1.csv` is a header, `fruits,sports,countries`. What does the task want you to do with it?
+~opts
+* Reverse and print it like any other row
+- Skip it
+- Print it unchanged
+~why
+The expected output starts with `['countries', 'sports', 'fruits']`, so the header is reversed too.
+@C
+Write the whole program yourself: read a CSV file name, then print each row reversed, as a list.
+
+Check also tests a file with a quoted comma.
+~start
+import csv
+
+# Get the file name, then reverse and print each row
+
+~sol
+import csv
+
+filename = input()
+
+with open(filename, 'r', newline='') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        reversed_row = row[::-1]
+        print(reversed_row)
+~hint
+Keep the `for` loop inside the `with` block, and print `row[::-1]`.
+~file input1.csv
+fruits,sports,countries
+banana,football,United States
+apple,soccer,Brazil
+orange,volleyball,Canada
+~file cities.csv
+city,state
+"Washington, D.C.",DC
+~out stdin=input1.csv
+['countries', 'sports', 'fruits']
+['United States', 'football', 'banana']
+['Brazil', 'soccer', 'apple']
+['Canada', 'volleyball', 'orange']
+~out stdin=cities.csv
+['state', 'city']
+['DC', 'Washington, D.C.']
+~must
+csv\.reader\s*\( :: Use `csv.reader()`.
+\bfor\b :: Use a loop to go through the rows.
+=L pyrev3 | Factorial compare, step by step
+@T
+**The task:** read two integers. Use `math.factorial()` on the first, print it, then print whether it's greater than the second.
+
+```
+The factorial value of 6 is 720
+True
+```
+
+This one is shorter. Same approach as the last two: get the input, do the work, print in the exact format.
+@T
+**Step 1: import the math module.** Like `csv`, `math` is built into Python. Importing it gives you `math.factorial()`.
+
+**Step 2: read the two numbers and convert them to integers.** `input()` always returns a string, even when the user types `6`. `int()` converts it so you can do math with it. Each `input()` reads one line, matching the sample: first number on line 1, second on line 2.
+
+Change the values in the **Input** box and run it.
+~code
+import math
+
+number = int(input())
+compare_value = int(input())
+print(number, compare_value)
+~stdin
+6
+500
+@Q
+What happens if you skip `int()` and call `math.factorial(input())`?
+~opts
+* An error, because `factorial` needs a number, not the text `"6"`
+- It works, because Python converts it automatically
+- It returns `0`
+~why
+`input()` always gives text. `math.factorial("6")` raises a `TypeError`.
+@T
+**Step 3: calculate the factorial.** `math.factorial(6)` computes 6 × 5 × 4 × 3 × 2 × 1, which is 720.
+
+**Step 4: print the factorial line** with an f-string. The `f` before the quotes lets you put variables inside `{}`, and Python fills in their values.
+
+**Step 5: print the comparison result.** A comparison like `720 > 500` is already a Boolean, `True` or `False`. You can print it directly, without an `if` statement.
+~code
+import math
+
+number = 6
+compare_value = 500
+factorial_value = math.factorial(number)
+print(f"The factorial value of {number} is {factorial_value}")
+print(factorial_value > compare_value)
+@Q
+The inputs are `5` and `120`. 5! is 120. What should the second line print?
+~opts
+* `False`
+- `True`
+- `Equal`
+~why
+The task asks whether the factorial is **greater** than the second number. 120 isn't greater than 120, so use `>`, not `>=`.
+@B
+Finish the comparison line.
+~code
+print(factorial_value ___ compare_value)
+~opts
+* >
+- >=
+- ==
+~why
+"Greater than" is `>`.
+@T
+**One edge case:** `math.factorial()` only accepts whole numbers that aren't negative. A negative input like `-3` raises a `ValueError`. That's fine for this assignment, but it's useful to know.
+
+**Checking against the samples:**
+
+`6` and `500`: 6! = 720, and 720 > 500, so it prints `True`.
+
+`4` and `50`: 4! = 24, and 24 > 50 is false, so it prints `False`.
+@C
+Write the whole program yourself: read two integers, print the factorial line, then the comparison.
+~start
+import math
+
+# Read both numbers, then print the factorial and the comparison
+
+~sol
+import math
+
+number = int(input())
+compare_value = int(input())
+
+factorial_value = math.factorial(number)
+
+print(f"The factorial value of {number} is {factorial_value}")
+print(factorial_value > compare_value)
+~hint
+`print(factorial_value > compare_value)` prints `True` or `False` by itself.
+~out stdin=6|500
+The factorial value of 6 is 720
+True
+~out stdin=4|50
+The factorial value of 4 is 24
+False
+~out stdin=5|120
+The factorial value of 5 is 120
+False
+~out stdin=0|0
+The factorial value of 0 is 1
+True
+~must
+math\.factorial\s*\( :: Use `math.factorial()`.
+=F pyrevfire1 | Hot fire: Files again
+@C
+Same pattern, new data. The file holds one whole number per line. Read the file name, then append a line `Total: N` with the sum of the numbers, and print the updated file.
+
+Sample: `nums.txt` holds `4`, `5` and `6`. The output is:
+
+```
+4
+5
+6
+Total: 15
+```
+~start
+# Read the file name, add up the numbers, append the total, print the file
+
+~sol
+filename = input()
+
+with open(filename, 'r') as file:
+    content = file.read()
+
+total = 0
+for word in content.split():
+    total += int(word)
+
+with open(filename, 'a') as file:
+    if not content.endswith('\n'):
+        file.write('\n')
+    file.write(f"Total: {total}\n")
+
+with open(filename, 'r') as file:
+    print(file.read())
+~hint
+`content.split()` gives the numbers as text. Convert each one with `int()` before adding.
+~file nums.txt
+4
+5
+6
+~file more.txt noeol
+10
+20
+5
+~out stdin=nums.txt
+4
+5
+6
+Total: 15
+~out stdin=more.txt
+10
+20
+5
+Total: 35
+~must
+['"]a['"] :: Open the file in append mode, `'a'`.
+@Q
+A program opens a file with `'w'`, then reads it with `'r'`. What does the read get?
+~opts
+* Only what was written after opening with `'w'`
+- The original contents plus the new writing
+- An error, because you can't reopen a file
+~why
+`'w'` erases the file the moment it opens.
+=F pyrevfire2 | Hot fire: CSV and math
+@C
+Read a CSV file name. For each row, print the first value and the last value joined by ` - `. Use `csv.reader`.
+
+Sample: for `input1.csv`, the first line printed is `fruits - countries`.
+~start
+import csv
+
+# Print each row's first and last value
+
+~sol
+import csv
+
+filename = input()
+
+with open(filename, 'r', newline='') as file:
+    for row in csv.reader(file):
+        print(f"{row[0]} - {row[-1]}")
+~hint
+`row[0]` is the first value and `row[-1]` is the last.
+~file input1.csv
+fruits,sports,countries
+banana,football,United States
+apple,soccer,Brazil
+orange,volleyball,Canada
+~file cities.csv
+city,state
+"Washington, D.C.",DC
+~out stdin=input1.csv
+fruits - countries
+banana - United States
+apple - Brazil
+orange - Canada
+~out stdin=cities.csv
+city - state
+Washington, D.C. - DC
+~must
+csv\.reader\s*\( :: Use `csv.reader()`.
+@C
+Read a whole number `n`. Print how many digits `n!` has, in this format:
+
+`5! has 3 digits`
+
+Use `math.factorial()`. Hint: turn the result into a string first.
+~start
+import math
+
+# Read n, then print how many digits n! has
+
+~sol
+import math
+
+n = int(input())
+digits = len(str(math.factorial(n)))
+print(f"{n}! has {digits} digits")
+~hint
+`str()` turns 120 into `"120"`, and `len()` counts its characters.
+~out stdin=5
+5! has 3 digits
+~out stdin=10
+10! has 7 digits
+~out stdin=20
+20! has 19 digits
+~must
+math\.factorial\s*\( :: Use `math.factorial()`.

@@ -90,7 +90,7 @@ Python challenges can include files with `~file name.txt` followed by the conten
 
 **Review buttons:** every question in a hot fire links to up to 10 earlier lessons that teach what it uses. `course/concepts.js` lists what each idea looks like in code. The build finds the first lesson that teaches each one, so links update when lessons change. To pick the links yourself, add `~review lessonid, lessonid` to a card.
 
-The Python **Practice Test** is in `course/py_practice.txt`.
+The Python **Practice Test** is in `course/py_practice.txt`. The step-by-step **Practice Review** (file append, CSV, factorial) is in `course/py_review.txt`. Any card can attach files with `~file name.txt`, and adding `noeol` leaves off the final newline.
 
 **Explanations and recaps** live in `course/deep_*.txt`. `=E lessonid` adds explanation cards after a lesson's opening cards, before its questions. `=R sectionid` (or a hot fire id) adds a "Remember" recap at the start of each hot fire in it.
 

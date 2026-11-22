@@ -102,13 +102,12 @@ def _hf_csv_row(line, delimiter):
         i += 1
     row.append(cur)
     return row
+def _hf_csv_rows(lines, delimiter):
+    for line in lines:
+        yield _hf_csv_row(line.rstrip("\r\n"), delimiter)
 class _HFCsv:
     def reader(self, lines, delimiter=",", **kw):
-        rows = []
-        for line in lines:
-            line = line.rstrip("\r\n")
-            rows.append(_hf_csv_row(line, delimiter))
-        return iter(rows)
+        return _hf_csv_rows(lines, delimiter)
     def writer(self, f, delimiter=",", **kw):
         return _HFCsvWriter(f, delimiter)
 class _HFCsvWriter:

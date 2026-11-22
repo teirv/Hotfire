@@ -473,8 +473,8 @@ function shell(inner,foot){const q=L.queue;
 function showCard(){const c=L.queue[L.i];if(!c)return finish();
   const s=c.s,lang=L.lang,crumb=crumbFor(s,lang);L.sel=null;L.fills=[];L.locked=false;L.fails=0;ed=null;
   const a=$("#app");
-  if(s.k==="T"){const has=!!s.code;a.innerHTML=shell(crumb+(s.recap?`<span class="recapl">Remember</span>`:"")+`<div class="prose">${md(s.text)}</div>`+(has?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+"":""),`<button class="btn" id="primary" data-next="1">Continue</button>`);
-    if(has)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]})}
+  if(s.k==="T"){const has=!!s.code;a.innerHTML=shell(crumb+(s.recap?`<span class="recapl">Remember</span>`:"")+`<div class="prose">${md(s.text)}</div>`+filesHTML(s.files)+(has?(s.html?htmlPane(s.html):"")+editorHTML("ed",{file:LANGS[lang].file,reset:true,html:s.html||lang==="html"})+"":""),`<button class="btn" id="primary" data-next="1">Continue</button>`);
+    if(has)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,files:s.files,getStdin:()=>s.stdin||[]})}
   else if(s.k==="Q"||s.k==="P"){const opts=L.optOrder=shuffle(s.opts);
     a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.code?`<pre class="static" tabindex="0">${hl(s.code,lang)}</pre>`:"")+`<div class="opts" role="group" aria-label="Answers">${opts.map((o,i)=>`<button class="opt" data-opt="${i}" aria-pressed="false"><span class="k">${"ABCD"[i]}</span><span class="v">${s.k==="P"?`<pre>${esc(o.t)}</pre>`:inline(o.t)}</span></button>`).join("")}</div>`,`<button class="btn" id="primary" data-check="1" disabled>Check</button>`)}
   else if(s.k==="W"){a.innerHTML=shell(crumb+`<div class="prose">${md(s.prompt)}</div>`+(s.big?`<div class="bigja">${tx(s.big)}</div>`:"")+`<input id="wans" class="wans" aria-label="Your answer" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type your answer">`+(lang==="spanish"?`<div class="tokens akeys" aria-label="Spanish letters">${["á","é","í","ó","ú","ñ","ü","¿","¡"].map(k=>`<button class="tok" data-acc="${k}">${k}</button>`).join("")}</div>`:""),`<button class="btn" id="primary" data-check="1" disabled>Check</button>`);
@@ -520,7 +520,7 @@ function showPeek(){const c=L.queue[L.peek],s=c.s,lang=L.lang,last=L.peek+1>=L.i
   if(s.k==="W")body=`<div class="prose">${md(s.prompt)}</div>`+(s.big?`<div class="bigja">${tx(s.big)}</div>`:"")+`<div class="opt right"><span class="v">${esc(s.accept[0])}</span></div>`+why;
   if(s.k==="C")body=`<div class="prose">${md(s.prompt)}</div>`+(s.html?htmlPane(s.html):"")+`<span class="label">Example solution</span><pre class="static" tabindex="0">${hl(s.sol,lang)}</pre>`;
   $("#app").innerHTML=shell(top+body,`<button class="btn" id="primary" data-peeknext="1">${last?"Back to where I was":"Next card"}</button>`);
-  if(s.k==="T"&&s.code)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,getStdin:()=>s.stdin||[]});
+  if(s.k==="T"&&s.code)ed=mountEditor("ed",{code:s.code,start:s.code,lang,html:s.html,files:s.files,getStdin:()=>s.stdin||[]});
   window.scrollTo(0,0)}
 /* Files a Python problem can open. Each run starts from these, so writing never changes them. */
 function filesHTML(f){if(!f)return "";return `<details class="tests files" open><summary>Files in the folder</summary>${Object.entries(f).map(([n,c])=>`<p><code>${esc(n)}</code></p><pre class="tout">${esc(c.replace(/\n$/,""))}</pre>`).join("")}<p class="muted">Every run starts from these copies.</p></details>`}

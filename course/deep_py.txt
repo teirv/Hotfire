@@ -451,3 +451,8 @@ Mode `"a"` adds to the end, and `" ".join(words)` makes the sentence.
 `import math`, then `math.factorial(n)`.
 
 A comparison like `a > b` is already `True` or `False`, so print it directly.
+=R pyrev
+@T
+Files: `'r'` reads, `'a'` adds to the end, and `'w'` erases first. `read()` gives one string, and `.split()` turns it into words.
+
+`csv.reader(file)` gives each row as a list, so keep the loop inside the `with` block. `math.factorial(n)` needs an `int`.

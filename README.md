@@ -96,4 +96,10 @@ The Python **Practice Test** is in `course/py_practice.txt`.
 
 Every code editor has an **Input** box. Run feeds it to `input()` (Python), `prompt()` (JavaScript), `Console.ReadLine()` (C#) or stdin (Rust). Check always uses the lesson's test inputs.
 
-Test every card with `node tests/verify.js`. For C# and Rust, start `runner/runner.py` on port 8101 first.
+Test every card with `node tests/verify.js`.
+
+More tests, each run from the repo root after `node build.js`:
+
+- `bash tests/server_e2e.sh` runs the real server with two accounts: invites, saving progress, the leaderboard and explanations.
+- `node tests/review.js` covers the review buttons, `node tests/console.js` the Input box (needs the runner on port 8101), and `node tests/autocomplete.js` autocomplete.
+- `node tests/back.js`, `seg.js` and `peekall.js` cover the back button, the progress bar and looking back at every card. For C# and Rust, start `runner/runner.py` on port 8101 first.
